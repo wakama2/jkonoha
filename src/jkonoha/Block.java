@@ -1,9 +1,6 @@
 package jkonoha;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jkonoha.compiler.kobject.KKonohaSpace;
+import java.util.*;
 
 public class Block {
 	public KonohaSpace ks;

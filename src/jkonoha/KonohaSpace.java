@@ -1,8 +1,9 @@
 package jkonoha;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class KonohaSpace {
+public class KonohaSpace extends Object {
 	
 	void tokenize(CTX ctx, String source, long uline, ArrayList<Token> toks) {
 		int i, pos = toks.size();
@@ -15,9 +16,28 @@ public class KonohaSpace {
 		}
 	}
 	
-	public void eval(CTX ctx, String source, long uline) {
+	public void eval(CTX ctx, String script, long uline) {
 		// TODO
+		List<Token> tls = new ArrayList<Token>();
+		tokenize(script, uline, tls);
+		Block bk = null;//newBlock();
+		//cctx.evalBlock(bk);
 	}
+	
+	public void tokenize(String source, long uline, List<Token> a) {
+		//TODO
+	}
+	
+	public boolean importPackage(String name, long pline) {
+		//TODO
+		return false;
+	}
+	
+	public boolean loadScript(String path) {
+		//TODO
+		return false;
+	}
+	
 }
 
 class TEnv {

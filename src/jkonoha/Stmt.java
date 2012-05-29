@@ -1,15 +1,10 @@
 package jkonoha;
 
-import jkonoha.*;
-import jkonoha.compiler.kobject.KToken;
-
-public class Stmt {
+public class Stmt extends KObject {
 	public int uline;
 	public Syntax syntax;
 	public Block parentNULL;
-	
-	public final int build;  // TSTMT.XXXX
-	public Map<String, Object> proto;
+	public int build;  // TSTMT.XXXX
 	
 	public Stmt(int build) {
 		this.build = build;
@@ -22,7 +17,7 @@ public class Stmt {
 			if(bk instanceof Block) {
 				return (Block)bk;
 			}
-			if(bk instanceof KToken) {
+			if(bk instanceof Token) {
 				//TODO
 			}
 		}
