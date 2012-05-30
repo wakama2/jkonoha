@@ -5,7 +5,7 @@ import java.util.*;
 public class Parser {
 
 	// important
-	public Block newBlock() {
+	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		//TODO
 		return null;
 	}

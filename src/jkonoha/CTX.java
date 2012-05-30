@@ -1,6 +1,5 @@
 package jkonoha;
 
-
 public class CTX extends KObject {
 	public Konoha konoha;
 	public CtxSugar sugar;

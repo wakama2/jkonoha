@@ -145,7 +145,7 @@ public class Compiler implements Opcodes {
 	}
 
 	public void asmErrStmt(Stmt stmt, int shift, int espidx) {
-		String str = (String)stmt.getObject(0);
+		String str = (String)stmt.getObject("0");
 		System.err.println(str);
 		//asmError();
 	}

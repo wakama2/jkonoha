@@ -6,6 +6,14 @@ public class KObject {
 	
 	private Map<String, Object> kvproto = null;
 	
+	public void setObject(int key, Object value) {
+		setObject(Integer.toString(key), value);
+	}
+	
+	public Object getObject(int key) {
+		return getObject(Integer.toString(key));
+	}
+	
 	public void setObject(String key, Object value) {
 		if(kvproto == null) {
 			kvproto = new HashMap<String, Object>();
