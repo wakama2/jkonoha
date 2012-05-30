@@ -1,5 +1,7 @@
 package jkonoha;
 
-public class CtxSugar {
+import java.util.*;
 
+public class CtxSugar {
+	public static ArrayList<Object>	errors;
 }

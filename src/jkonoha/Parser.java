@@ -22,7 +22,7 @@ public class Parser extends KObject{
 		return null;
 	}
 	
-	public void makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Object tkERRRef) {
+	public void makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Object> tlsdst, Object tkERRRef) {
 		//TODO 
 				
 	}
@@ -34,42 +34,22 @@ public class Parser extends KObject{
 	
 	public void Block_addStmtLine (CTX ctx, Block bk, List<Object> tls, int s, int e, Token tkERR) {
 		Stmt stmt = new Stmt(s/*tls.toks[s].uline*/);//TODO
+		
 		ArrayList<Object> tmp = (ArrayList<Object>)tls;
 		tmp.add(bk);
-		KObject trial = new KObject();
 		if (tkERR != null) {
 			stmt.syntax = new Syntax();//TODO rf. /src/ast.h (SYN_ function in Block_addStmtLine). 
 			stmt.build = TSTMT.ERR;
-			trial.setObject(KW.Err, tkERR);
+			setObject(KW.Err, tkERR);//TODO key is String or Int?
 		}
 		else {
-			int estart = Ctxsugar.errors.size();//TODO	creat Ctxsugar Class
-			s = Stmt_addAnnotation(ctx, stmt, tls, s, e);//TODO
-			if (!Stmt_parseSyntaxRule(ctx, stmt, tls, s, e)) {//TODO
-				Stmt_toERR(stmt, estart);
+			int estart = CtxSugar.errors.size();
+			s = stmt.addAnnotation(ctx, stmt, tls, s, e);
+			if (!stmt.parseSyntaxRule(ctx, stmt, tls, s, e)) {
+				stmt.toERR(stmt, estart);
 			}
 		}
 		assert (stmt.syntax != null);
 	}
-	
-	public int Stmt_addAnnotation(CTX ctx, Stmt stmt, List<Object>  tls, int s, int e) {
-		int i;
-		for (i = s; i < e; i++) {
-			Token tk;
-			if (tk.tt != TK_METANAME) break;
-			if (i+1 < e) {
-				String buf;
-				//snprintf(buf, sizeof(buf), "@%s", S_text(tk->text));
-				int kw;
-				
-			}
-		}
-		return 1;
-	}
-	public boolean Stmt_parseSyntaxRule(CTX ctx, Stmt stmt, List<Object> tls, int s, int e) {
-		return true;
-	}
-	public void Stmt_toERR (Stmt stmt, int estart) {
-		//TODO
-	}
+
 }
