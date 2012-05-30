@@ -3,7 +3,7 @@ package jkonoha;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KonohaSpace extends Object {
+public class KonohaSpace extends KObject {
 	
 	void tokenize(CTX ctx, String source, long uline, ArrayList<Token> toks) {
 		int i, pos = toks.size();

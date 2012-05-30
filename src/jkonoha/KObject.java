@@ -4,16 +4,16 @@ import java.util.*;
 
 public class KObject {
 	
-	private Map<Integer, Object> kvproto = null;
+	private Map<String, Object> kvproto = null;
 	
-	public void setObject(int key, Object value) {
+	public void setObject(String key, Object value) {
 		if(kvproto == null) {
-			kvproto = new HashMap<Integer, Object>();
+			kvproto = new HashMap<String, Object>();
 		}
 		kvproto.put(key, value);
 	}
 	
-	public Object getObject(int key) {
+	public Object getObject(String key) {
 		if(kvproto != null) {
 			return kvproto.get(key);
 		} else {

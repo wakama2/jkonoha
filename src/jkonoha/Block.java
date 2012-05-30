@@ -2,7 +2,7 @@ package jkonoha;
 
 import java.util.*;
 
-public class Block {
+public class Block extends KObject {
 	public KonohaSpace ks;
 	public Stmt parentNULL;
 	public final List<Stmt> blocks = new ArrayList<Stmt>();

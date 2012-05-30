@@ -2,7 +2,7 @@ package jkonoha;
 
 import java.util.*;
 
-public abstract class Expr {
+public abstract class Expr extends KObject {
 	public int ty;     // TY_var ==> TY_int
 	public int build;  // 
 	public Token tk;   // unfamiliar 
@@ -64,13 +64,13 @@ class FieldExpr extends Expr {
 }
 
 class BoxingExpr extends Expr {
-	Expr single;
+	public Expr single;
 //	int BOX      =  7;
 //	int UNBOX    =  8;
 }
 
 class BlockExpr extends Expr {
-	Block block;
+	public Block block;
 //	int BLOCK    =  5;
 }
 
