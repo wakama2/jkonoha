@@ -11,7 +11,7 @@ public class Stmt extends KObject {
 	}
 	
 	// src/sugar/struct.h:930
-	public Block getBlock(CTX ctx, int kw, Block def) {
+	public Block getBlock(CTX ctx, String kw, Block def) {
 		Object bk = this.getObject(kw);
 		if(bk != null) {
 			if(bk instanceof Block) {
@@ -24,11 +24,11 @@ public class Stmt extends KObject {
 		return def;
 	}
 	
-	public String getText(CTX ctx, int kw, String def) {
+	public String getText(CTX ctx, String kw, String def) {
 		return (String)getObject(kw);
 	}
 	
-	public Expr getExpr(CTX ctx, int kw, Expr def) {
+	public Expr getExpr(CTX ctx, String kw, Expr def) {
 		return (Expr)getObject(kw);
 	}
 }
