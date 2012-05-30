@@ -5,9 +5,8 @@ import java.util.*;
 public class Konoha {
 	public static final int NEWID = -2;
 	
-	ArrayList<String> fileidList;
-	Map<String, Long> fileidMap;
-	// 
+	public ArrayList<String> fileidList;
+	public Map<String, Long> fileidMap;
 	
 	public Konoha() {
 		this.fileidList = new ArrayList<String>();

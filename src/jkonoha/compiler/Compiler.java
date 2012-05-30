@@ -4,17 +4,7 @@ import java.util.*;
 
 import org.objectweb.asm.*;
 
-import jkonoha.CTX;
-import jkonoha.Expr;
-import jkonoha.Block;
-import jkonoha.K;
-import jkonoha.KW;
-import jkonoha.Syntax;
-import jkonoha.Stmt;
-import jkonoha.TEXPR;
-import jkonoha.TSTMT;
-import jkonoha.TY;
-import jkonoha.compiler.kobject.*;
+import jkonoha.*;
 
 public class Compiler implements Opcodes {
 	
@@ -225,13 +215,13 @@ public class Compiler implements Opcodes {
 	}
 	
 	private void asmCall(int a, Expr expr, int shift, int espidx) {
-		List<?> l = (List<?>)expr.data;
-		KMethod mtd = (KMethod)l.get(0);
+		List<Expr> l = expr.getCons();
+		KMethod mtd = (KMethod)expr.getObject(0);
 		//int s = mtd.isStatic() ? 2 : 1;//TODO
 		int s = 1;
 		int thisidx = espidx + K.CALLDELTA;
 		for(int i=s; i<l.size(); i++) {
-			Expr e = (Expr)l.get(i);
+			Expr e = l.get(i);
 			asmExpr(thisidx + i - 1, e, shift, thisidx + i - 1);
 		}
 		call(mtd);
@@ -256,11 +246,11 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmOr(int a, Expr expr, int shift, int espidx) {
-		List<?> l = (List<?>)expr.data;
+		List<Expr> l = expr.getCons();
 		Label lbTRUE = new Label();
 		Label lbFALSE = new Label();
 		for(int i=1; i<l.size(); i++) {
-			this.asmExprJmpIf(a, (Expr)l.get(i), true, lbTRUE, shift, espidx);
+			this.asmExprJmpIf(a, l.get(i), true, lbTRUE, shift, espidx);
 		}
 		mv.visitInsn(ICONST_0);//false
 		asmJump(lbFALSE);
@@ -270,11 +260,11 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmAnd(int a, Expr expr, int shift, int espidx) {
-		List<?> l = (List<?>)expr.data;
+		List<Expr> l = expr.getCons();
 		Label lbTRUE = new Label();
 		Label lbFALSE = new Label();
 		for(int i=1; i<l.size(); i++) {
-			this.asmExprJmpIf(a, (Expr)l.get(i), false, lbTRUE, shift, espidx);
+			this.asmExprJmpIf(a, l.get(i), false, lbTRUE, shift, espidx);
 		}
 		mv.visitInsn(ICONST_0);//false
 		asmJump(lbFALSE);
@@ -287,7 +277,7 @@ public class Compiler implements Opcodes {
 		switch(expr.build) {
 		case TEXPR.CONST:
 		case TEXPR.NCONST:
-			loadConst(expr.data);
+			loadConst(expr.getData());
 			break;
 		case TEXPR.NEW:
 			//TODO
@@ -300,7 +290,7 @@ public class Compiler implements Opcodes {
 			loadLocal("local_" + expr.getIndex());
 			break;
 		case TEXPR.BLOCK:
-			asmBlock((Block)expr.data, espidx);
+			asmBlock((Block)expr.getData(), espidx);
 			//NMOV
 			break;
 		case TEXPR.FIELD:

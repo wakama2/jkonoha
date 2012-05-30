@@ -6,16 +6,36 @@ public abstract class Expr extends KObject {
 	public int ty;     // TY_var ==> TY_int
 	public int build;  // 
 	public Token tk;   // unfamiliar 
+	
+	public Object getData() {
+		throw new RuntimeException();
+	}
+	
+	public Expr at(int n) {
+		throw new RuntimeException();
+	}
+	
+	public List<Expr> getCons() {
+		throw new RuntimeException();
+	}
+	
+	public int getIndex() {
+		throw new RuntimeException();
+	}
 }
 
 class ConsExpr extends Expr {
 	
-	public List<Object> cons = new ArrayList<Object>();
+	public List<Expr> cons = new ArrayList<Expr>();
 	
-	public Expr at(int n) {
-		return (Expr)cons.get(n);
+	@Override public Expr at(int n) {
+		return cons.get(n);
 	}
-//	buildid;
+	
+	@Override public List<Expr> getCons() {
+		return cons;
+	}
+	
 //	int CALL     =  9;
 //	int AND      = 10;
 //	int OR       = 11;
@@ -28,6 +48,11 @@ class TermExpr extends Expr {
 
 class ConstExpr extends Expr {  // as if NConstExpr 
 	public Object data;
+	
+	@Override public Object getData() {
+		return data;
+	}
+	
 //	int CONST    =  0;
 //	int NCONST   =  3;  if ty is unboxed
 }
@@ -47,20 +72,29 @@ class NullExpr extends Expr {
 
 class FuncScopeVariableExpr extends Expr {
 	public int index;
+	
+	@Override public int getIndex() {
+		return index;
+	}
 	//int LOCAL    =  4;
 }
 
 class BlockScopeVariableExpr extends Expr {
 	public int index;
-	int LOCAL_   = -4;   /*THIS IS NEVER PASSED*/
-	int BLOCK_   = -3;   /*THIS IS NEVER PASSED*/
-	int FIELD_   = -2;   /*THIS IS NEVER PASSED*/
+	
+	@Override public int getIndex() {
+		return index;
+	}
+	
+	//int LOCAL_   = -4;   /*THIS IS NEVER PASSED*/
+	//int BLOCK_   = -3;   /*THIS IS NEVER PASSED*/
+	//int FIELD_   = -2;   /*THIS IS NEVER PASSED*/
 }
 
 class FieldExpr extends Expr {
 	public int index;
 	public int xindex;
-	int FIELD    =  6;
+	//int FIELD    =  6;
 }
 
 class BoxingExpr extends Expr {

@@ -17,28 +17,6 @@ public abstract class Token extends KObject {
 		this.tt = 0;
 		this.kw = 0;
 	}
-	
-	public static final void tokenize(CTX ctx, TEnv tenv) {
-		int ch, pos = 0;
-		FTokenizer fmat[] = tenv.fmat;
-		Token tk = new RawToken(tenv.uline);
-//		tk.lpos = tenv.lpos(0);
-		pos = Tokenizer.parseINDENT.parse(ctx, tk, tenv, pos, null);
-		while(pos < tenv.source.length() && (ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
-			if(tk.tt != 0) {
-				tenv.list.add(tk);
-				tk = new RawToken(tenv.uline);
-				//tk.lpos = tenv.lpos(pos);
-			}
-			int pos2 = fmat[ch].parse(ctx, tk, tenv, pos, null);
-			assert pos2 > pos;
-			pos = pos2;
-		}
-		if(tk.tt != 0) {
-			tenv.list.add(tk);
-		}
-	}
-	
 }
 
 class RawToken extends Token {
