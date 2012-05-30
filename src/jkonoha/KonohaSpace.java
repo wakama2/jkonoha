@@ -48,6 +48,11 @@ public class KonohaSpace extends KObject {
 		//TODO
 	}
 	
+	public Syntax getSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
+		//TODO
+		return null;
+	}
+	
 	public void eval(CTX ctx, String script, long uline) {
 		List<Token> tls = new ArrayList<Token>();
 		tokenize(ctx, script, uline, tls);
