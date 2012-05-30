@@ -37,12 +37,12 @@ public class Stmt extends KObject {
 	public int addAnnotation(CTX ctx, Stmt stmt, List<Object> tls, int s, int e) {//used in Parser.java
 		int i;
 		for (i = s; i < e; i++) {
-			Token tk = (Token)tls.get(i);
+			Token tk = (Token)tls.get(i);//Something wrong?
 			if (tk.tt != TK_METANAME) break;//TODO
 			if (i+1 < e) {
 				String buf;
 				int kw;//keyword(_ctx, (const char*)buf, S_size(tk->text)+1, FN_NEWID);TODO
-				Token tk1 = (Token)tls.get(i+1);//
+				Token tk1 = (Token)tls.get(i+1);//Something wrong?
 				KObject value = new KObject();
 				if (tk1.tt == KW.Parenthesis) {
 					value = (KObject)Stmt_newExpr2(ctx, stmt, tk1.sub, 0, tk1.sub.size());//TODO

@@ -6,7 +6,6 @@ public class Parser extends KObject{
 
 	// important
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Object> tls, int s, int e, int delim) {
-		//TODO
 		Block bk = new Block();
 		int i = s, indent = 0, atop = tls.size();
 		while (i < e) {
@@ -33,7 +32,7 @@ public class Parser extends KObject{
 	}
 	
 	public void Block_addStmtLine (CTX ctx, Block bk, List<Object> tls, int s, int e, Token tkERR) {
-		Stmt stmt = new Stmt(s/*tls.toks[s].uline*/);//TODO
+		Stmt stmt = new Stmt(s);//TODO/*tls.toks[s].uline*/
 		
 		ArrayList<Object> tmp = (ArrayList<Object>)tls;
 		tmp.add(bk);
