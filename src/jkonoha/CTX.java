@@ -1,9 +1,9 @@
 package jkonoha;
 
 
-public final class CTX {
-	Konoha konoha;   // global
-	// local data is here
+public class CTX extends KObject {
+	public Konoha konoha;
+	public CtxSugar sugar;
 
 	public long kfileid(String name, long def)
 	{
