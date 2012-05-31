@@ -4,6 +4,14 @@ import java.util.*;
 
 public class KonohaSpace extends KObject {
 	
+	public KonohaSpace parentNULL;
+	public FTokenizer[] fmat;
+	public Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
+	
+	public KonohaSpace() {
+		//TODO
+	}
+	
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
 		TEnv tenv = new TEnv(source, uline, toks, 4, this);
@@ -51,6 +59,41 @@ public class KonohaSpace extends KObject {
 	public Syntax getSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		//TODO
 		return null;
+	}
+	
+	public void syntax(CTX ctx, String kw, int isnew) {
+		//TODO
+	}
+	
+	public void defineSyntax(CTX ctx, Syntax[] syndef) {
+		//TODO
+	}
+	
+	public void setSyntaxMethod(CTX ctx, KMethod f, KMethod[] synp, KMethod p, KMethod[] mp) {
+		//TODO
+	}
+	
+	public void addMethod(CTX ctx, KMethod mtd) {
+		//TODO
+	}
+	
+	public KMethod getMethodNULL(CTX ctx, int cid, String mn) {
+		//TODO
+		return null;
+	}
+	
+	public KMethod getStaticMethodNULL(CTX ctx, String mn) {
+		//TODO
+		return null;
+	}
+	
+	public boolean defineMethod(CTX ctx, KMethod mtd, long pline) {
+		//TODO
+		return false;
+	}
+	
+	public void loadMethodData(CTX ctx, Object data) {
+		//TODO
 	}
 	
 	public void eval(CTX ctx, String script, long uline) {
