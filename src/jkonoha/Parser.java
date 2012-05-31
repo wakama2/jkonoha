@@ -30,7 +30,7 @@ public class Parser {
 		if (tkERR != null) {
 			stmt.syntax = new Syntax();//TODO rf. /src/ast.h (SYN_ function in Block_addStmtLine). 
 			stmt.build = TSTMT.ERR;
-			stmt.setObject(KW.Err, tkERR);//TODO key is String or Int?
+			stmt.setObject(KW.Err, tkERR);
 		}
 		else {
 			int estart = ctx.sugar.errors.size();
