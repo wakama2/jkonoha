@@ -60,12 +60,12 @@ public class Stmt extends KObject {
 		//TODO return
 		if (s < e) {
 			Syntax syn = null;
-			int idx = findBinaryOp(ctx, tls, s, e, syn);//TODO Stmt_findBinaryOp
+			int idx = findBinaryOp(ctx, tls, s, e, syn);
 			if (idx != -1) {
 				return ParseExpr(ctx, syn, tls, s, idx, e);
 			}
 			int c = s;
-			syn = SYN_(this);//TODO syn = SYN_(kStmt_ks(stmt), (tls.toks[c]).kw);
+			syn = SYN_(this.parentNULL.ks, tls.get(c).kw);//TODO syn = SYN_
 			return ParseExpr(ctx, syn, tls, c, c, e);
 		}
 		else {
@@ -92,7 +92,7 @@ public class Stmt extends KObject {
 			if (rule.tt == TK.CODE) {
 				if (rule.kw != tk.kw) {
 					if (optional)	return s;
-					//kTOken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
+					//kToken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
 					return -1;
 				}
 				ti++;
@@ -175,15 +175,15 @@ public class Stmt extends KObject {
 	
 	private Expr ParseExpr(CTX ctx, Syntax syn, List<Token> tls, int s, int c, int e) // TODO
 	{
-		KMethod mtd = (syn == NULL || syn.ParseExpr == NULL) ? kmodsugar.UndefinedParseExpr : syn.ParseExpr;
-		BEGIN_LOCAL(lsfp, 10); // BEGIN_LOCAL is at konoha2.h
-		KSETv(lsfp[K_CALLDELTA+0].o, (KObject)this);
-		lsfp[K_CALLDELTA+0].ndata = (uintptr_t)syn;  // quick access
-		KSETv(lsfp[K_CALLDELTA+1].o, tls);
-		lsfp[K_CALLDELTA+2].ivalue = s;
-		lsfp[K_CALLDELTA+3].ivalue = c;
-		lsfp[K_CALLDELTA+4].ivalue = e;
-		KCALL(lsfp, 0, mtd, 4, K_NULLEXPR);
+		KMethod mtd = (syn == null || syn.ParseExpr == null) ? kmodsugar.UndefinedParseExpr : syn.ParseExpr;
+		BEGIN_LOCAL(lsfp, 10); // BEGIN_LOCAL is at konoha2.h, lsfp is in command.c (ksfp_t *lsfp = base->stack + base->evalidx;)
+		KSETv(lsfp[K.CALLDELTA+0].o, (KObject)this);
+		lsfp[K.CALLDELTA+0].ndata = (uintptr_t)syn;  // quick access, TODO Why cast ksyntax_t* to uintptr_t?
+		KSETv(lsfp[K.CALLDELTA+1].o, tls);
+		lsfp[K.CALLDELTA+2].ivalue = s;
+		lsfp[K.CALLDELTA+3].ivalue = c;
+		lsfp[K.CALLDELTA+4].ivalue = e;
+		KCALL(lsfp, 0, mtd, 4, K.NULLEXPR);//TODO KNULLEXPR
 		END_LOCAL(); // END_LOCAL is at konoha2.h
 		assert(IS_Expr(lsfp[0].o));
 		return lsfp[0].expr;
@@ -191,7 +191,7 @@ public class Stmt extends KObject {
 	
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{
-		Syntax syn = SYN_(kStmt_ks(this), tk.kw); // kStmt_ks is at sugar.h
+		Syntax syn = SYN_(this.parentNULL.ks, tk.kw); // kStmt_ks is at sugar.h
 		return (syn.op1 != MN_NONAME);
 	}
 	
@@ -210,7 +210,7 @@ public class Stmt extends KObject {
 		int idx = -1, i, prif = 0;
 		for(i = skipUnaryOp(ctx, tls, s, e) + 1; i < e; i++) {
 			Token tk = tls.get(i);
-			Syntax syn = SYN_(kStmt_ks(this), tk.kw); // kStmt_ks is at sugar.h
+			Syntax syn = SYN_(this.parentNULL.ks, tk.kw); // kStmt_ks is at sugar.h
 //			if(syn != NULL && syn.op2 != 0) {
 			if(syn.priority > 0) {
 				if(prif < syn.priority || (prif == syn.priority && !(FLAG_is(syn.flag, SYNFLAG_ExprLeftJoinOp2)) )) {

@@ -28,15 +28,15 @@ public class Parser {
 		bk.blocks.add(stmt);
 		stmt.parentNULL = bk;
 		if (tkERR != null) {
-			stmt.syntax = new Syntax();//TODO rf. /src/ast.h (SYN_ function in Block_addStmtLine). 
+			stmt.syntax = new Syntax();
 			stmt.build = TSTMT.ERR;
 			stmt.setObject(KW.Err, tkERR);
 		}
 		else {
 			int estart = ctx.sugar.errors.size();
-			s = stmt.addAnnotation(ctx, stmt, tls, s, e);
-			if (!stmt.parseSyntaxRule(ctx, stmt, tls, s, e)) {
-				stmt.toERR(stmt, estart);
+			s = stmt.addAnnotation(ctx, tls, s, e);
+			if (!stmt.parseSyntaxRule(ctx, tls, s, e)) {
+				stmt.toERR(estart);
 			}
 		}
 		assert (stmt.syntax != null);
