@@ -23,7 +23,7 @@ class RawToken extends Token {
 	public String text;
 	public int topch;
 	
-	public RawToken(long uline){
+	public RawToken(long uline) {
 		super();
 		this.uline = uline;
 		this.topch = 0;
