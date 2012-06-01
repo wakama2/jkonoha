@@ -14,7 +14,7 @@ public class Token extends KObject {
 	public int closech;
 	public int mn_type;
 	public int mn;
-	public int namech;
+	public int nameid;
 	
 	public Token() {
 		

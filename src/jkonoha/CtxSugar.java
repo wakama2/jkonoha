@@ -11,6 +11,8 @@ public class CtxSugar extends ModLocal {
 	// public cwb
 	public List<Object> errors = new ArrayList<Object>();
 	public Block singleBlock;
+	
+	int errCount;
 	// Gamma gma
 	// ..
 }

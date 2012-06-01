@@ -10,7 +10,7 @@ public interface TK {
 	int FLOAT = 6;         // KW_Float
 	int TYPE = 7;          // KW_Type
 	int AST_PARENTHESIS = 8;  // KW_Parenthesis
-	int AST_BRACKET = 9;      // KW_Brancet
+	int AST_BRANCET = 9;      // KW_Brancet
 	int AST_BRACE = 10;       // KW_Brace
 
 	int OPERATOR = 11;
