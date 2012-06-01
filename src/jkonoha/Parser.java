@@ -207,10 +207,9 @@ public class Parser {
 	
 	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
 		//int kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME); // tk : .text .ty
-		int kw = 0;//TODO
+		int kw = 0;//TODO kw : int => String?
 		//if(kw != FN_NONAME) {
-			//Syntax syn = SYN_(ks, kw); // TODO SYN_?
-			Syntax syn = ks.syntax(ctx, kw, 0); // TODO SYN_?
+			Syntax syn = ks.syntax(ctx,kw);
 			if(syn != null) {
 				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
 					tk.kw = KW.Type; tk.ty = syn.ty;
@@ -243,7 +242,7 @@ public class Parser {
 				ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
 				if(ct.bcid == KClass.CLASS_Func) {
 					//TODO
-//					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics?
+//					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
 				}
 				else if(ct.p0 == TY.VOID) {
 //					SUGAR_P(ERR_, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?

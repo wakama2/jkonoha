@@ -62,22 +62,22 @@ public class KonohaSpace extends KObject {
 	}
 	
 	public Syntax syntax(CTX ctx, String kw) {
-		KonohaSpace ks = this;
 		assert(this != null);/* scan-build: remove warning */
-		Syntax parent = ks.syntaxMapNN.get(kw);
+		Syntax parent = syntaxMapNN.get(kw);
 		if (parent != null) {
 			return parent;
 		}
 		//DBG_P("creating new syntax %s old=%p", T_kw(kw), parent);
-		Syntax syn;
+		Syntax syn; //TODO fix Syntax.java
 		syn.kw = kw; // TODO Syntax.java's kw : int => String
 		syn.ty  = TY.unknown;
 		syn.op1 = MN.NONAME; // TODO MN is not exist
 		syn.op2 = MN.NONAME;
-		KINITv(syn.ParseExpr, Modsugar.UndefinedParseExpr);
-		KINITv(syn.TopStmtTyCheck, ModSugar.UndefinedStmtTyCheck);
-		KINITv(syn.StmtTyCheck, ModSugar.UndefinedStmtTyCheck);
-		KINITv(syn.ExprTyCheck, ModSugar.UndefinedExprTyCheck);
+		syn.ParseExpr = ctx.modsugar.UndefinedParseExpr;
+		syn.TopStmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
+		syn.StmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
+		syn.ExprTyCheck = ctx.modsugar.UndefinedExprTyCheck;
+		syntaxMapNN.put(kw, syn);
 		//syn.parent = parent;
 		return syn;
 	}
