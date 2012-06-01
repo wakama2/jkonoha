@@ -206,7 +206,7 @@ final class ParseNUM implements FTokenizer {
 		}
 		if(tk != null /* IS_NOTNULL(tk) */) {
 //			tk.text = new KString(ts.substring(tok_start, pos - 1));
-			((RawToken)tk).text = ts.substring(tok_start, pos);
+			tk.text = ts.substring(tok_start, pos);
 			tk.tt = (dot == 0) ? TK.INT : TK.FLOAT;
 		}
 //		return pos - 1;  // next
@@ -227,7 +227,7 @@ final class ParseSYMBOL implements FTokenizer {
 			if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
 			break;
 		}
-		RawToken rtk = (RawToken)tk;
+		Token rtk = tk;
 		if(rtk != null /* IS_NOTNULL(tk) */) {
 			rtk.text = ts.substring(tok_start, pos);
 			assert rtk.text != null;
@@ -251,7 +251,7 @@ final class ParseUSYMBOL implements FTokenizer {
 			if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
 			break;
 		}
-		RawToken rtk = (RawToken)tk;
+		Token rtk = tk;
 		if(rtk != null /* IS_NOTNULL(tk) */) {
 //			tk.text = new KString(ts.substring(tok_start, pos - 1));
 			rtk.text = ts.substring(tok_start, pos);
@@ -274,7 +274,7 @@ final class ParseMSYMBOL implements FTokenizer {
 			if((ch = ts.charAt(pos)) == 0) break;
 			if(!(ch < 0)) break;
 		}
-		RawToken rtk = (RawToken)tk;
+		Token rtk = tk;
 		if(rtk != null /* IS_NOTNULL(tk) */) {
 //			tk.text = new KString(ts.substring(tok_start, pos - 1));
 			rtk.text = ts.substring(tok_start, pos);
@@ -288,7 +288,7 @@ final class ParseMSYMBOL implements FTokenizer {
 final class ParseOP1 implements FTokenizer {
 
 	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		RawToken rtk = (RawToken)tk;
+		Token rtk = tk;
 		if(rtk != null /* IS_NOTNULL(tk) */) {
 			String s = tenv.source.substring(tok_start);
 			rtk.text = s.substring(0, 1);
@@ -319,7 +319,7 @@ final class ParseOP implements FTokenizer {
 			}
 			break;
 		}
-		RawToken rtk = (RawToken)tk;
+		Token rtk = tk;
 		if(rtk != null /* IS_NOTNULL(tk) */) {
 			String s = tenv.source.substring(tok_start);
 //			tk.text = new KString(s.substring(0, (pos - 1) - tok_start));
@@ -414,7 +414,7 @@ final class ParseDQUOTE implements FTokenizer {
 				break;
 			}
 			if(ch == '"' && prev != '\\') {
-				RawToken rtk = (RawToken)tk;
+				Token rtk = tk;
 				if(rtk != null /* CTX.IS_NOTNULL(tk) */) {
 //					tk.text = new KString(tenv.source.substring(tok_start + 1, pos - 1));
 					rtk.text = tenv.source.substring(tok_start + 1, pos);
@@ -468,7 +468,7 @@ final class ParseBLOCK implements FTokenizer { // TODO
 			if(ch == Tokenizer._RBR/*}*/) {
 				level--;
 				if(level == 0) {
-					RawToken rtk = (RawToken)tk;
+					Token rtk = tk;
 					if(tk != null /* IS_NOTNULL(tk) */) {
 						rtk.text = tenv.source.substring(tok_start + 1, pos);
 						rtk.tt = TK.CODE;

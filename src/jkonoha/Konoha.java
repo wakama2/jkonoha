@@ -35,19 +35,7 @@ public class Konoha {
 	
 	public void eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
 		KonohaSpace ks = new KonohaSpace();
-		ArrayList<Token> toks = new ArrayList<Token>();
-		ks.tokenize(ctx, source, 0, toks);
-		for(int i = 0; i < toks.size(); i++) {
-			RawToken rtk = (RawToken)toks.get(i);
-			System.out.print("{ token type:" + rtk.tt + ", ");
-			if(rtk.text != null) {
-				System.out.print("text: " + rtk.text + ", ");
-			}
-			else {
-				System.out.print("text: null, ");
-			}
-			System.out.println("uline: " + rtk.uline + " }");
-		}
+		ks.eval(ctx, source, 0);
 	}
 	
 	public void load(String script) {
@@ -66,6 +54,7 @@ public class Konoha {
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();
+		k.eval(ctx, "123  + 456");
 		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
 		k.eval(ctx, "fibo(10);");
 //		k.load("file.k");

@@ -1,6 +1,8 @@
 package jkonoha;
 
 public interface TY {
+	int CLASS_newid = -1;
+	int unknown = -2;
 	//TODO
 	int VOID = 0;
 	int VAR = 1;
