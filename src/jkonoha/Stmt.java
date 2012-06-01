@@ -123,11 +123,11 @@ public class Stmt extends KObject {
 					}
 					ri++;
 				}
-				int errCount = ctx.sugar.errCount;//TODO
+				int errCount = ctx.ctxsugar.errCount;//TODO
 				int next = ParseStmt(ctx, syn, rule.nameid, tls, ti, c);
 				if (next == -1) {
 					if (optional) return s;
-					if (errCount == ctx.sugar.errCount) {
+					if (errCount == ctx.ctxsugar.errCount) {
 						kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
 					}
 					return -1;

@@ -2,7 +2,8 @@ package jkonoha;
 
 public class CTX extends KObject {
 	public Konoha konoha;
-	public CtxSugar sugar = new CtxSugar();
+	public CtxSugar ctxsugar = new CtxSugar();
+	public ModSugar modsugar = new ModSugar();
 
 	public long kfileid(String name, long def)
 	{
