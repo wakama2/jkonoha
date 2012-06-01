@@ -46,9 +46,9 @@ public class KonohaSpace extends KObject {
 	}
 
 
-	public Syntax getSyntaxRule(CTX ctx, Stmt stmt, List<Object> tls, int s, int e) {
+	public Syntax getSyntaxRule(CTX ctx ,List<Token> tls, int s, int e) {
 		//TODO
-		Token tk = (Token)tls.get(s);
+		Token tk = tls.get(s);
 		if (tk.kw == KW.Type) {
 			
 		}

@@ -41,8 +41,8 @@ public class Stmt extends KObject {
 			if (tk.tt != TK.METANAME) break;
 			if (i+1 < e) {
 				//String buf;
-				int kw;//keyword(ctx, (const char*)buf, S_size(tk.text)+1, FN_NEWID);TODO
-				Token tk1 = (Token)tls.get(i+1);//Something wrong?
+				int kw = 1;//keyword(ctx, (const char*)buf, S_size(tk.text)+1, FN_NEWID);TODO
+				AstToken tk1 = (AstToken)tls.get(i+1);//Something wrong?
 				KObject value = new KObject();
 				if (tk1.tt == KW.Parenthesis) {
 					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());//TODO
@@ -82,12 +82,21 @@ public class Stmt extends KObject {
 		}
 	}
 	
+	public int lookAheadKeyword (List<Token> tls, int s, int e, Token rule){
+		int i;
+		for (i = s; i < e; i++) {
+			Token tk = tls.get(i);
+			if (rule.kw == tk.kw) return i;
+		}
+		return -1;
+	}
+	
 	public int matchSyntaxRule(CTX ctx, List<Token> rules, long uline, List<Token> tls, int s, int e, boolean optional) {
 		int ri, ti, ruleSize = rules.size();
 		ti = s;
 		for (ri = 0; ri < ruleSize && ti < e; ri++) {
-			Token rule = rules.get(ri);
-			Token tk = tls.get(ti);
+			AstToken rule = (AstToken)rules.get(ri);
+			AstToken tk = (AstToken)tls.get(ti);
 			uline = tk.uline;
 			if (rule.tt == TK.CODE) {
 				if (rule.kw != tk.kw) {
@@ -100,7 +109,7 @@ public class Stmt extends KObject {
 			}
 			else if (rule.tt == TK.METANAME) {
 				Syntax syn = SYN_(parentNULL.ks, rule.kw);
-				if (syn == null || syn.ParseStemtNULL == null) {
+				if (syn == null || syn.ParseStmtNULL == null) {//TODO Syntax has KMethod ParseStmtNULL
 					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
 					return -1;
 				}
@@ -127,14 +136,14 @@ public class Stmt extends KObject {
 				continue;
 			}
 			else if (rule.tt == TK.AST_OPTIONAL) {
-				int next = matchSyntaxRule(ctx, rule.sub, uline, tls, ti, e, 1);
+				int next = matchSyntaxRule(ctx, rule.sub, uline, tls, ti, e, true);
 				if (next == -1) return -1;
 				ti = next;
 				continue;
 			}
-			else if (rule.tt == TK.AST_PARENTHESIS || rule.tt == TK.AST_BRACE || rule.tt == TK.AST_BRACKET) {
+			else if (rule.tt == TK.AST_PARENTHESIS || rule.tt == TK.AST_BRACE || rule.tt == TK.AST_BRANCET) {
 				if (tk.tt == rule.tt && rule.topch == tk.topch) {//topch is int type in Token
-					int next = matchSyntaxRule(ctx, rule.sub, uline, tk.sub, 0, tk.sub.size(), 0 );
+					int next = matchSyntaxRule(ctx, rule.sub, uline, tk.sub, 0, tk.sub.size(), false);
 					if (next == -1) return -1;
 					ti++;
 				}
