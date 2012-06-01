@@ -2,7 +2,7 @@ package jkonoha;
 
 public class CTX extends KObject {
 	public Konoha konoha;
-	public CtxSugar sugar;
+	public CtxSugar sugar = new CtxSugar();
 
 	public long kfileid(String name, long def)
 	{
@@ -17,6 +17,10 @@ public class CTX extends KObject {
 	
 	public int kw(String s) {
 		return -1;//TODO
+	}
+	
+	public KClass ct(int ty) {
+		return null;//TODO
 	}
 	
 //	public static final int CLASS_newid = -1;

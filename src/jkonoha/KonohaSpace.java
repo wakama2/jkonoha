@@ -26,7 +26,7 @@ public class KonohaSpace extends KObject {
 	private void tokenize(CTX ctx, TEnv tenv) {
 		int ch, pos = 0;
 		FTokenizer fmat[] = tenv.fmat;
-		RawToken tk = new RawToken(tenv.uline);
+		Token tk = new Token(tenv.uline);
 		assert(tk.tt == 0);
 		tk.uline = tenv.uline;
 //		tk.lpos = tenv.lpos(0);
@@ -34,7 +34,7 @@ public class KonohaSpace extends KObject {
 		while(pos < tenv.source.length() && (ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
 			if(tk.tt != 0) {
 				tenv.list.add(tk);
-				tk = new RawToken(tenv.uline);
+				tk = new Token(tenv.uline);
 				tk.uline = tenv.uline;
 				//tk.lpos = tenv.lpos(pos);
 			}
@@ -61,8 +61,9 @@ public class KonohaSpace extends KObject {
 		return null;
 	}
 	
-	public void syntax(CTX ctx, String kw, int isnew) {
+	public Syntax syntax(CTX ctx, int kw, int isnew) {
 		//TODO
+		return null;
 	}
 	
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {
@@ -103,11 +104,12 @@ public class KonohaSpace extends KObject {
 	
 	public void eval(CTX ctx, String script, long uline) {
 		List<Token> tls = new ArrayList<Token>();
+		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
 		
 		// debug: dump tokens
 		for(int i = 0; i < tls.size(); i++) {
-			RawToken rtk = (RawToken)tls.get(i);
+			Token rtk = tls.get(i);
 			System.out.print("{ token type:" + rtk.tt + ", ");
 			if(rtk.text != null) {
 				System.out.print("text: " + rtk.text + ", ");
@@ -119,7 +121,6 @@ public class KonohaSpace extends KObject {
 		}
 		
 		Parser p = new Parser();
-		int pos = tls.size();
 		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		evalBlock(ctx, bk);
 	}
