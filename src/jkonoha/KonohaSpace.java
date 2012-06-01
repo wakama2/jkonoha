@@ -26,7 +26,7 @@ public class KonohaSpace extends KObject {
 	private void tokenize(CTX ctx, TEnv tenv) {
 		int ch, pos = 0;
 		FTokenizer fmat[] = tenv.fmat;
-		Token tk = new RawToken(tenv.uline);
+		RawToken tk = new RawToken(tenv.uline);
 		assert(tk.tt == 0);
 		tk.uline = tenv.uline;
 //		tk.lpos = tenv.lpos(0);
@@ -94,6 +94,11 @@ public class KonohaSpace extends KObject {
 	
 	public void loadMethodData(CTX ctx, Object data) {
 		//TODO
+	}
+	
+	public KClass getCT(CTX ctx, KClass thisct, String name, int def) {
+		//TODO
+		return null;
 	}
 	
 	public void eval(CTX ctx, String script, long uline) {
