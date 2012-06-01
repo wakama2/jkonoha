@@ -31,7 +31,7 @@ public class Parser {
 			stmt.setObject(KW.Err, tkERR);
 		}
 		else {
-			int estart = ctx.sugar.errors.size();
+			int estart = ctx.ctxsugar.errors.size();
 			s = stmt.addAnnotation(ctx, tls, s, e);
 			if (!stmt.parseSyntaxRule(ctx, tls, s, e)) {
 				stmt.toERR(estart);
@@ -182,7 +182,7 @@ public class Parser {
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
 				if (tkN.topch != '[' ) break;
-				List<Token> abuf = /*CtxSugar.tokens;*/ctx.sugar.tokens;//TODO CtxSugar.tokens should be static?
+				List<Token> abuf = /*CtxSugar.tokens;*/ctx.ctxsugar.tokens;//TODO CtxSugar.tokens should be static?
 				int atop = abuf.size();
 				next = makeTree(ctx, ks, TK.AST_BRANCET, tls, next+1, e, ']', abuf, tkERR);
 				if(!(abuf.size() > atop)) return next;
