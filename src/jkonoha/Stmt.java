@@ -65,7 +65,7 @@ public class Stmt extends KObject {
 				return ParseExpr(ctx, syn, tls, s, idx, e);
 			}
 			int c = s;
-			syn = SYN_(this.parentNULL.ks, tls.get(c).kw);//TODO syn = SYN_
+			syn = this.parentNULL.ks.syntax(ctx, tls.get(c).kw);
 			return ParseExpr(ctx, syn, tls, c, c, e);
 		}
 		else {
@@ -108,7 +108,7 @@ public class Stmt extends KObject {
 				continue;
 			}
 			else if (rule.tt == TK.METANAME) {
-				Syntax syn = SYN_(parentNULL.ks, rule.kw);
+				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
 				if (syn == null || syn.ParseStmtNULL == null) {//TODO Syntax has KMethod ParseStmtNULL
 					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
 					return -1;
@@ -200,8 +200,7 @@ public class Stmt extends KObject {
 	
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{
-		//Syntax syn = SYN_(this.parentNULL.ks, tk.kw); // kStmt_ks is at sugar.h
-		this.parentNULL.ks.syntax(ctx, tk.kw, 0);
+		Syntax syn = parentNULL.ks.syntax(ctx, tk.kw);
 		return (syn.op1 != MN_NONAME);
 	}
 	
@@ -220,7 +219,7 @@ public class Stmt extends KObject {
 		int idx = -1, i, prif = 0;
 		for(i = skipUnaryOp(ctx, tls, s, e) + 1; i < e; i++) {
 			Token tk = tls.get(i);
-			Syntax syn = SYN_(this.parentNULL.ks, tk.kw); // kStmt_ks is at sugar.h
+			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw); // kStmt_ks is at sugar.h
 //			if(syn != NULL && syn.op2 != 0) {
 			if(syn.priority > 0) {
 				if(prif < syn.priority || (prif == syn.priority && !(FLAG_is(syn.flag, SYNFLAG_ExprLeftJoinOp2)) )) {

@@ -9,7 +9,7 @@ public class KClass {
 	public static final int CLASS_Func = 0;
 	public static final int CT_Array = 0;
 	
-	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) {
+	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
 		kparamid_t paramdom = Kparamdom(_ctx, psize, p); // TODO kparamid_t?
 		KClass ct0 = this;
 		boolean isNotFuncClass = (bcid != CLASS_Func);
