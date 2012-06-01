@@ -60,15 +60,26 @@ public class KonohaSpace extends KObject {
 		//TODO
 		return null;
 	}
-<<<<<<< HEAD
-
-	public void syntax(CTX ctx, String kw, int isnew) {
-=======
 	
-	public Syntax syntax(CTX ctx, int kw, int isnew) {
->>>>>>> refs/remotes/Lee/master
-		//TODO
-		return null;
+	public Syntax syntax(CTX ctx, String kw) {
+		KonohaSpace ks = this;
+		assert(this != null);/* scan-build: remove warning */
+		Syntax parent = ks.syntaxMapNN.get(kw);
+		if (parent != null) {
+			return parent;
+		}
+		//DBG_P("creating new syntax %s old=%p", T_kw(kw), parent);
+		Syntax syn;
+		syn.kw = kw; // TODO Syntax.java's kw : int => String
+		syn.ty  = TY.unknown;
+		syn.op1 = MN.NONAME; // TODO MN is not exist
+		syn.op2 = MN.NONAME;
+		KINITv(syn.ParseExpr, Modsugar.UndefinedParseExpr);
+		KINITv(syn.TopStmtTyCheck, ModSugar.UndefinedStmtTyCheck);
+		KINITv(syn.StmtTyCheck, ModSugar.UndefinedStmtTyCheck);
+		KINITv(syn.ExprTyCheck, ModSugar.UndefinedExprTyCheck);
+		//syn.parent = parent;
+		return syn;
 	}
 
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {
@@ -101,41 +112,16 @@ public class KonohaSpace extends KObject {
 	public void loadMethodData(CTX ctx, Object data) {
 		//TODO
 	}
-<<<<<<< HEAD
-
-	public KClass getCT(CTX ctx, KClass thisct, String name, int def) {
-		//TODO
-		return null;
-	}
-
-=======
 	
 	public KClass getCT(CTX ctx, KClass thisct, String name, int def) {
 		//TODO
 		return null;
 	}
-	
->>>>>>> refs/remotes/Lee/master
+
 	public void eval(CTX ctx, String script, long uline) {
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
-<<<<<<< HEAD
-
-		// debug: dump tokens
-		for(int i = 0; i < tls.size(); i++) {
-			RawToken rtk = (RawToken)tls.get(i);
-			System.out.print("{ token type:" + rtk.tt + ", ");
-			if(rtk.text != null) {
-				System.out.print("text: " + rtk.text + ", ");
-			}
-			else {
-				System.out.print("text: null, ");
-			}
-			System.out.println("uline: " + rtk.uline + " }");
-		}
-
-=======
 		
 		// debug: dump tokens
 		for(int i = 0; i < tls.size(); i++) {
@@ -150,7 +136,6 @@ public class KonohaSpace extends KObject {
 			System.out.println("uline: " + rtk.uline + " }");
 		}
 		
->>>>>>> refs/remotes/Lee/master
 		Parser p = new Parser();
 		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		evalBlock(ctx, bk);

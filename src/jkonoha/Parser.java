@@ -227,7 +227,7 @@ public class Parser {
 	private Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
-			Param[] p = new Param[size]; // TODO kparam_t?
+			Param[] p = new Param[size];
 			for(i = 0; i < size; i++) {
 				Token tkT = tkP.sub.get(i);
 				if(tkT.kw == KW.Type) {
