@@ -42,7 +42,7 @@ public class Parser {
 		assert (stmt.syntax != null);
 	}
 
-	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<? super Token> tlsdst, Token tkERRRef) {
+	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s); // tk : .topch .sub .lpos .text
 		assert(tk.kw == 0);
@@ -89,7 +89,7 @@ public class Parser {
 		return e;
 	}
 	
-	public int selectStmtLine(CTX ctx, KonohaSpace ks, int indent, List<Token> tls, int s, int e, int delim, List<? super Token> tlsdst, Token tkERRRef) {
+	public int selectStmtLine(CTX ctx, KonohaSpace ks, int indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
 		int i = s;
 		assert(e <= tls.size());
 		for(; i < e - 1; i++) {
@@ -146,7 +146,7 @@ public class Parser {
 		return i;
 	}
 	
-	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<? super Token> dst, List<Token> tkERR) {
+	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, List<Token> tkERR) {
 		int next = s; // don't add
 		Token tk = tls.get(s); // tk : .text .ty .lpos
 		if(tk.tt < TK.OPERATOR) {

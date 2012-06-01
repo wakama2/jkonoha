@@ -100,6 +100,19 @@ public class KonohaSpace extends KObject {
 		List<Token> tls = new ArrayList<Token>();
 		tokenize(ctx, script, uline, tls);
 		
+		// debug: dump tokens
+		for(int i = 0; i < tls.size(); i++) {
+			RawToken rtk = (RawToken)tls.get(i);
+			System.out.print("{ token type:" + rtk.tt + ", ");
+			if(rtk.text != null) {
+				System.out.print("text: " + rtk.text + ", ");
+			}
+			else {
+				System.out.print("text: null, ");
+			}
+			System.out.println("uline: " + rtk.uline + " }");
+		}
+		
 		Parser p = new Parser();
 		int pos = tls.size();
 		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
@@ -107,8 +120,7 @@ public class KonohaSpace extends KObject {
 	}
 	
 	private void evalBlock(CTX ctx, Block bk) {
-		//Block bk1 = ctx.sugar.singleBlock;
-		//KMethod mtd = null;//TODO
+		//TODO
 	}
 	
 	public boolean importPackage(CTX ctx, String name, long pline) {
