@@ -13,6 +13,8 @@ public abstract class Token extends KObject {
 	public int  kw;
 	public long uline;
 	
+	public int lpos;//use?
+	
 	public Token() {
 		this.tt = 0;
 		this.kw = 0;
