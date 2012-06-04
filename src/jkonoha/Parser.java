@@ -253,17 +253,12 @@ public class Parser {
 				}
 			}
 			else {
-				ct = CT_p0(ctx, KClass.CT_Array, tk.ty); // TODO CT_p0?
+				ct = ct.CT_p0(ctx, tk.ty);
 			}
 			tk.ty = ct.cid;
 			return tk;
 		}
 		return null;
-	}
-	
-	public KClass CT_p0(CTX ctx, int ty) {
-		Param p = new Param(ty, 0);
-		return generics(ctx, TY_void, 1, p);
 	}
 	
 	//TODO

@@ -109,8 +109,31 @@ public class KonohaSpace extends KObject {
 		return false;
 	}
 
-	public void loadMethodData(CTX ctx, Object data) {
-		//TODO
+	public void loadMethodData(CTX ctx, KonohaSpace ks, int data[]) {
+		int d[] = data;
+		while(d[0] != -1) {
+			int flag = d[0];
+			int f = d[1];
+			int rtype = d[2];
+			int cid  = d[3];
+			int mn = d[4];
+			int i, psize = d[5];
+		    Param p[];
+//			d = d + 6;
+			int j = 6;
+			for(i = 0; i < psize; i++) {
+				p[i].ty = d[j];
+				p[i].fn = d[j+1];
+				j += 2;
+			}
+			KMethod mtd = new KMethod(ctx, flag, cid, mn, f);
+			mtd.setParam(ctx, rtype, psize, p);
+			if(ks == null || ((mtd.flag & KMethod.Public) == KMethod.Public)) {
+				CT_addMethod(ctx, CT_(cid), mtd); //TODO CT_addMethod, CT_
+			} else {
+				addMethod(ctx, mtd);
+			}
+		}
 	}
 	
 	public KClass getCT(CTX ctx, KClass thisct, String name, int def) {
