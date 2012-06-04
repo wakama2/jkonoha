@@ -1,22 +1,43 @@
 package jkonoha;
 
+import java.util.*;
+
+import jkonoha.compiler.KField;
+
 public class KClass {
 	public int cid;
 	public int cflag;
 	public int bcid;
 	public int supcid;
 	public int p0;
-	public static final int CLASS_Func = 0;
-	public static final int CT_Array = 0;
+	//-add--------------------
+	public int packid;
+	public int paramdom;
+	public int magivflag;
+	public int cstruct_size;
+	public KField fields; //TODO KField ?
+	public int fsize;
+	public int fallocsize;
+	public String DBG_NAME;
+	public int nameid;
+	public int optvalue;
+	public List<Object> methods = new ArrayList<Object>();
+	public String shortNameNULL;
+	public KObject nulvalNUL;
+	public KObject WnulvalNUL;
+	public Map<String, Syntax> constPoolMapNO = new HashMap<String, Syntax>();
 	public KClass searchSimilarClassNULL;
 	public KClass searchSuperMethodClassNULL;
+	//----------------------------
+	public static final int CLASS_Func = 0;
+	public static final int CT_Array = 0;
 	
-	public KClass generics(CTX ctx, int rtype, int psize, Param p[]) { //at src/konoha/datatype.h
-		kparamid_t paramdom = Kparamdom(ctx, psize, p); // TODO kparamid_t?
+	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
+		int paramdom = Param.Kparamdom(ctx, psize, p);
 		KClass ct0 = this;
 		boolean isNotFuncClass = (bcid != CLASS_Func);
 		do {
-			if(paramdom == paramdom && (isNotFuncClass || p0 == rtype)) {
+			if(this.paramdom == paramdom && (isNotFuncClass || p0 == rtype)) {
 				return this;
 			}
 			if(searchSimilarClassNULL == null) break;
@@ -25,7 +46,7 @@ public class KClass {
 		KClass newct = new_CT(ctx, ct0, null, NOPLINE);
 		newct.paramdom = paramdom;
 		newct.p0 = isNotFuncClass ? p[0].ty : rtype;
-		newct.methods =  K_EMPTYARRAY);
+		newct.methods =  K_EMPTYARRAY;
 		if(newct.searchSuperMethodClassNULL == null) {
 			newct.searchSuperMethodClassNULL = ct0;
 		}
@@ -35,7 +56,7 @@ public class KClass {
 	
 	KClass new_CT(CTX ctx, KDEFINE_CLASS s, int pline) {
 		kshare_t *share = ctx.share; // TODO kshare_t?
-		kcid_t newid = share.ca.bytesize / sizeof(KClass); //kcid? sizeof?
+		int newid = share.ca.bytesize / sizeof(KClass); // sizeof?
 		/*if(share.ca.bytesize == share.ca.bytemax) {
 			KARRAY_EXPAND(&share.ca, share.ca.bytemax * 2);
 		}*/ // not necessary?
@@ -58,7 +79,7 @@ public class KClass {
 			ct.fsize  = s.fsize;
 			ct.fallocsize = s.fallocsize;
 			ct.cstruct_size = size64(s.cstruct_size);
-			DBG_ASSERT(ct.cstruct_size <= 128);
+			assert(ct.cstruct_size <= 128);
 			ct.DBG_NAME = (s.structname != null) ? s.structname : "N/A";
 			if(s.psize > 0 && s.cparams != null) {
 				ct.p0 = s.cparams[0].ty;
@@ -81,8 +102,10 @@ public class KClass {
 		return ct;
 	}
 	
-	public KClass CT_p0(CTX ctx, int ct, int ty) {
-		Param[] p = new Param[2];//kparam_t p = {ty ,0}; klib.h:CT_p0
+	public KClass CT_p0(CTX ctx, int ty) {
+		Param p[] = new Param[1];
+		p[0].ty = ty;
+		p[0].fn = 0;
 		return generics(ctx, TY.VOID, 1, p);
 	}
 }

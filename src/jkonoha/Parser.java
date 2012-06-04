@@ -253,7 +253,7 @@ public class Parser {
 				}
 			}
 			else {
-				ct.CT_p0(ctx, KClass.CT_Array, tk.ty); // TODO CT_p0?
+				ct = ct.CT_p0(ctx, tk.ty);
 			}
 			tk.ty = ct.cid;
 			return tk;

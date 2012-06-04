@@ -5,6 +5,9 @@ public class KMethod extends KObject {
 	public int flag;
 	public int cid;
 	public int mn;
+	public int paramdom;
+	public int paramid;
+	public static int Public  = (1<<0);
 	
 	public KMethod(CTX ctx, int flag, int cid, int mn, int func) {
 		this.flag = flag;
@@ -16,9 +19,4 @@ public class KMethod extends KObject {
 	public void setFunc(int func) {
 		
 	}
-	
-	public void setParam(CTX ctx, int rtype, int psize, int p) {
-		
-	}
-	
 }
