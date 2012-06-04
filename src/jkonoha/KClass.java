@@ -8,9 +8,11 @@ public class KClass {
 	public int p0;
 	public static final int CLASS_Func = 0;
 	public static final int CT_Array = 0;
+	public KClass searchSimilarClassNULL;
+	public KClass searchSuperMethodClassNULL;
 	
 	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
-		kparamid_t paramdom = Kparamdom(_ctx, psize, p); // TODO kparamid_t?
+/*		kparamid_t paramdom = Kparamdom(_ctx, psize, p); // TODO kparamid_t?
 		KClass ct0 = this;
 		boolean isNotFuncClass = (bcid != CLASS_Func);
 		do {
@@ -27,12 +29,12 @@ public class KClass {
 		if(newct.searchSuperMethodClassNULL == null) {
 			newct.searchSuperMethodClassNULL = ct0;
 		}
-		((KClass)this).searchSimilarClassNULL = (KClass)newct;
+		((KClass)this).searchSimilarClassNULL = (KClass)newct;*/
 		return searchSimilarClassNULL;
 	}
 	
-	KClass new_CT(CTX ctx, KDEFINE_CLASS s, int pline) {
-/*		kshare_t *share = _ctx.share;
+/*	KClass new_CT(CTX ctx, KDEFINE_CLASS s, int pline) {
+		kshare_t *share = _ctx.share;
 		kcid_t newid = share.ca.bytesize / sizeof(struct _kclass*);
 		if(share.ca.bytesize == share.ca.bytemax) {
 			KARRAY_EXPAND(&share.ca, share.ca.bytemax * 2);
@@ -76,6 +78,6 @@ public class KClass {
 		if(ct.initdef != NULL) {
 			ct.initdef(_ctx, ct, pline);
 		}
-		return ct;*/
-	}
+		return ct;
+	}*/
 }

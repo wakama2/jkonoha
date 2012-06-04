@@ -155,10 +155,10 @@ public class Parser {
 			tk.kw = tk.tt;
 		}
 		if(tk.tt == TK.SYMBOL) {
-			Token_resolved(ctx, ks, tk);
+			tk.resolved(ctx, ks);
 		}
 		else if(tk.tt == TK.USYMBOL) {
-			if(!Token_resolved(ctx, ks, tk)) {
+			if(! tk.resolved(ctx, ks)) {
 				KClass ct = ks.getCT(ctx, null, tk.text, TY.unknown); // TODO Konohaspace_getCT?
 				if(ct != null) {
 					tk.kw = KW.Type;
@@ -167,7 +167,7 @@ public class Parser {
 			}
 		}
 		else if(tk.tt == TK.OPERATOR) {
-			if(!Token_resolved(ctx, ks, tk)) {
+			if(! tk.resolved(ctx, ks)) {
 				//FIXME
 //				int errref = SUGAR_P(ERR_, tk.uline, tk.lpos, "undefined token: %s", kToken_s(tk)); //TODO SUGAR_P? kToken_s?
 //				Token_toERR(ctx, tk, errref);  // TODO Token_toERR?
@@ -205,7 +205,7 @@ public class Parser {
 		return next;
 	}
 	
-	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
+/*	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
 		//int kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME); // tk : .text .ty
 		int kw = 0;//TODO kw : int => String?
 		//if(kw != FN_NONAME) {
@@ -221,7 +221,7 @@ public class Parser {
 			}
 		//}
 		return false;
-	}
+	}*/
 	
 	private Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {

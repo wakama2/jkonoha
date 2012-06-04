@@ -6,7 +6,7 @@ public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
 	public FTokenizer[] fmat;
-	public Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
+	public Map<Integer, Syntax> syntaxMapNN = new HashMap<Integer, Syntax>();
 
 	public KonohaSpace() {
 		//TODO
@@ -61,18 +61,18 @@ public class KonohaSpace extends KObject {
 		return null;
 	}
 	
-	public Syntax syntax(CTX ctx, String kw) {
+	public Syntax syntax(CTX ctx, int kw) {
 		assert(this != null);/* scan-build: remove warning */
 		Syntax parent = syntaxMapNN.get(kw);
 		if (parent != null) {
 			return parent;
 		}
 		//DBG_P("creating new syntax %s old=%p", T_kw(kw), parent);
-		Syntax syn; //TODO fix Syntax.java
+		Syntax syn = new Syntax(); //TODO fix Syntax.java
 		syn.kw = kw; // TODO Syntax.java's kw : int => String
 		syn.ty  = TY.unknown;
-		syn.op1 = MN.NONAME; // TODO MN is not exist
-		syn.op2 = MN.NONAME;
+		syn.op1 = 1;//MN.NONAME; // TODO MN is not exist
+		syn.op2 = 2;//MN.NONAME;
 		syn.ParseExpr = ctx.modsugar.UndefinedParseExpr;
 		syn.TopStmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
 		syn.StmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;

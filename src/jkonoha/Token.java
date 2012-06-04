@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Token extends KObject {
 	public int tt;
-	public int kw;
+	public int kw;// Which is better int kw or String kw?
 	public long uline;
 	public int lpos;
 	public String text;
@@ -22,6 +22,25 @@ public class Token extends KObject {
 	
 	public Token(long uline) {
 		this.uline = uline;
+	}
+	boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
+		//int kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME); // tk : .text .ty
+		int kw = 0;//TODO kw : int => String?
+		//if(kw != FN_NONAME) {
+			Syntax syn = ks.syntax(ctx,kw);
+			if(syn != null) {
+				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
+					this.kw = KW.Type;
+					this.ty = syn.ty;
+				}
+				else {
+					this.kw = kw;
+				}
+				return true;
+			}
+		//}
+		return false;
+		
 	}
 }
 

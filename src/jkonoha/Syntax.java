@@ -6,6 +6,12 @@ public class Syntax {
 	public int kw;   // id
 	public int flag; // flag
 	List<Token> syntaxRuleNULL;
+	KMethod ParseStmtNULL;
+	KMethod ParseExpr;
+	KMethod TopStmtTyCheck;
+	KMethod StmtTyCheck;
+	KMethod ExprTyCheck;
+	
 	// "if" "(" $expr ")" $block ["else" $block]
 	//Func ParseExpr;
 	//Func ..;

@@ -124,11 +124,11 @@ public class Stmt extends KObject {
 					ri++;
 				}
 				int errCount = ctx.ctxsugar.errCount;//TODO
-				int next = ParseStmt(ctx, syn, rule.nameid, tls, ti, c);
+				int next = 1;//ParseStmt(ctx, syn, rule.nameid, tls, ti, c);
 				if (next == -1) {
 					if (optional) return s;
 					if (errCount == ctx.ctxsugar.errCount) {
-						kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
+						//kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
 					}
 					return -1;
 				}
@@ -153,7 +153,7 @@ public class Stmt extends KObject {
 			for (; ri < rules.size(); ri++) {
 				Token rule = rules.get(ri);
 				if (rule.tt != TK.AST_OPTIONAL) {
-					SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
+					//SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
 					return -1;
 				}
 			}
@@ -182,8 +182,8 @@ public class Stmt extends KObject {
 //		setObject(KW.Err, kstrerror(eno));//TODO
 	}
 	
-//	private Expr ParseExpr(CTX ctx, Syntax syn, List<Token> tls, int s, int c, int e) // TODO
-//	{
+	private Expr ParseExpr(CTX ctx, Syntax syn, List<Token> tls, int s, int c, int e) // TODO
+	{
 //		KMethod mtd = (syn == null || syn.ParseExpr == null) ? kmodsugar.UndefinedParseExpr : syn.ParseExpr;
 //		BEGIN_LOCAL(lsfp, 10); // BEGIN_LOCAL is at konoha2.h, lsfp is in command.c (ksfp_t *lsfp = base->stack + base->evalidx;)
 //		KSETv(lsfp[K.CALLDELTA+0].o, (KObject)this);
@@ -196,12 +196,14 @@ public class Stmt extends KObject {
 //		END_LOCAL(); // END_LOCAL is at konoha2.h
 //		assert(IS_Expr(lsfp[0].o));
 //		return lsfp[0].expr;
-//	}
+		Expr test = new ConsExpr();
+		return test;
+	}
 	
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{
 		Syntax syn = parentNULL.ks.syntax(ctx, tk.kw);
-		return (syn.op1 != MN_NONAME);
+		return (syn.op1 != 0/*MN.NONAME*/);//TODO what is MN_NONAME?
 	}
 	
 	private int skipUnaryOp(CTX ctx, List<Token> tls, int s, int e) {
@@ -219,15 +221,15 @@ public class Stmt extends KObject {
 		int idx = -1, i, prif = 0;
 		for(i = skipUnaryOp(ctx, tls, s, e) + 1; i < e; i++) {
 			Token tk = tls.get(i);
-			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw); // kStmt_ks is at sugar.h
+			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw); 
 //			if(syn != NULL && syn.op2 != 0) {
 			if(syn.priority > 0) {
-				if(prif < syn.priority || (prif == syn.priority && !(FLAG_is(syn.flag, SYNFLAG_ExprLeftJoinOp2)) )) {
+				if(prif < syn.priority || (prif == syn.priority && !((syn.flag & SYNFLAG.ExprLeftJoinOp2) == SYNFLAG.ExprLeftJoinOp2) )) {
 					prif = syn.priority;
 					idx = i;
 					synRef = syn;
 				}
-				if(!FLAG_is(syn.flag, SYNFLAG_ExprPostfixOp2)) {  /* check if real binary operator to parse f() + 1 */
+				if(! ((syn.flag & SYNFLAG.ExprPostfixOp2) == SYNFLAG.ExprLeftJoinOp2)) {  /* check if real binary operator to parse f() + 1 */
 					i = skipUnaryOp(ctx, tls, i+1, e) - 1;
 				}
 			}
