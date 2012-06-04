@@ -10,7 +10,7 @@ public class KClass {
 	public static final int CT_Array = 0;
 	
 	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
-		kparamid_t paramdom = Kparamdom(_ctx, psize, p); // TODO kparamid_t?
+		kparamid_t paramdom = Kparamdom(ctx, psize, p); // TODO kparamid_t?
 		KClass ct0 = this;
 		boolean isNotFuncClass = (bcid != CLASS_Func);
 		do {
@@ -32,22 +32,22 @@ public class KClass {
 	}
 	
 	KClass new_CT(CTX ctx, KDEFINE_CLASS s, int pline) {
-/*		kshare_t *share = _ctx.share;
-		kcid_t newid = share.ca.bytesize / sizeof(struct _kclass*);
-		if(share.ca.bytesize == share.ca.bytemax) {
+		kshare_t *share = ctx.share; // TODO kshare_t?
+		kcid_t newid = share.ca.bytesize / sizeof(KClass); //kcid? sizeof?
+		/*if(share.ca.bytesize == share.ca.bytemax) {
 			KARRAY_EXPAND(&share.ca, share.ca.bytemax * 2);
-		}
-		share.ca.bytesize += sizeof(struct _kclass*);
-		struct _kclass *ct = (struct _kclass*)KCALLOC(sizeof(kclass_t), 1);
-		share.ca.cts[newid] = (kclass_t*)ct;
-		if(bct != NULL) {
-			DBG_ASSERT(s == NULL);
-			memcpy(ct, bct, offsetof(kclass_t, methods));
+		}*/ // not necessary?
+		share.ca.bytesize += sizeof(KClass);
+		KClass ct/* = (struct _kclass*)KCALLOC(sizeof(kclass_t), 1)*/;
+		share.ca.cts[newid] = (KClass)ct;
+		if(bct != null) {
+			assert(s == null);
+			memcpy(ct, bct, offsetof(kclass_t, methods)); //TODO offsetof?
 			ct.cid = newid;
 			if(ct.fnull == DEFAULT_fnull) ct.fnull =  DEFAULT_fnullinit;
 		}
 		else {
-			DBG_ASSERT(s != NULL);
+			assert(s != null);
 			ct.cflag   = s.cflag;
 			ct.cid     = newid;
 			ct.bcid    = (s.bcid == 0) ? newid : s.bcid;
@@ -57,25 +57,25 @@ public class KClass {
 			ct.fallocsize = s.fallocsize;
 			ct.cstruct_size = size64(s.cstruct_size);
 			DBG_ASSERT(ct.cstruct_size <= 128);
-			ct.DBG_NAME = (s.structname != NULL) ? s.structname : "N/A";
-			if(s.psize > 0 && s.cparams != NULL) {
+			ct.DBG_NAME = (s.structname != null) ? s.structname : "N/A";
+			if(s.psize > 0 && s.cparams != null) {
 				ct.p0 = s.cparams[0].ty;
-				ct.paramdom = Kparamdom(_ctx, s.rtype, s.psize, s.cparams);
+				ct.paramdom = Kparamdom(ctx, s.rtype, s.psize, s.cparams);
 			}
 			// function
-			ct.init = (s.init != NULL) ? s.init : DEFAULT_init;
-			ct.reftrace = (s.reftrace != NULL) ? s.reftrace : DEFAULT_reftrace;
-			ct.p     = (s.p != NULL) ? s.p : DEFAULT_p;
-			ct.unbox = (s.unbox != NULL) ? s.unbox : DEFAULT_unbox;
-			ct.free = (s.free != NULL) ? s.free : DEFAULT_free;
-			ct.fnull = (s.fnull != NULL) ? s.fnull : DEFAULT_fnullinit;
-			ct.realtype = (s.realtype != NULL) ? s.realtype : DEFAULT_realtype;
-			ct.isSubType = (s.isSubType != NULL) ? s.isSubType : DEFAULT_isSubType;
+			ct.init = (s.init != null) ? s.init : DEFAULT_init;
+			ct.reftrace = (s.reftrace != null) ? s.reftrace : DEFAULT_reftrace;
+			ct.p     = (s.p != null) ? s.p : DEFAULT_p;
+			ct.unbox = (s.unbox != null) ? s.unbox : DEFAULT_unbox;
+			ct.free = (s.free != null) ? s.free : DEFAULT_free;
+			ct.fnull = (s.fnull != null) ? s.fnull : DEFAULT_fnullinit;
+			ct.realtype = (s.realtype != null) ? s.realtype : DEFAULT_realtype;
+			ct.isSubType = (s.isSubType != null) ? s.isSubType : DEFAULT_isSubType;
 			ct.initdef = s.initdef;
 		}
-		if(ct.initdef != NULL) {
-			ct.initdef(_ctx, ct, pline);
+		if(ct.initdef != null) {
+			ct.initdef(ctx, ct, pline);
 		}
-		return ct;*/
+		return ct;
 	}
 }

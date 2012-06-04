@@ -261,9 +261,9 @@ public class Parser {
 		return null;
 	}
 	
-	//TODO
-	public KClass CT_p0(CTX ctx, int a, int b) {
-		return null;
+	public KClass CT_p0(CTX ctx, int ty) {
+		Param p = new Param(ty, 0);
+		return generics(ctx, TY_void, 1, p);
 	}
 	
 	//TODO
