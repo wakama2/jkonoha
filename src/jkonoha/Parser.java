@@ -159,7 +159,7 @@ public class Parser {
 		}
 		else if(tk.tt == TK.USYMBOL) {
 			if(! tk.resolved(ctx, ks)) {
-				KClass ct = ks.getCT(ctx, null, tk.text, TY.unknown); // TODO Konohaspace_getCT?
+				KClass ct = ks.getCT(ctx, null, tk.text, tk.text.length(), TY.unknown); // TODO Konohaspace_getCT?
 				if(ct != null) {
 					tk.kw = KW.Type;
 					tk.ty = ct.cid;
@@ -253,16 +253,11 @@ public class Parser {
 				}
 			}
 			else {
-				ct = CT_p0(ctx, KClass.CT_Array, tk.ty); // TODO CT_p0?
+				ct.CT_p0(ctx, KClass.CT_Array, tk.ty); // TODO CT_p0?
 			}
 			tk.ty = ct.cid;
 			return tk;
 		}
-		return null;
-	}
-	
-	//TODO
-	public KClass CT_p0(CTX ctx, int a, int b) {
 		return null;
 	}
 	

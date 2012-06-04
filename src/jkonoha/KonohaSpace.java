@@ -113,9 +113,31 @@ public class KonohaSpace extends KObject {
 		//TODO
 	}
 	
-	public KClass getCT(CTX ctx, KClass thisct, String name, int def) {
+	public Kvs getConstNULL (CTX ctx, int un) {
 		//TODO
-		return null;
+		Kvs kvs = new Kvs();
+		return kvs;
+	}
+	public int longid (int packdom, int un) {
+		int hcode = packdom;
+		return (hcode << ((int)*8)) | un;
+	}
+	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {
+		int PN_konoha = 1;//TODO PN_konoha is Macro.
+		KClass ct;
+		int un = kuname (name, len, 0, FN_NONAME);//Don't know FN_NONAME
+		if (un != FN_NONAME) {
+			int hcode = longid (PN_konoha, un);
+			ct = map_getu (ctx, ctx.share.lcnameMapNN, hcode, 0);
+			if (ct == null) {
+				Kvs kvs = getConstNULL (ctx, un);
+				//DBG_P ("kvs = %s, %p", name, kvs);
+				if (kvs != null && kvs.ty == TY.TYPE) {
+					return kvs.uval;
+				}
+			}
+		}
+		return (ct != null) ? ct : ((def >= 0) ? null : CT_(def));
 	}
 
 	public void eval(CTX ctx, String script, long uline) {
