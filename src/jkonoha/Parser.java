@@ -155,18 +155,8 @@ public class Parser {
 	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
 		int next = s; // don't add
 		Token tk = tls.get(s);
-		if(tk.tt == TK.NONE || // tk.tt < TK.OPERATOR
-				tk.tt == TK.INDENT ||
-				tk.tt == TK.SYMBOL ||
-				tk.tt == TK.USYMBOL  ||
-				tk.tt == TK.TEXT  ||
-				tk.tt == TK.INT ||
-				tk.tt == TK.FLOAT ||
-				tk.tt == TK.TYPE ||
-				tk.tt == TK.AST_PARENTHESIS ||
-				tk.tt == TK.AST_BRANCET ||
-				tk.tt == TK.AST_BRACE) {
-			tk.kw = tk.tt;
+		if(tk.tt < TK.OPERATOR) {
+			tk.kw = KW.TK_KW[tk.tt];
 		}
 		if(tk.tt == TK.SYMBOL) {
 			tk.resolved(ctx, ks);

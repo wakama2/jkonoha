@@ -91,6 +91,14 @@ public class KonohaSpace extends KObject {
 		return syn;
 	}
 	
+	public void defineDefaultSyntax(CTX ctx) {
+		Syntax[] s = {
+				new ExprSyntax(),
+				//TODO
+		};
+		defineSyntax(ctx, s);
+	}
+	
 	public Syntax syntax(CTX ctx, String kw) {
 		assert(this != null);/* scan-build: remove warning */
 		Syntax parent = syntaxMapNN.get(kw);

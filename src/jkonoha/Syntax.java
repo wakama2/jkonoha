@@ -2,21 +2,51 @@ package jkonoha;
 
 import java.util.*;
 
-public class Syntax {
+public abstract class Syntax {
 	public String kw;   // id
 	public int flag; // flag
-	List<Token> syntaxRuleNULL;
-	KMethod ParseStmtNULL;
-	KMethod ParseExpr;
-	KMethod TopStmtTyCheck;
-	KMethod StmtTyCheck;
-	KMethod ExprTyCheck;
+	public List<Token> syntaxRuleNULL;
+
+	public int ty;        // "void" ==> TY_void
+	public int priority;  // op2   
+	public int op2;
+	public int op1;
+	
+	public int parseExpr(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		//TODO default parseExpr
+		return 0;
+	}
+	
+	public int parseStmt() {
+		//TODO default parseExpr
+		return 0;
+	}
+
+//	KMethod ParseStmtNULL;
+//	KMethod ParseExpr;
+//	KMethod TopStmtTyCheck;
+//	KMethod StmtTyCheck;
+//	KMethod ExprTyCheck;
 	
 	// "if" "(" $expr ")" $block ["else" $block]
 	//Func ParseExpr;
 	//Func ..;
-	int ty;        // "void" ==> TY_void
-	int priority;  // op2   
-	int op2;
-	int op1;
 }
+
+class ExprSyntax extends Syntax {
+	@Override public int parseExpr(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		// TODO ParseStmt_Expr
+		return 0;
+	}
+}
+
+class IntSyntax extends Syntax {
+	IntSyntax() {
+		this.flag = SYNFLAG.ExprTerm;
+	}
+}
+
+class AddSyntax extends Syntax {
+
+}
+
