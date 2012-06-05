@@ -6,7 +6,7 @@ public interface TK {
 	String SYMBOL = "SYMBOL";        // KW_Symbol
 	String USYMBOL = "USYMBOL";       // KW_Usymbol
 	String TEXT = "TEXT";          // KW_Text
-	String String = "String";           // KW_Int
+	String INT = "INT";           // KW_Int
 	String FLOAT = "FLOAT";         // KW_Float
 	String TYPE = "TYPE";          // KW_Type
 	String AST_PARENTHESIS = "AST_PARENTHESIS";  // KW_Parenthesis

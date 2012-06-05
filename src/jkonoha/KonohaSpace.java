@@ -27,12 +27,12 @@ public class KonohaSpace extends KObject {
 		int ch, pos = 0;
 		FTokenizer fmat[] = tenv.fmat;
 		Token tk = new Token(tenv.uline);
-		assert(tk.tt == 0);
+		assert(tk.tt == TK.NONE);
 		tk.uline = tenv.uline;
 //		tk.lpos = tenv.lpos(0);
 		pos = Tokenizer.parseINDENT.parse(ctx, tk, tenv, pos, null);
 		while(pos < tenv.source.length() && (ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
-			if(tk.tt != 0) {
+			if(tk.tt != TK.NONE) {
 				tenv.list.add(tk);
 				tk = new Token(tenv.uline);
 				tk.uline = tenv.uline;
@@ -42,7 +42,7 @@ public class KonohaSpace extends KObject {
 			assert pos2 > pos;
 			pos = pos2;
 		}
-		if(tk.tt != 0) {
+		if(tk.tt != TK.NONE) {
 			tenv.list.add(tk);
 		}
 	}
@@ -76,11 +76,11 @@ public class KonohaSpace extends KObject {
 			return parent;
 		}
 		//DBG_P("creating new syntax %s old=%p", T_kw(kw), parent);
-		Syntax syn; //TODO fix Syntax.java
+		Syntax syn = new Syntax(); //TODO fix Syntax.java
 		syn.kw = kw;
 		syn.ty  = TY.unknown;
-		syn.op1 = MN_NONAME;
-		syn.op2 = MN_NONAME;
+		syn.op1 = 0/*MN_NONAME*/;
+		syn.op2 = 0/*MN_NONAME*/;
 		syn.ParseExpr = ctx.modsugar.UndefinedParseExpr;
 		syn.TopStmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
 		syn.StmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;

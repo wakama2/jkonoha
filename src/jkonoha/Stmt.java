@@ -40,8 +40,8 @@ public class Stmt extends KObject {
 			Token tk = tls.get(i);
 			if (tk.tt != TK.METANAME) break;
 			if (i+1 < e) {
-				//String buf;
-				String kw = keyword(ctx, buf, S_size(tk.text)+1, FN_NEWID);
+				String buf;
+				String kw = "dummy"/*keyword(ctx, buf, S_size(tk.text)+1, FN_NEWID)*/;
 				Token tk1 = tls.get(i+1);
 				KObject value = new KObject();
 				if (tk1.tt == KW.Parenthesis) {
@@ -62,11 +62,11 @@ public class Stmt extends KObject {
 			Syntax syn = null;
 			int idx = findBinaryOp(ctx, tls, s, e, syn);
 			if (idx != -1) {
-				return ParseExpr(ctx, syn, tls, s, idx, e);
+				return null/*ParseExpr(ctx, syn, tls, s, idx, e)*/;
 			}
 			int c = s;
 			syn = this.parentNULL.ks.syntax(ctx, tls.get(c).kw);
-			return ParseExpr(ctx, syn, tls, c, c, e);
+			return null/*ParseExpr(ctx, syn, tls, c, c, e)*/;
 		}
 		else {
 			if (0 < s - 1) {

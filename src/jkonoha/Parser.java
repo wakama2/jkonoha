@@ -43,7 +43,7 @@ public class Parser {
 		assert (stmt.syntax != null);
 	}
 
-	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
+	public int makeTree(CTX ctx, KonohaSpace ks, String tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
 		assert(tk.kw == KW.Err);
@@ -99,7 +99,7 @@ public class Parser {
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(tk.kw != KW.ERR) break;  // already parsed
+			if(tk.kw != KW.Err) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
 				tk1.tt = TK.METANAME;  tk1.kw = KW.Err;
 				tlsdst.add(tk1); i++;
@@ -159,7 +159,7 @@ public class Parser {
 				tk.tt == TK.SYMBOL ||
 				tk.tt == TK.USYMBOL  ||
 				tk.tt == TK.TEXT  ||
-				tk.tt == TK.String ||
+				tk.tt == TK.INT ||
 				tk.tt == TK.FLOAT ||
 				tk.tt == TK.TYPE ||
 				tk.tt == TK.AST_PARENTHESIS ||
@@ -219,8 +219,8 @@ public class Parser {
 	}
 	
 	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
-		String kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME);
-		if(kw != FN_NONAME) {
+		String kw = "dummy"/*keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME)*/;
+		if(kw != "dummy"/*FN_NONAME*/) {
 			Syntax syn = ks.syntax(ctx,kw);
 			if(syn != null) {
 				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
