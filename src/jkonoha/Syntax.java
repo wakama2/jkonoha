@@ -17,7 +17,7 @@ public abstract class Syntax {
 		return 0;
 	}
 	
-	public int parseStmt() {
+	public int parseStmt(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//TODO default parseExpr
 		return 0;
 	}
