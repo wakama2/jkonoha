@@ -13,7 +13,7 @@ public class Stmt extends KObject {
 	}
 	
 	// src/sugar/struct.h:930
-	public Block getBlock(CTX ctx, int kw, Block def) {
+	public Block getBlock(CTX ctx, String kw, Block def) {
 		Object bk = this.getObject(kw);
 		if(bk != null) {
 			if(bk instanceof Block) {
@@ -26,11 +26,11 @@ public class Stmt extends KObject {
 		return def;
 	}
 	
-	public String getText(CTX ctx, int kw, String def) {
+	public String getText(CTX ctx, String kw, String def) {
 		return (String)getObject(kw);
 	}
 	
-	public Expr getExpr(CTX ctx, int kw, Expr def) {
+	public Expr getExpr(CTX ctx, String kw, Expr def) {
 		return (Expr)getObject(kw);
 	}
 	
@@ -41,7 +41,7 @@ public class Stmt extends KObject {
 			if (tk.tt != TK.METANAME) break;
 			if (i+1 < e) {
 				//String buf;
-				int kw = 1;//keyword(ctx, (const char*)buf, S_size(tk.text)+1, FN_NEWID);TODO
+				String kw = keyword(ctx, (const char*)buf, S_size(tk.text)+1, FN_NEWID);
 				Token tk1 = tls.get(i+1);//Something wrong?
 				KObject value = new KObject();
 				if (tk1.tt == KW.Parenthesis) {
@@ -181,22 +181,6 @@ public class Stmt extends KObject {
 //		stmt.build = TSTMT.ERR;
 //		setObject(KW.Err, kstrerror(eno));//TODO
 	}
-	
-//	private Expr ParseExpr(CTX ctx, Syntax syn, List<Token> tls, int s, int c, int e) // TODO
-//	{
-//		KMethod mtd = (syn == null || syn.ParseExpr == null) ? kmodsugar.UndefinedParseExpr : syn.ParseExpr;
-//		BEGIN_LOCAL(lsfp, 10); // BEGIN_LOCAL is at konoha2.h, lsfp is in command.c (ksfp_t *lsfp = base->stack + base->evalidx;)
-//		KSETv(lsfp[K.CALLDELTA+0].o, (KObject)this);
-//		lsfp[K.CALLDELTA+0].ndata = (uintptr_t)syn;  // quick access, TODO Why cast ksyntax_t* to uintptr_t?
-//		KSETv(lsfp[K.CALLDELTA+1].o, tls);
-//		lsfp[K.CALLDELTA+2].ivalue = s;
-//		lsfp[K.CALLDELTA+3].ivalue = c;
-//		lsfp[K.CALLDELTA+4].ivalue = e;
-//		KCALL(lsfp, 0, mtd, 4, K.NULLEXPR);//TODO KNULLEXPR
-//		END_LOCAL(); // END_LOCAL is at konoha2.h
-//		assert(IS_Expr(lsfp[0].o));
-//		return lsfp[0].expr;
-//	}
 	
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{

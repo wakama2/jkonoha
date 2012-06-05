@@ -43,7 +43,7 @@ public class Parser {
 	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
-		assert(tk.kw == 0);
+		assert(tk.kw == KW.Err);
 //		if(TK.AST_PARENTHESIS <= tk.tt && tk.tt <= TK.AST_BRACE) {  // already transformed
 //			kArray_add(tlsdst, tk);
 //			return s;
@@ -55,7 +55,7 @@ public class Parser {
 		tkP.sub = new ArrayList<Token>();
 		for(i = s + 1; i < e; i++) {
 			tk = tls.get(i);
-			if(tk.kw != 0) {
+			if(tk.kw != KW.Err) {
 				tkP.sub.add(tk);
 				continue;
 			}
@@ -96,9 +96,9 @@ public class Parser {
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(tk.kw > 0) break;  // already parsed
+			if(tk.kw != KW.ERR) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
-				tk1.tt = TK.METANAME;  tk1.kw = 0;
+				tk1.tt = TK.METANAME;  tk1.kw = "0";
 				tlsdst.add(tk1); i++;
 				Token tktest = tls.get(i+1);//I'm not sure.
 				if(i + 1 < e && /*tls.get(i+1)*/tktest.topch == '(') {
@@ -122,7 +122,7 @@ public class Parser {
 			if(tk.topch == delim && tk.tt == TK.OPERATOR) {
 				return i+1;
 			}
-			if(tk.kw > 0) {
+			if(tk.kw != KW.Err) {
 				tlsdst.add(tk);
 				continue;
 			}
@@ -151,7 +151,17 @@ public class Parser {
 	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
 		int next = s; // don't add
 		Token tk = tls.get(s);
-		if(tk.tt < TK.OPERATOR) {
+		if(tk.tt == TK.NONE || // tk.tt < TK.OPERATOR
+				tk.tt == TK.INDENT ||
+				tk.tt == TK.SYMBOL ||
+				tk.tt == TK.USYMBOL  ||
+				tk.tt == TK.TEXT  ||
+				tk.tt == TK.String ||
+				tk.tt == TK.FLOAT ||
+				tk.tt == TK.TYPE ||
+				tk.tt == TK.AST_PARENTHESIS ||
+				tk.tt == TK.AST_BRANCET ||
+				tk.tt == TK.AST_BRACE) {
 			tk.kw = tk.tt;
 		}
 		if(tk.tt == TK.SYMBOL) {
@@ -199,16 +209,15 @@ public class Parser {
 				}
 			}
 		}
-		else if(tk.kw > KW.Expr) {
+		else if(tk.kw != KW.Err && tk.kw != KW.Expr) {
 			dst.add(tk);
 		}
 		return next;
 	}
 	
 	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
-		//int kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME); // tk : .text .ty
-		int kw = 0;//TODO kw : int => String?
-		//if(kw != FN_NONAME) {
+		String kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME);
+		if(kw != FN_NONAME) {
 			Syntax syn = ks.syntax(ctx,kw);
 			if(syn != null) {
 				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
@@ -219,7 +228,7 @@ public class Parser {
 				}
 				return true;
 			}
-		//}
+		}
 		return false;
 	}
 	

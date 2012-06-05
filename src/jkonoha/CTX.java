@@ -16,8 +16,8 @@ public class CTX extends KObject {
 
 	public final Block NULLBLOCK = null;//TODO
 	
-	public int kw(String s) {
-		return -1;//TODO
+	public String kw(String s) {
+		return "-1";//TODO
 	}
 	
 	public KClass ct(int ty) {
