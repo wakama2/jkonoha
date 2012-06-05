@@ -7,6 +7,9 @@ public class Parser {
 	// important
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block();
+		if (parent != null) {
+			bk.parentNULL = parent;
+		}
 		int i = s, indent = 0, atop = tls.size();
 		while (i < e) {
 			Token tkERR = null;
@@ -40,10 +43,10 @@ public class Parser {
 		assert (stmt.syntax != null);
 	}
 
-	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
+	public int makeTree(CTX ctx, KonohaSpace ks, String tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
-		assert(tk.kw == 0);
+		assert(tk.kw == KW.Err);
 //		if(TK.AST_PARENTHESIS <= tk.tt && tk.tt <= TK.AST_BRACE) {  // already transformed
 //			kArray_add(tlsdst, tk);
 //			return s;
@@ -55,7 +58,7 @@ public class Parser {
 		tkP.sub = new ArrayList<Token>();
 		for(i = s + 1; i < e; i++) {
 			tk = tls.get(i);
-			if(tk.kw != 0) {
+			if(tk.kw != KW.Err) {
 				tkP.sub.add(tk);
 				continue;
 			}
@@ -96,9 +99,9 @@ public class Parser {
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(tk.kw > 0) break;  // already parsed
+			if(tk.kw != KW.Err) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
-				tk1.tt = TK.METANAME;  tk1.kw = 0;
+				tk1.tt = TK.METANAME;  tk1.kw = KW.Err;
 				tlsdst.add(tk1); i++;
 				Token tktest = tls.get(i+1);//I'm not sure.
 				if(i + 1 < e && /*tls.get(i+1)*/tktest.topch == '(') {
@@ -122,7 +125,7 @@ public class Parser {
 			if(tk.topch == delim && tk.tt == TK.OPERATOR) {
 				return i+1;
 			}
-			if(tk.kw > 0) {
+			if(tk.kw != KW.Err) {
 				tlsdst.add(tk);
 				continue;
 			}
@@ -151,15 +154,25 @@ public class Parser {
 	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
 		int next = s; // don't add
 		Token tk = tls.get(s);
-		if(tk.tt < TK.OPERATOR) {
+		if(tk.tt == TK.NONE || // tk.tt < TK.OPERATOR
+				tk.tt == TK.INDENT ||
+				tk.tt == TK.SYMBOL ||
+				tk.tt == TK.USYMBOL  ||
+				tk.tt == TK.TEXT  ||
+				tk.tt == TK.INT ||
+				tk.tt == TK.FLOAT ||
+				tk.tt == TK.TYPE ||
+				tk.tt == TK.AST_PARENTHESIS ||
+				tk.tt == TK.AST_BRANCET ||
+				tk.tt == TK.AST_BRACE) {
 			tk.kw = tk.tt;
 		}
 		if(tk.tt == TK.SYMBOL) {
-			Token_resolved(ctx, ks, tk);
+			tk.resolved(ctx, ks);
 		}
 		else if(tk.tt == TK.USYMBOL) {
-			if(!Token_resolved(ctx, ks, tk)) {
-				KClass ct = ks.getCT(ctx, null, tk.text, TY.unknown); // TODO Konohaspace_getCT?
+			if(! tk.resolved(ctx, ks)) {
+				KClass ct = ks.getCT(ctx, null, tk.text, tk.text.length(), TY.unknown); // TODO Konohaspace_getCT?
 				if(ct != null) {
 					tk.kw = KW.Type;
 					tk.ty = ct.cid;
@@ -167,7 +180,7 @@ public class Parser {
 			}
 		}
 		else if(tk.tt == TK.OPERATOR) {
-			if(!Token_resolved(ctx, ks, tk)) {
+			if(! tk.resolved(ctx, ks)) {
 				//FIXME
 //				int errref = SUGAR_P(ERR_, tk.uline, tk.lpos, "undefined token: %s", kToken_s(tk)); //TODO SUGAR_P? kToken_s?
 //				Token_toERR(ctx, tk, errref);  // TODO Token_toERR?
@@ -199,35 +212,16 @@ public class Parser {
 				}
 			}
 		}
-		else if(tk.kw > KW.Expr) {
+		else if(tk.kw != KW.Err && tk.kw != KW.Expr) {
 			dst.add(tk);
 		}
 		return next;
 	}
 	
-	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
-		//int kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME); // tk : .text .ty
-		int kw = 0;//TODO
-		//if(kw != FN_NONAME) {
-			//Syntax syn = SYN_(ks, kw); // TODO SYN_?
-			Syntax syn = ks.syntax(ctx, kw, 0); // TODO SYN_?
-			if(syn != null) {
-				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
-					tk.kw = KW.Type; tk.ty = syn.ty;
-				}
-				else {
-					tk.kw = kw;
-				}
-				return true;
-			}
-		//}
-		return false;
-	}
-	
 	private Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
-			Param[] p = new Param[size]; // TODO kparam_t?
+			Param[] p = new Param[size];
 			for(i = 0; i < size; i++) {
 				Token tkT = tkP.sub.get(i);
 				if(tkT.kw == KW.Type) {
@@ -243,27 +237,22 @@ public class Parser {
 				ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
 				if(ct.bcid == KClass.CLASS_Func) {
 					//TODO
-//					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics?
+//					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
 				}
 				else if(ct.p0 == TY.VOID) {
 //					SUGAR_P(ERR_, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
 					return tk;
 				}
 				else {
-					ct = ct.generics(ctx, TY.VOID, psize, p);
+					//ct = ct.generics(ctx, TY.VOID, psize, p);
 				}
 			}
 			else {
-				ct = CT_p0(ctx, KClass.CT_Array, tk.ty); // TODO CT_p0?
+				//ct = ct.CT_p0(ctx, tk.ty);
 			}
 			tk.ty = ct.cid;
 			return tk;
 		}
-		return null;
-	}
-	
-	//TODO
-	public KClass CT_p0(CTX ctx, int a, int b) {
 		return null;
 	}
 	

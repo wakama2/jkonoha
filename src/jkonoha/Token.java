@@ -3,8 +3,8 @@ package jkonoha;
 import java.util.*;
 
 public class Token extends KObject {
-	public int tt;
-	public int kw;
+	public String tt;
+	public String kw;
 	public long uline;
 	public int lpos;
 	public String text;
@@ -22,6 +22,22 @@ public class Token extends KObject {
 	
 	public Token(long uline) {
 		this.uline = uline;
+	}
+	boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
+		String kw = "dummy"/*keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME)*/;
+		if(kw != "dummy"/*FN_NONAME*/) {
+			Syntax syn = ks.syntax(ctx,kw);
+			if(syn != null) {
+				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
+					this.kw = KW.Type; this.ty = syn.ty;
+				}
+				else {
+					this.kw = kw;
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
