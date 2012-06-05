@@ -30,7 +30,7 @@ public class Parser {
 		bk.blocks.add(stmt);
 		stmt.parentNULL = bk;
 		if (tkERR != null) {
-			stmt.syntax = new Syntax();
+//			stmt.syntax = new Syntax();
 			stmt.build = TSTMT.ERR;
 			stmt.setObject(KW.Err, tkERR);
 		}

@@ -8,10 +8,6 @@ public class KonohaSpace extends KObject {
 	public FTokenizer[] fmat;
 	public Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
 
-	public KonohaSpace() {
-		//TODO
-	}
-
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
 		TEnv tenv = new TEnv(source, uline, toks, 4, this);
@@ -100,28 +96,109 @@ public class KonohaSpace extends KObject {
 	}
 	
 	public Syntax syntax(CTX ctx, String kw) {
-		assert(this != null);/* scan-build: remove warning */
-		Syntax parent = syntaxMapNN.get(kw);
-		if (parent != null) {
-			return parent;
+		KonohaSpace ks0 = this;
+		KonohaSpace ks = ks0;
+		while(ks != null) {
+			if(ks.syntaxMapNN != null) {
+				Syntax parent = ks.syntaxMapNN.get(kw);
+				if(ks0 != ks) {
+					break;
+				}
+				return parent;
+			}
+			ks = ks.parentNULL;
 		}
-		//DBG_P("creating new syntax %s old=%p", T_kw(kw), parent);
-		Syntax syn = new Syntax(); //TODO fix Syntax.java
-		syn.kw = kw;
-		syn.ty  = TY.unknown;
-		syn.op1 = 0/*MN_NONAME*/;
-		syn.op2 = 0/*MN_NONAME*/;
-		syn.ParseExpr = ctx.modsugar.UndefinedParseExpr;
-		syn.TopStmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
-		syn.StmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
-		syn.ExprTyCheck = ctx.modsugar.UndefinedExprTyCheck;
-		syntaxMapNN.put(kw, syn);
-		//syn.parent = parent;
-		return syn;
+		throw new RuntimeException("syntax not found: " + kw);
+		//return null;
+	}
+	
+	private int findTopCh(CTX ctx, List<Token> tls, int s, int e, int tt, int closech) {
+		for(int i=s; i<e; i++) {
+			Token tk = tls.get(i);
+			if(tk.tt == tt && tk.text.charAt(0) == closech) return i;
+		}
+		return e;
+	}
+	
+	private int tmp_s; //FIXME
+	private boolean checkNestedSyntax(CTX ctx, List<Token> tls, int s, int e, int tt, int opench, int closech) {
+		int i = s;
+		Token tk = tls.get(i);
+		String t = tk.text;
+		if(t.length() == 1 && t.charAt(0) == opench) {
+			int ne = findTopCh(ctx, tls, i+1, e, tk.tt, closech);
+			tk.tt = tt;
+			tk.kw = KW.TK_KW[tt];
+			tk.sub = new ArrayList<Token>();
+			tk.topch = opench;
+			tk.closech = closech;
+			makeSyntaxRule(ctx, tls, i+1, ne, tk.sub);
+			tmp_s = ne;//FIXME *s = ne
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean makeSyntaxRule(CTX ctx, List<Token> tls, int s, int e, List<Token> adst) {
+		String nameid = null;
+		for(int i=s; i<e; i++) {
+			Token tk = tls.get(i);
+			if(tk.tt == TK.INDENT) continue;
+			if(tk.tt == TK.TEXT) {
+				if(checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')') ||
+				   checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')') ||
+				   checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')')) {
+					i = tmp_s;//FIXME
+				} else {
+					tk.tt = TK.CODE;
+					tk.kw = tk.text;
+				}
+				adst.add(tk);
+				continue;
+			}
+			if(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
+				if(i > 0 && tls.get(i-1).topch == '$') {
+					tk.kw = "$" + tk.text;
+					tk.tt = TK.METANAME;
+					if(nameid == null) nameid = tk.kw;
+					tk.nameid = nameid;
+					nameid = null;
+					adst.add(tk);
+					continue;
+				}
+				if(i + 1 < e && tls.get(i+1).topch == ':') {
+					nameid = tls.get(i).text;
+					i++;
+					continue;
+				}
+			}
+			if(tk.tt == TK.OPERATOR) {
+				if(checkNestedSyntax(ctx, tls, i, e, TK.AST_OPTIONAL, '[', ']')) {
+					adst.add(tk);
+					continue;
+				}
+				if(tls.get(i).topch == '$') continue;
+			}
+			return false;
+		}
+		return true;
+	}
+	
+	private void parseSyntaxRule(CTX ctx, String rule, long uline, List<Token> a) {
+		List<Token> tls = ctx.ctxsugar.tokens;
+		int pos = tls.size();
+		tokenize(ctx, rule, uline, tls);
+		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
 	}
 
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {
-		//TODO
+		for(Syntax syn : syndef) {
+			if(syn.rule != null) {
+				syn.syntaxRuleNULL = new ArrayList<Token>();
+				parseSyntaxRule(ctx, syn.rule, 0, syn.syntaxRuleNULL);
+			}
+			this.syntaxMapNN.put(syn.kw, syn);
+		}
 	}
 
 	public void setSyntaxMethod(CTX ctx, KMethod f, KMethod[] synp, KMethod p, KMethod[] mp) {

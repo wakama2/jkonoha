@@ -3,14 +3,19 @@ package jkonoha;
 import java.util.*;
 
 public abstract class Syntax {
-	public String kw;   // id
+	public final String kw;   // id
 	public int flag; // flag
+	public String rule;
 	public List<Token> syntaxRuleNULL;
 
 	public int ty;        // "void" ==> TY_void
 	public int priority;  // op2   
-	public int op2;
-	public int op1;
+	public String op2;
+	public String op1;
+	
+	public Syntax(String kw) {
+		this.kw = kw;
+	}
 	
 	public int parseExpr(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		//TODO default parseExpr
@@ -34,6 +39,9 @@ public abstract class Syntax {
 }
 
 class ExprSyntax extends Syntax {
+	public ExprSyntax() {
+		super("$expr");
+	}
 	@Override public int parseExpr(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		// TODO ParseStmt_Expr
 		return 0;
@@ -41,12 +49,16 @@ class ExprSyntax extends Syntax {
 }
 
 class IntSyntax extends Syntax {
-	IntSyntax() {
+	public IntSyntax() {
+		super("$INT");
 		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
 class AddSyntax extends Syntax {
+	public AddSyntax() {
+		super("+");
+	}
 
 }
 

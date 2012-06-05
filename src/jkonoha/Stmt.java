@@ -109,10 +109,10 @@ public class Stmt extends KObject {
 			}
 			else if (rule.tt == TK.METANAME) {
 				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
-				if (syn == null || syn.ParseStmtNULL == null) {//TODO Syntax has KMethod ParseStmtNULL
-					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
-					return -1;
-				}
+//				if (syn == null || syn.ParseStmtNULL == null) {//TODO Syntax has KMethod ParseStmtNULL
+//					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
+//					return -1;
+//				}
 				int c = e;
 				if (ri +1 < ruleSize && rules.get(ri+1).tt == TK.CODE) {
 					c = lookAheadKeyword (tls, ti+1, e, rules.get(ri+1));
