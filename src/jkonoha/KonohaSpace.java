@@ -56,17 +56,39 @@ public class KonohaSpace extends KObject {
 		//TODO
 	}
 
+	private Token lookAhead(CTX ctx, List<Token> tls, int s, int e)
+	{
+		return (s < e) ? tls.get(s) : null/*K_NULLTOKEN*/;
+	}
+	
 	public Syntax getSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		Token tk = tls.get(s);
 		if (tk.kw == KW.Type) {
-			//tk = lookAhead(ctx, tls, s+1, e);
+			tk = lookAhead(ctx, tls, s+1, e);
 			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
-				//tk = TokenArray_lookAhead(_ctx, tls, s+2, e);
-				
+				tk = lookAhead(ctx, tls, s+2, e);
+				if(tk.tt == TK.AST_PARENTHESIS || tk.kw == KW.DOT) {
+					return syntax(ctx, KW.StmtMethodDecl); //
+				}
+				return syntax(ctx, KW.StmtTypeDecl);  //
 			}
+			return syntax(ctx, KW.Expr);  // expression
 		}
-		//TODO
-		return null;
+		Syntax syn = syntax(ctx, tk.kw);
+		if(syn.syntaxRuleNULL == null) {
+			//		DBG_P("kw='%s', %d, %d", T_kw(syn.kw), syn.ParseExpr == kmodsugar.UndefinedParseExpr, kmodsugar.UndefinedExprTyCheck == syn.ExprTyCheck);
+			int i;
+			for(i = s + 1; i < e; i++) {
+				tk = tls.get(i);
+				syn = syntax(ctx, tk.kw);
+				if(syn.syntaxRuleNULL != null && syn.priority > 0) {
+					//SUGAR_P(DEBUG_, tk.uline, tk.lpos, "binary operator syntax kw='%s'", T_kw(syn.kw));   // sugar $expr "=" $expr;
+					return syn;
+				}
+			}
+			return syntax(ctx, KW.Expr);
+		}
+		return syn;
 	}
 	
 	public Syntax syntax(CTX ctx, String kw) {

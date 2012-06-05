@@ -218,23 +218,6 @@ public class Parser {
 		return next;
 	}
 	
-	private boolean Token_resolved(CTX ctx, KonohaSpace ks, Token tk) {
-		String kw = "dummy"/*keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME)*/;
-		if(kw != "dummy"/*FN_NONAME*/) {
-			Syntax syn = ks.syntax(ctx,kw);
-			if(syn != null) {
-				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
-					tk.kw = KW.Type; tk.ty = syn.ty;
-				}
-				else {
-					tk.kw = kw;
-				}
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	private Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
