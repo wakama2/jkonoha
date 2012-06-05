@@ -42,9 +42,9 @@ public class Stmt extends KObject {
 			if (i+1 < e) {
 				//String buf;
 				int kw = 1;//keyword(ctx, (const char*)buf, S_size(tk.text)+1, FN_NEWID);TODO
-				Token tk1 = tls.get(i+1);//Something wrong?
+				Token tk1 = tls.get(i+1);
 				KObject value = new KObject();
-				if (tk1.tt == KW.Parenthesis) {
+				if (tk1.tt == 9/*KW.Parenthesis*/) {//TODO
 					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());//TODO
 					i++;
 				}
@@ -164,7 +164,7 @@ public class Stmt extends KObject {
 	
 	public boolean parseSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		boolean ret = false;
-		Syntax syn = (parentNULL.ks).getSyntaxRule(ctx, tls, s, e);//TODO KonohaSpace_getSyntaxRule
+		Syntax syn = parentNULL.ks.getSyntaxRule(ctx, tls, s, e);//TODO KonohaSpace_getSyntaxRule
 		assert (syn != null);
 		if (syn.syntaxRuleNULL != null) {
 			syntax = syn;

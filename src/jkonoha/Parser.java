@@ -7,6 +7,9 @@ public class Parser {
 	// important
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block();
+		if (parent != null) {
+			bk.parentNULL = parent;
+		}
 		int i = s, indent = 0, atop = tls.size();
 		while (i < e) {
 			Token tkERR = null;
@@ -43,7 +46,7 @@ public class Parser {
 	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
-		assert(tk.kw == 0);
+		assert(tk.kw == "Err");
 //		if(TK.AST_PARENTHESIS <= tk.tt && tk.tt <= TK.AST_BRACE) {  // already transformed
 //			kArray_add(tlsdst, tk);
 //			return s;
@@ -55,7 +58,7 @@ public class Parser {
 		tkP.sub = new ArrayList<Token>();
 		for(i = s + 1; i < e; i++) {
 			tk = tls.get(i);
-			if(tk.kw != 0) {
+			if(tk.kw != "Err") {
 				tkP.sub.add(tk);
 				continue;
 			}
@@ -96,9 +99,9 @@ public class Parser {
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(tk.kw > 0) break;  // already parsed
+			if(tk.kw != "Err"/*> 0*/) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
-				tk1.tt = TK.METANAME;  tk1.kw = 0;
+				tk1.tt = TK.METANAME;  tk1.kw = "Err";
 				tlsdst.add(tk1); i++;
 				Token tktest = tls.get(i+1);//I'm not sure.
 				if(i + 1 < e && /*tls.get(i+1)*/tktest.topch == '(') {
@@ -122,7 +125,7 @@ public class Parser {
 			if(tk.topch == delim && tk.tt == TK.OPERATOR) {
 				return i+1;
 			}
-			if(tk.kw > 0) {
+			if(tk.kw != "Err"/*> 0*/) {
 				tlsdst.add(tk);
 				continue;
 			}
@@ -152,7 +155,7 @@ public class Parser {
 		int next = s; // don't add
 		Token tk = tls.get(s);
 		if(tk.tt < TK.OPERATOR) {
-			tk.kw = tk.tt;
+			tk.kw = KW.TK_KW[tk.tt];
 		}
 		if(tk.tt == TK.SYMBOL) {
 			tk.resolved(ctx, ks);
@@ -199,7 +202,7 @@ public class Parser {
 				}
 			}
 		}
-		else if(tk.kw > KW.Expr) {
+		else if(tk.kw != "Err" || tk.kw != "Expr"/*> KW.Expr*/) {
 			dst.add(tk);
 		}
 		return next;
@@ -249,11 +252,11 @@ public class Parser {
 					return tk;
 				}
 				else {
-					ct = ct.generics(ctx, TY.VOID, psize, p);
+					//ct = ct.generics(ctx, TY.VOID, psize, p);
 				}
 			}
 			else {
-				ct = ct.CT_p0(ctx, tk.ty);
+				//ct = ct.CT_p0(ctx, tk.ty);
 			}
 			tk.ty = ct.cid;
 			return tk;

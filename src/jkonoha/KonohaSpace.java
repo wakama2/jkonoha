@@ -6,7 +6,7 @@ public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
 	public FTokenizer[] fmat;
-	public Map<Integer, Syntax> syntaxMapNN = new HashMap<Integer, Syntax>();
+	public Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
 
 	public KonohaSpace() {
 		//TODO
@@ -57,11 +57,19 @@ public class KonohaSpace extends KObject {
 	}
 
 	public Syntax getSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
+		Token tk = tls.get(s);
+		if (tk.kw == KW.Type) {
+			//tk = lookAhead(ctx, tls, s+1, e);
+			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
+				//tk = TokenArray_lookAhead(_ctx, tls, s+2, e);
+				
+			}
+		}
 		//TODO
 		return null;
 	}
 	
-	public Syntax syntax(CTX ctx, int kw) {
+	public Syntax syntax(CTX ctx, String kw) {
 		assert(this != null);/* scan-build: remove warning */
 		Syntax parent = syntaxMapNN.get(kw);
 		if (parent != null) {
@@ -109,7 +117,7 @@ public class KonohaSpace extends KObject {
 		return false;
 	}
 
-	public void loadMethodData(CTX ctx, KonohaSpace ks, int data[]) {
+/*	public void loadMethodData(CTX ctx, KonohaSpace ks, int data[]) {
 		int d[] = data;
 		while(d[0] != -1) {
 			int flag = d[0];
@@ -134,21 +142,21 @@ public class KonohaSpace extends KObject {
 				addMethod(ctx, mtd);
 			}
 		}
-	}
+	}*/
 	
-	public Kvs getConstNULL (CTX ctx, int un) {
+	/*public Kvs getConstNULL (CTX ctx, int un) {
 		//TODO
 		Kvs kvs = new Kvs();
 		return kvs;
 	}
 	public int longid (int packdom, int un) {
 		int hcode = packdom;
-		return (hcode << (32*8)) | un;/*int is 32 bits.*/
-	}
-	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {
-		int PN_konoha = 1;//TODO PN_konoha is Macro.
-		KClass ct;
-		int un = kuname (name, len, 0, FN_NONAME);//Don't know FN_NONAME
+		return (hcode << (32*8)) | un;		//int is 32 bits.
+	}*/
+	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {//TODO
+		//int PN_konoha = 1;//TODO PN_konoha is Macro.
+		KClass ct = null;
+		/*int un = kuname (name, len, 0, FN_NONAME);//Don't know FN_NONAME
 		if (un != FN_NONAME) {
 			int hcode = longid (PN_konoha, un);
 			ct = map_getu (ctx, ctx.share.lcnameMapNN, hcode, 0);
@@ -159,8 +167,8 @@ public class KonohaSpace extends KObject {
 					return kvs.uval;
 				}
 			}
-		}
-		return (ct != null) ? ct : ((def >= 0) ? null : ctx.share.ca.cts[def]);
+		}*/
+		return ct;
 	}
 
 	public void eval(CTX ctx, String script, long uline) {
@@ -183,12 +191,18 @@ public class KonohaSpace extends KObject {
 		
 		Parser p = new Parser();
 		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
-		evalBlock(ctx, bk);
+		//evalBlock(ctx, bk);
 	}
 
-	private void evalBlock(CTX ctx, Block bk) {
+/*	private void evalBlock(CTX ctx, Block bk) {
+		Block bk1 = ctx.ctxsugar.singleBlock;
+		KMethod mtd = new KMethod(ctx, KMethod.Static, 0, 0, 0);
+		mtd.setParam(TY.OBJECT, 0, null);
+		int i, jmpresult;
+		int result = K_CONTINUE;
+		
 		//TODO
-	}
+	}*/
 
 	public boolean importPackage(CTX ctx, String name, long pline) {
 		//TODO

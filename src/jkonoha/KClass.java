@@ -32,7 +32,7 @@ public class KClass {
 	public static final int CLASS_Func = 0;
 	public static final int CT_Array = 0;
 	
-	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
+/*	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
 		int paramdom = Param.Kparamdom(ctx, psize, p);
 		KClass ct0 = this;
 		boolean isNotFuncClass = (bcid != CLASS_Func);
@@ -57,11 +57,11 @@ public class KClass {
 	KClass new_CT(CTX ctx, KDEFINE_CLASS s, int pline) {
 		kshare_t *share = ctx.share; // TODO kshare_t?
 		int newid = share.ca.bytesize / sizeof(KClass); // sizeof?
-		/*if(share.ca.bytesize == share.ca.bytemax) {
+		if(share.ca.bytesize == share.ca.bytemax) {
 			KARRAY_EXPAND(&share.ca, share.ca.bytemax * 2);
-		}*/ // not necessary?
+		} // not necessary?
 		share.ca.bytesize += sizeof(KClass);
-		KClass ct/* = (struct _kclass*)KCALLOC(sizeof(kclass_t), 1)*/;
+		KClass ct = (struct _kclass*)KCALLOC(sizeof(kclass_t), 1);
 		share.ca.cts[newid] = (KClass)ct;
 		if(bct != null) {
 			assert(s == null);
@@ -107,5 +107,5 @@ public class KClass {
 		p[0].ty = ty;
 		p[0].fn = 0;
 		return generics(ctx, TY.VOID, 1, p);
-	}
+	}*/
 }
