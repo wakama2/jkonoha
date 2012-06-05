@@ -17,12 +17,12 @@ public abstract class Syntax {
 		this.kw = kw;
 	}
 	
-	public int parseExpr(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//TODO default parseExpr
-		return 0;
+		return null;
 	}
 	
-	public int parseStmt(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+	public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		//TODO default parseExpr
 		return 0;
 	}
@@ -42,7 +42,7 @@ class ExprSyntax extends Syntax {
 	public ExprSyntax() {
 		super("$expr");
 	}
-	@Override public int parseExpr(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		// TODO ParseStmt_Expr
 		return 0;
 	}

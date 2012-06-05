@@ -4,14 +4,13 @@ import java.util.*;
 
 public class Parser {
 
-	// important
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
-		Block bk = new Block();
-		bk.ks = ks;
+		Block bk = new Block(ctx, ks);
 		if (parent != null) {
 			bk.parentNULL = parent;
 		}
-		int i = s, indent = 0, atop = tls.size();
+		int i = s, atop = tls.size();
+		int[] indent = new int[]{0};
 		while (i < e) {
 			Token tkERR = null;
 			assert (atop == tls.size());
@@ -30,7 +29,7 @@ public class Parser {
 		bk.blocks.add(stmt);
 		stmt.parentNULL = bk;
 		if (tkERR != null) {
-//			stmt.syntax = new Syntax();
+			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Err);
 			stmt.build = TSTMT.ERR;
 			stmt.setObject(KW.Err, tkERR);
 		}
@@ -94,7 +93,7 @@ public class Parser {
 		return e;
 	}
 	
-	public int selectStmtLine(CTX ctx, KonohaSpace ks, int indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
+	public int selectStmtLine(CTX ctx, KonohaSpace ks, int[] indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
 		int i = s;
 		assert(e <= tls.size());
 		for(; i < e - 1; i++) {
@@ -102,8 +101,10 @@ public class Parser {
 			Token tk1 = tls.get(i+1);
 			if(tk.kw != KW.Err) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
-				tk1.tt = TK.METANAME;  tk1.kw = KW.Err;
-				tlsdst.add(tk1); i++;
+				tk1.tt = TK.METANAME;
+				tk1.kw = KW.Err;
+				tlsdst.add(tk1);
+				i++;
 				Token tktest = tls.get(i+1);//I'm not sure.
 				if(i + 1 < e && /*tls.get(i+1)*/tktest.topch == '(') {
 					i = makeTree(ctx, ks, TK.AST_PARENTHESIS, tls, i+1, e, ')', tlsdst, tkERRRef);
@@ -119,7 +120,7 @@ public class Parser {
 				continue;
 			}
 			if(tk.tt != TK.INDENT) break;
-			if(indent == 0) indent = tk.lpos;
+			if(indent[0] == 0) indent[0] = tk.lpos;
 		}
 		for(; i < e ; i++) {
 			Token tk = tls.get(i);
@@ -142,7 +143,7 @@ public class Parser {
 				//tkERRRef.add(0, tk); //TODO
 			}
 			if(tk.tt == TK.INDENT) {
-				if(tk.lpos <= indent) {
+				if(tk.lpos <= indent[0]) {
 					return i+1;
 				}
 				continue;

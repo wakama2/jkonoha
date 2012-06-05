@@ -101,10 +101,12 @@ public class KonohaSpace extends KObject {
 		while(ks != null) {
 			if(ks.syntaxMapNN != null) {
 				Syntax parent = ks.syntaxMapNN.get(kw);
-				if(ks0 != ks) {
-					break;
+				if(parent != null) {
+					if(ks0 != ks) {
+						break;
+					}
+					return parent;
 				}
-				return parent;
 			}
 			ks = ks.parentNULL;
 		}
@@ -279,6 +281,8 @@ public class KonohaSpace extends KObject {
 	}
 
 	public void eval(CTX ctx, String script, long uline) {
+		ctx.modsugar.setup();
+		
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
