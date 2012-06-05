@@ -44,7 +44,7 @@ public class Stmt extends KObject {
 				String kw = "dummy"/*keyword(ctx, buf, S_size(tk.text)+1, FN_NEWID)*/;
 				Token tk1 = tls.get(i+1);
 				KObject value = new KObject();
-				if (tk1.tt == KW.Parenthesis) {
+				if (KW.TK_KW[tk1.tt] == KW.Parenthesis) {
 					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());//TODO
 					i++;
 				}
@@ -164,11 +164,11 @@ public class Stmt extends KObject {
 	
 	public boolean parseSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		boolean ret = false;
-		Syntax syn = parentNULL.ks.getSyntaxRule(ctx, tls, s, e);//TODO KonohaSpace_getSyntaxRule
+		Syntax syn = parentNULL.ks.getSyntaxRule(ctx, tls, s, e);
 		assert (syn != null);
 		if (syn.syntaxRuleNULL != null) {
 			syntax = syn;
-			ret = (matchSyntaxRule(ctx, syn.syntaxRuleNULL, uline, tls, s, e, false) != -1);//TODO matchSyntaxRule
+			ret = (matchSyntaxRule(ctx, syn.syntaxRuleNULL, uline, tls, s, e, false) != -1);
 		}
 		else {
 			//sugar_p(ERR_, uline, 0, "undefined syntax rule for '%s'", null);//TODO ERR_

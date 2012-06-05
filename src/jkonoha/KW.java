@@ -15,6 +15,9 @@ public interface KW {
 	String Parenthesis  = "Parenthesis";
 	String Brancet      = "Brancet";
 	String Brace        = "Brace";
+	
+	String[] TK_KW = {"Err", "Expr", "Symbol", "Usymbol", "Text", "Int", "Float", "Type", "Parenthesis", "Brancet", "Brace"};
+
 
 	String Block   = "Block";
 	String Params  = "Params";

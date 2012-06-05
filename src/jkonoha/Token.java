@@ -3,7 +3,7 @@ package jkonoha;
 import java.util.*;
 
 public class Token extends KObject {
-	public String tt;
+	public int tt;
 	public String kw;
 	public long uline;
 	public int lpos;
