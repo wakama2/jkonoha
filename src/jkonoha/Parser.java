@@ -7,6 +7,9 @@ public class Parser {
 	// important
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block();
+		if (parent != null) {
+			bk.parentNULL = parent;
+		}
 		int i = s, indent = 0, atop = tls.size();
 		while (i < e) {
 			Token tkERR = null;
@@ -98,7 +101,7 @@ public class Parser {
 			Token tk1 = tls.get(i+1);
 			if(tk.kw != KW.ERR) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
-				tk1.tt = TK.METANAME;  tk1.kw = "0";
+				tk1.tt = TK.METANAME;  tk1.kw = KW.Err;
 				tlsdst.add(tk1); i++;
 				Token tktest = tls.get(i+1);//I'm not sure.
 				if(i + 1 < e && /*tls.get(i+1)*/tktest.topch == '(') {
@@ -165,11 +168,11 @@ public class Parser {
 			tk.kw = tk.tt;
 		}
 		if(tk.tt == TK.SYMBOL) {
-			Token_resolved(ctx, ks, tk);
+			tk.resolved(ctx, ks);
 		}
 		else if(tk.tt == TK.USYMBOL) {
-			if(!Token_resolved(ctx, ks, tk)) {
-				KClass ct = ks.getCT(ctx, null, tk.text, TY.unknown); // TODO Konohaspace_getCT?
+			if(! tk.resolved(ctx, ks)) {
+				KClass ct = ks.getCT(ctx, null, tk.text, tk.text.length(), TY.unknown); // TODO Konohaspace_getCT?
 				if(ct != null) {
 					tk.kw = KW.Type;
 					tk.ty = ct.cid;
@@ -177,7 +180,7 @@ public class Parser {
 			}
 		}
 		else if(tk.tt == TK.OPERATOR) {
-			if(!Token_resolved(ctx, ks, tk)) {
+			if(! tk.resolved(ctx, ks)) {
 				//FIXME
 //				int errref = SUGAR_P(ERR_, tk.uline, tk.lpos, "undefined token: %s", kToken_s(tk)); //TODO SUGAR_P? kToken_s?
 //				Token_toERR(ctx, tk, errref);  // TODO Token_toERR?
@@ -258,11 +261,11 @@ public class Parser {
 					return tk;
 				}
 				else {
-					ct = ct.generics(ctx, TY.VOID, psize, p);
+					//ct = ct.generics(ctx, TY.VOID, psize, p);
 				}
 			}
 			else {
-				ct = ct.CT_p0(ctx, tk.ty);
+				//ct = ct.CT_p0(ctx, tk.ty);
 			}
 			tk.ty = ct.cid;
 			return tk;

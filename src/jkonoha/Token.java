@@ -23,6 +23,25 @@ public class Token extends KObject {
 	public Token(long uline) {
 		this.uline = uline;
 	}
+	boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
+		//int kw = keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME); // tk : .text .ty
+		String kw = "Err";
+		//if(kw != FN_NONAME) {
+			Syntax syn = ks.syntax(ctx,kw);
+			if(syn != null) {
+				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
+					this.kw = KW.Type;
+					this.ty = syn.ty;
+				}
+				else {
+					this.kw = kw;
+				}
+				return true;
+			}
+		//}
+		return false;
+		
+	}
 }
 
 //import java.util.*;

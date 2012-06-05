@@ -41,8 +41,8 @@ public class Stmt extends KObject {
 			if (tk.tt != TK.METANAME) break;
 			if (i+1 < e) {
 				//String buf;
-				String kw = keyword(ctx, (const char*)buf, S_size(tk.text)+1, FN_NEWID);
-				Token tk1 = tls.get(i+1);//Something wrong?
+				String kw = keyword(ctx, buf, S_size(tk.text)+1, FN_NEWID);
+				Token tk1 = tls.get(i+1);
 				KObject value = new KObject();
 				if (tk1.tt == KW.Parenthesis) {
 					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());//TODO
@@ -124,11 +124,11 @@ public class Stmt extends KObject {
 					ri++;
 				}
 				int errCount = ctx.ctxsugar.errCount;//TODO
-				int next = ParseStmt(ctx, syn, rule.nameid, tls, ti, c);
+				int next = 1;//ParseStmt(ctx, syn, rule.nameid, tls, ti, c);
 				if (next == -1) {
 					if (optional) return s;
 					if (errCount == ctx.ctxsugar.errCount) {
-						kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
+						//kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
 					}
 					return -1;
 				}
@@ -153,7 +153,7 @@ public class Stmt extends KObject {
 			for (; ri < rules.size(); ri++) {
 				Token rule = rules.get(ri);
 				if (rule.tt != TK.AST_OPTIONAL) {
-					SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
+					//SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
 					return -1;
 				}
 			}
@@ -164,7 +164,7 @@ public class Stmt extends KObject {
 	
 	public boolean parseSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		boolean ret = false;
-		Syntax syn = (parentNULL.ks).getSyntaxRule(ctx, tls, s, e);//TODO KonohaSpace_getSyntaxRule
+		Syntax syn = parentNULL.ks.getSyntaxRule(ctx, tls, s, e);//TODO KonohaSpace_getSyntaxRule
 		assert (syn != null);
 		if (syn.syntaxRuleNULL != null) {
 			syntax = syn;
@@ -185,7 +185,7 @@ public class Stmt extends KObject {
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{
 		Syntax syn = parentNULL.ks.syntax(ctx, tk.kw);
-		return (syn.op1 != MN_NONAME);
+		return (syn.op1 != 0/*MN.NONAME*/);//TODO what is MN_NONAME?
 	}
 	
 	private int skipUnaryOp(CTX ctx, List<Token> tls, int s, int e) {
@@ -203,15 +203,15 @@ public class Stmt extends KObject {
 		int idx = -1, i, prif = 0;
 		for(i = skipUnaryOp(ctx, tls, s, e) + 1; i < e; i++) {
 			Token tk = tls.get(i);
-			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw); // kStmt_ks is at sugar.h
+			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw); 
 //			if(syn != NULL && syn.op2 != 0) {
 			if(syn.priority > 0) {
-				if(prif < syn.priority || (prif == syn.priority && !(FLAG_is(syn.flag, SYNFLAG_ExprLeftJoinOp2)) )) {
+				if(prif < syn.priority || (prif == syn.priority && !((syn.flag & SYNFLAG.ExprLeftJoinOp2) == SYNFLAG.ExprLeftJoinOp2) )) {
 					prif = syn.priority;
 					idx = i;
 					synRef = syn;
 				}
-				if(!FLAG_is(syn.flag, SYNFLAG_ExprPostfixOp2)) {  /* check if real binary operator to parse f() + 1 */
+				if(! ((syn.flag & SYNFLAG.ExprPostfixOp2) == SYNFLAG.ExprLeftJoinOp2)) {  /* check if real binary operator to parse f() + 1 */
 					i = skipUnaryOp(ctx, tls, i+1, e) - 1;
 				}
 			}
