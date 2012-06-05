@@ -213,6 +213,12 @@ public class KonohaSpace extends KObject {
 		
 		Parser p = new Parser();
 		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		System.out.println("block size = " + bk.blocks.size());
+		Stmt s = bk.blocks.get(0);
+		System.out.println("stmt = " + s);
+		Object s0 = s.getObject(0);
+		System.out.println("stmt[0] = " + s0);
+		
 		//evalBlock(ctx, bk);
 	}
 

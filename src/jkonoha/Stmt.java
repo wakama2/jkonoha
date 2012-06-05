@@ -44,7 +44,7 @@ public class Stmt extends KObject {
 				String kw = "dummy"/*keyword(ctx, buf, S_size(tk.text)+1, FN_NEWID)*/;
 				Token tk1 = tls.get(i+1);
 				KObject value = new KObject();
-				if (tk1.tt == KW.Parenthesis) {
+				if (tk1.tt == TK.AST_PARENTHESIS) {
 					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());//TODO
 					i++;
 				}

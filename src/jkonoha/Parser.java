@@ -7,6 +7,7 @@ public class Parser {
 	// important
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block();
+		bk.ks = ks;
 		if (parent != null) {
 			bk.parentNULL = parent;
 		}
@@ -43,7 +44,7 @@ public class Parser {
 		assert (stmt.syntax != null);
 	}
 
-	public int makeTree(CTX ctx, KonohaSpace ks, String tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
+	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
 		assert(tk.kw == KW.Err);
