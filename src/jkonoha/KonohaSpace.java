@@ -143,7 +143,7 @@ public class KonohaSpace extends KObject {
 	}
 	public int longid (int packdom, int un) {
 		int hcode = packdom;
-		return (hcode << ((int)*8)) | un;
+		return (hcode << (32*8)) | un;/*int is 32 bits.*/
 	}
 	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {
 		int PN_konoha = 1;//TODO PN_konoha is Macro.
@@ -160,7 +160,7 @@ public class KonohaSpace extends KObject {
 				}
 			}
 		}
-		return (ct != null) ? ct : ((def >= 0) ? null : CT_(def));
+		return (ct != null) ? ct : ((def >= 0) ? null : ctx.share.ca.cts[def]);
 	}
 
 	public void eval(CTX ctx, String script, long uline) {
