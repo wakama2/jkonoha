@@ -44,8 +44,8 @@ class ExprSyntax extends Syntax {
 	}
 }
 
-class ExprSYMBOL extends Syntax {
-	public ExprSYMBOL(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+class SYMBOLSyntax extends Syntax {
+	public SYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		VAR_ParseStmt(stmt, syn, name, tls, s, e);
 		int r = -1;
 		Token tk = tls.get(s);
@@ -57,8 +57,8 @@ class ExprSYMBOL extends Syntax {
 	}
 }
 
-class ExprUSYMBOL extends Syntax {
-	public ExprUSYMBOL(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+class USYMBOLSyntax extends Syntax {
+	public USYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		VAR_ParseStmt(stmt, syn, name, tls, s, e);
 		int r = -1;
 		Token tk = tls.get(s);
@@ -70,26 +70,26 @@ class ExprUSYMBOL extends Syntax {
 	}
 }
 
-class ExprTEXT extends Syntax {
-	public ExprTEXT() {
+class TextSyntax extends Syntax {
+	public TextSyntax() {
 		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
-class ExprInt extends Syntax {
-	public ExprInt() {
+class IntSyntax extends Syntax {
+	public IntSyntax() {
 		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
-class ExprFloat extends Syntax {
-	public ExprFloat() {
+class FloatSyntax extends Syntax {
+	public FloatSyntax() {
 		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
-class ExprTYPE extends Syntax {
-	public ExprTYPE(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+class TypeSyntax extends Syntax {
+	public TypeSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		VAR_ParseStmt(stmt, syn, name, tls, s, e);
 		int r = -1;
 		Token tk = tls.get(s);
@@ -98,6 +98,7 @@ class ExprTYPE extends Syntax {
 			r = s + 1;
 		}
 		sfp[K_RIX].ivalue = r;
+		this.rule = "$type $expr";
 	}
 }
 
