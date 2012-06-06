@@ -10,27 +10,27 @@ public class KClass {
 	public int bcid;
 	public int supcid;
 	public int p0;
-	//-add--------------------
-	public int packid;
-	public int paramdom;
-	public int magivflag;
-	public int cstruct_size;
-	public KField fields; //TODO KField ?
-	public int fsize;
-	public int fallocsize;
-	public String DBG_NAME;
-	public int nameid;
-	public int optvalue;
-	public List<Object> methods = new ArrayList<Object>();
-	public String shortNameNULL;
-	public KObject nulvalNUL;
-	public KObject WnulvalNUL;
-	public Map<String, Syntax> constPoolMapNO = new HashMap<String, Syntax>();
-	public KClass searchSimilarClassNULL;
-	public KClass searchSuperMethodClassNULL;
-	//----------------------------
-	public static final int CLASS_Func = 0;
-	public static final int CT_Array = 0;
+//	//-add--------------------
+//	public int packid;
+//	public int paramdom;
+//	public int magivflag;
+//	public int cstruct_size;
+//	public KField fields; //TODO KField ?
+//	public int fsize;
+//	public int fallocsize;
+//	public String DBG_NAME;
+//	public int nameid;
+//	public int optvalue;
+//	public List<Object> methods = new ArrayList<Object>();
+//	public String shortNameNULL;
+//	public KObject nulvalNUL;
+//	public KObject WnulvalNUL;
+//	public Map<String, Syntax> constPoolMapNO = new HashMap<String, Syntax>();
+//	public KClass searchSimilarClassNULL;
+//	public KClass searchSuperMethodClassNULL;
+//	//----------------------------
+//	public static final int CLASS_Func = 0;
+//	public static final int CT_Array = 0;
 	
 /*	public KClass generics(CTX ctx, int rtype, int psize, Param[] p) { //at src/konoha/datatype.h
 		int paramdom = Param.Kparamdom(ctx, psize, p);

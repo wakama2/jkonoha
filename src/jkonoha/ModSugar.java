@@ -26,4 +26,8 @@ public class ModSugar extends ModShare {
 	KMethod UndefinedExprTyCheck;
 	KMethod ParseExpr_Term;
 	KMethod ParseExpr_Op;
+	
+	public void setup() {
+		//TODO
+	}
 }

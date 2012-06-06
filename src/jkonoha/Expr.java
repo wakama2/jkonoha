@@ -22,6 +22,17 @@ public abstract class Expr extends KObject {
 	public int getIndex() {
 		throw new RuntimeException();
 	}
+	
+	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
+		//TODO
+		return null;
+	}
+	
+	public void typed(int build, int ty) {
+		this.build = build;
+		this.ty = ty;
+	}
+	
 }
 
 class ConsExpr extends Expr {
@@ -47,7 +58,11 @@ class TermExpr extends Expr {
 }
 
 class ConstExpr extends Expr {  // as if NConstExpr 
-	public Object data;
+	public final Object data;
+	
+	public ConstExpr(Object data) {
+		this.data = data;
+	}
 	
 	@Override public Object getData() {
 		return data;

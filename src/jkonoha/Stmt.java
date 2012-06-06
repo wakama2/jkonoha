@@ -2,6 +2,8 @@ package jkonoha;
 
 import java.util.*;
 
+import jkonoha.compiler.kobject.KBoolean;
+
 public class Stmt extends KObject {
 	public long uline;
 	public Syntax syntax;
@@ -34,39 +36,37 @@ public class Stmt extends KObject {
 		return (Expr)getObject(kw);
 	}
 	
-	public int addAnnotation(CTX ctx, List<Token> tls, int s, int e) {//used in Parser.java
+	public int addAnnotation(CTX ctx, List<Token> tls, int s, int e) {
 		int i;
 		for (i = s; i < e; i++) {
 			Token tk = tls.get(i);
 			if (tk.tt != TK.METANAME) break;
 			if (i+1 < e) {
-				String buf;
-				String kw = "dummy"/*keyword(ctx, buf, S_size(tk.text)+1, FN_NEWID)*/;
+				String kw = "@" + tk.text;
 				Token tk1 = tls.get(i+1);
-				KObject value = new KObject();
+				KObject value = KBoolean.box(true);
 				if (tk1.tt == TK.AST_PARENTHESIS) {
-					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());//TODO
+					value = (KObject)newExpr2(ctx, tk1.sub, 0, tk1.sub.size());
 					i++;
 				}
 				if (value != null) {
-					value.setObject(kw, value);
+					this.setObject(kw, value);
 				}
 			}
 		}
-		return 1;
+		return i;
 	}
 	
 	public Expr newExpr2(CTX ctx, List<Token> tls, int s, int e) {//Return value is not void
-		//TODO return
 		if (s < e) {
-			Syntax syn = null;
+			Syntax[] syn = new Syntax[]{null};
 			int idx = findBinaryOp(ctx, tls, s, e, syn);
 			if (idx != -1) {
-				return null/*ParseExpr(ctx, syn, tls, s, idx, e)*/;
+				return syn[0].parseExpr(ctx, this, tls, s, idx, e);
 			}
 			int c = s;
-			syn = this.parentNULL.ks.syntax(ctx, tls.get(c).kw);
-			return null/*ParseExpr(ctx, syn, tls, c, c, e)*/;
+			syn[0] = this.parentNULL.ks.syntax(ctx, tls.get(c).kw);
+			return syn[0].parseExpr(ctx, this, tls, c, c, e);
 		}
 		else {
 			if (0 < s - 1) {
@@ -78,7 +78,7 @@ public class Stmt extends KObject {
 			else {
 				//SUGAR_P(ERR_, uline, 0, "expected expression");
 			}
-			return null;//TODO
+			return null;
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class Stmt extends KObject {
 		int i;
 		for (i = s; i < e; i++) {
 			Token tk = tls.get(i);
-			if (rule.kw == tk.kw) return i;
+			if (rule.kw.equals(tk.kw)) return i;
 		}
 		return -1;
 	}
@@ -109,7 +109,7 @@ public class Stmt extends KObject {
 			}
 			else if (rule.tt == TK.METANAME) {
 				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
-				if (syn == null || syn.ParseStmtNULL == null) {//TODO Syntax has KMethod ParseStmtNULL
+				if (syn == null/* || syn.ParseStmtNULL == null*/) {//TODO Syntax has KMethod ParseStmtNULL
 					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
 					return -1;
 				}
@@ -123,8 +123,8 @@ public class Stmt extends KObject {
 					}
 					ri++;
 				}
-				int errCount = ctx.ctxsugar.errCount;//TODO
-				int next = 1;//ParseStmt(ctx, syn, rule.nameid, tls, ti, c);
+				int errCount = ctx.ctxsugar.errCount;
+				int next = syn.parseStmt(ctx, this, rule.nameid, tls, ti, c);
 				if (next == -1) {
 					if (optional) return s;
 					if (errCount == ctx.ctxsugar.errCount) {
@@ -185,7 +185,7 @@ public class Stmt extends KObject {
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{
 		Syntax syn = parentNULL.ks.syntax(ctx, tk.kw);
-		return (syn.op1 != 0/*MN.NONAME*/);//TODO what is MN_NONAME?
+		return (syn.op1 != null/*MN.NONAME*/);//TODO what is MN_NONAME?
 	}
 	
 	private int skipUnaryOp(CTX ctx, List<Token> tls, int s, int e) {
@@ -199,7 +199,7 @@ public class Stmt extends KObject {
 		return i;
 	}
 	
-	private int findBinaryOp(CTX ctx, List<Token> tls, int s, int e, Syntax synRef) {
+	private int findBinaryOp(CTX ctx, List<Token> tls, int s, int e, Syntax[] synRef) {
 		int idx = -1, i, prif = 0;
 		for(i = skipUnaryOp(ctx, tls, s, e) + 1; i < e; i++) {
 			Token tk = tls.get(i);
@@ -209,7 +209,7 @@ public class Stmt extends KObject {
 				if(prif < syn.priority || (prif == syn.priority && !((syn.flag & SYNFLAG.ExprLeftJoinOp2) == SYNFLAG.ExprLeftJoinOp2) )) {
 					prif = syn.priority;
 					idx = i;
-					synRef = syn;
+					synRef[0] = syn;
 				}
 				if(! ((syn.flag & SYNFLAG.ExprPostfixOp2) == SYNFLAG.ExprLeftJoinOp2)) {  /* check if real binary operator to parse f() + 1 */
 					i = skipUnaryOp(ctx, tls, i+1, e) - 1;
@@ -217,5 +217,23 @@ public class Stmt extends KObject {
 			}
 		}
 		return idx;
+	}
+	
+	public boolean tyCheckExpr(CTX ctx, String nameid, Object gamma, int reqty, int pol) {
+		Object o = this.getObject(nameid);
+		if(o != null && o instanceof Expr) {
+			Expr expr = (Expr)o;
+			Expr texpr = expr.tyCheck(ctx, gamma, reqty, pol);
+			if(texpr != null) {
+				if(texpr != expr) {
+					this.setObject(nameid, texpr);
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void typed(int build) {
+		this.build = build;
 	}
 }
