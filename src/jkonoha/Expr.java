@@ -22,6 +22,17 @@ public abstract class Expr extends KObject {
 	public int getIndex() {
 		throw new RuntimeException();
 	}
+	
+	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
+		//TODO
+		return null;
+	}
+	
+	public void typed(int build, int ty) {
+		this.build = build;
+		this.ty = ty;
+	}
+	
 }
 
 class ConsExpr extends Expr {

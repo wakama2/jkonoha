@@ -17,4 +17,7 @@ public interface TY {
 	int SYSTEM = 9;
 	int T0 = 10;
 	int T = T0;
+	
+	int var = CLASS.Tvar;
+	int Object = CLASS.Object;
 }

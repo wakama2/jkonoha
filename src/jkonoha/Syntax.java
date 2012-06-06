@@ -37,7 +37,7 @@ public abstract class Syntax {
 		return false;
 	}
 	
-	public boolean topStmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
+	public final/*FIXME*/ boolean topStmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
 		return stmtTyCheck(ctx, stmt, gamma);
 	}
 	
@@ -50,6 +50,11 @@ class ExprSyntax extends Syntax {
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		// TODO ParseStmt_Expr
 		return 0;
+	}
+	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
+		boolean r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, TY.var, TPOL.ALLOWVOID);
+		stmt.typed(TSTMT.EXPR);
+		return r;
 	}
 }
 
