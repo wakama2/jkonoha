@@ -63,6 +63,7 @@ class ERRSyntax extends Syntax {
 class ExprSyntax extends Syntax {
 	public ExprSyntax() {
 		super("$expr");
+		this.rule = "$expr";
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
@@ -148,7 +149,7 @@ class TextSyntax extends Syntax {
 	}
 }
 
-class IntSyntax extends Syntax {
+class IntSyntax extends TermSyntax {
 	public IntSyntax() {
 		super("$INT");
 		this.flag = SYNFLAG.ExprTerm;
@@ -204,7 +205,13 @@ abstract class TermSyntax extends Syntax {
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//TODO src/sugar/ast.h:638 ParseExpr_Term
-		return null;
+		assert(s == c);
+		Token tk = tls.get(c);
+		Expr expr = new Expr();
+		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
+		//Expr_setTerm(expr, 1);
+		//KSETv(expr->tk, tk);
+		return expr;
 	}
 }
 
@@ -214,7 +221,27 @@ abstract class OpSyntax extends Syntax {
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//TODO src/sugar/ast.h:650 ParseExpr_Op
-		return null;
+		Token tk = tls.get(c);
+		Expr expr, rexpr = stmt.newExpr2(ctx, tls, c+1, e);
+		String mn = (s ==c) ? this.op1 : this.op2;
+		if (mn != null /*TODO && this.exprTyCheck(ctx, rexpr, gamma, e)*/) {
+			//TODO
+		}
+		if (s == c) {
+			expr = new Expr();
+			exprConsSet(rexpr);
+		}
+		else {
+			Expr  lexpr = stmt.newExpr2(ctx, tls, s, c);
+			expr = new Expr();
+			exprConsSet(lexpr, rexpr);
+		}
+		return expr;
+	}
+	private void exprConsSet(Expr... exprs) {
+		for (Expr expr : exprs) {
+			expr.cons.add(expr);
+		}
 	}
 }
 
@@ -228,3 +255,20 @@ class AddSyntax extends OpSyntax {
 	}
 }
 
+class BlockSyntax extends Syntax {
+	public BlockSyntax() {
+		super("$block");
+	}
+}
+
+class IfSyntax extends Syntax {
+	public IfSyntax() {
+		super("if");
+	}
+}
+
+class ReturnSyntax extends Syntax {
+	public ReturnSyntax() {
+		super("return");
+	}
+}

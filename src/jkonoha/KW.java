@@ -1,7 +1,6 @@
 package jkonoha;
 
 public interface KW {
-	String[] TK_KW = {"Err", "Expr", "Symbol", "Usymbol", "Text", "Int", "Float", "Type", "Parenthesis", "Brancet", "Brace"};
 
 	String Err     = "Err";
 	String Expr    = "Expr";
@@ -10,6 +9,7 @@ public interface KW {
 	String Usymbol = "Usymbol";
 //	String cname  = 3;
 	String Text    = "Text";
+	String Int     = "Int";
 	String String     = "String";
 	String Float   = "Float";
 	String Type    = "Type";
@@ -24,6 +24,7 @@ public interface KW {
 	String Params  = "Params";
 	String ExprMethodCall = "ExprMethodCall";/*FIXME*/
 	String Toks    = "Toks";
+	String[] TK_KW = { Err, Expr, Symbol, Usymbol, Text, Int, Float, Type, Parenthesis, Brancet, Brace };
 
 	String DOT     = "DOT";
 	String DIV     = "DIV";

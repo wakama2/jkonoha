@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Token extends KObject {
 	public int tt;
-	public String kw;
+	public String kw = KW.Err; // default is 0
 	public long uline;
 	public int lpos;
 	public String text;
@@ -17,12 +17,13 @@ public class Token extends KObject {
 	public String nameid;
 	
 	public Token() {
-		
+		this(0);
 	}
 	
 	public Token(long uline) {
 		this.uline = uline;
 	}
+	
 	boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
 		String kw = "dummy"/*keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME)*/;
 		if(kw != "dummy"/*FN_NONAME*/) {

@@ -59,7 +59,7 @@ public class KonohaSpace extends KObject {
 	
 	public Syntax getSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		Token tk = tls.get(s);
-		if (tk.kw == KW.Type) {
+		if (tk.kw.equals(KW.Type)) {
 			tk = lookAhead(ctx, tls, s+1, e);
 			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 				tk = lookAhead(ctx, tls, s+2, e);
@@ -90,6 +90,8 @@ public class KonohaSpace extends KObject {
 	public void defineDefaultSyntax(CTX ctx) {
 		Syntax[] s = {
 				new ExprSyntax(),
+				new IntSyntax(),
+				new AddSyntax(),
 				//TODO
 		};
 		defineSyntax(ctx, s);
@@ -98,6 +100,9 @@ public class KonohaSpace extends KObject {
 	public Syntax syntax(CTX ctx, String kw) {
 		KonohaSpace ks0 = this;
 		KonohaSpace ks = ks0;
+		//TODO
+		if(kw.equals("Int")) kw = "$INT";
+		if(kw.equals("Expr")) kw = "$expr";
 		while(ks != null) {
 			if(ks.syntaxMapNN != null) {
 				Syntax parent = ks.syntaxMapNN.get(kw);
@@ -305,8 +310,12 @@ public class KonohaSpace extends KObject {
 		System.out.println("block size = " + bk.blocks.size());
 		Stmt s = bk.blocks.get(0);
 		System.out.println("stmt = " + s);
-		Object s0 = s.getObject("0");
-		System.out.println("stmt[0] = " + s0);
+		s.dumpObjects();
+		Expr o = (Expr)s.getObject("$expr");
+		for(Expr e : o.cons) {
+			e.dumpObjects();
+		}
+		
 		
 		//evalBlock(ctx, bk);
 	}
