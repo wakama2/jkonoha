@@ -18,6 +18,7 @@ public class KObject {
 		if(kvproto == null) {
 			kvproto = new HashMap<String, Object>();
 		}
+		System.out.println("setObject " + this + " " + key + " = " + value);
 		kvproto.put(key, value);
 	}
 	
@@ -27,6 +28,18 @@ public class KObject {
 		} else {
 			return null;
 		}
+	}
+	
+	// debug
+	void dumpObjects() {
+		System.out.println("*** dump " + this);
+		if(kvproto == null) {
+			System.out.println("null");
+		} else
+		for(Map.Entry<String, Object> e : kvproto.entrySet()) {
+			System.out.println("" + e.getKey() + ": " + e.getValue());
+		}
+		System.out.println("***");
 	}
 	
 	public static boolean isNull(KObject o) {

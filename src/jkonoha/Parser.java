@@ -53,8 +53,7 @@ public class Parser {
 //		}
 		Token tkP = new Token(); // tkP : .topch .lpos .sub  .text
 		tlsdst.add(tkP);
-		//tkP.tt = tt; tkP.kw = tt; tkP.uline = tk.uline; tkP.topch = tk.topch; tkP.lpos = closech;
-		//KSETv(tkP.sub, new_(TokenArray, 0));
+		tkP.tt = tt; tkP.kw = KW.TK_KW[tt]; tkP.uline = tk.uline; tkP.topch = tk.topch; tkP.lpos = closech;
 		tkP.sub = new ArrayList<Token>();
 		for(i = s + 1; i < e; i++) {
 			tk = tls.get(i);
@@ -86,7 +85,6 @@ public class Parser {
 		}
 		else {
 			tkP.tt = TK.ERR;
-			//KSETv(tkP.text, tk.text);
 			tkP.text = tk.text;
 		}
 		//tkERRRef.set(0,tkP);//TODO

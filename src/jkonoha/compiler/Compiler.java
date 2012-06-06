@@ -17,7 +17,7 @@ public class Compiler implements Opcodes {
 	private final Stack<Type> typeStack = new Stack<Type>();
 	
 	// ctxcode
-	private int uline;
+	private long uline;
 	//private final List<Object> constPools = null;
 	private Label curBB = null;
 	
@@ -141,7 +141,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmExprStmt(Stmt stmt, int shift, int espidx) {
-		Expr expr = stmt.getExpr(ctx, 1, null);
+		Expr expr = (Expr)stmt.getObject("$expr");
 		asmExpr(espidx, expr, shift, espidx);
 	}
 	
@@ -150,7 +150,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmReturnStmt(Stmt stmt, int shift, int espidx) {
-		Object o = stmt.getObject(1);
+		Object o = stmt.getObject("$expr");
 		if(o != null && o instanceof Expr) {
 			Expr expr = (Expr)o;
 			if(expr.ty != TY.VOID) {
@@ -178,7 +178,7 @@ public class Compiler implements Opcodes {
 		Label lbELSE = new Label();
 		Label lbEND  = new Label();
 		/* if */
-		asmExprJmpIf(espidx, stmt.getExpr(ctx, 1, null), false, lbELSE, shift, espidx);
+		asmExprJmpIf(espidx, (Expr)stmt.getObject("$expr"), false, lbELSE, shift, espidx);
 		/* then */
 		asmBlock(stmt.getBlock(ctx, KW.Block, ctx.NULLBLOCK), shift);
 		asmJump(lbEND);
@@ -195,7 +195,7 @@ public class Compiler implements Opcodes {
 		stmt.setObject(ctx.kw("continue"), lbCONTINUE);
 		stmt.setObject(ctx.kw("break"), lbBREAK);
 		asmLabel(lbCONTINUE);
-		asmExprJmpIf(espidx, (Expr)stmt.getObject(1), false, lbBREAK, shift, espidx);
+		asmExprJmpIf(espidx, (Expr)stmt.getObject("$expr"), false, lbBREAK, shift, espidx);
 		asmBlock((Block)stmt.getObject(KW.Block), shift);
 		asmJump(lbCONTINUE);
 		asmLabel(lbBREAK);
@@ -216,7 +216,7 @@ public class Compiler implements Opcodes {
 	
 	private void asmCall(int a, Expr expr, int shift, int espidx) {
 		List<Expr> l = expr.getCons();
-		KMethod mtd = (KMethod)expr.getObject(0);
+		KMethod mtd = (KMethod)expr.cons.get(0);
 		//int s = mtd.isStatic() ? 2 : 1;//TODO
 		int s = 1;
 		int thisidx = espidx + K.CALLDELTA;

@@ -171,11 +171,12 @@ public class Stmt extends KObject {
 			ret = (matchSyntaxRule(ctx, syn.syntaxRuleNULL, uline, tls, s, e, false) != -1);//TODO matchSyntaxRule
 		}
 		else {
-			//sugar_p(ERR_, uline, 0, "undefined syntax rule for '%s'", null);//TODO ERR_
+			Konoha.SUGAR_P_ERR(uline, 0, "undefined syntax rule for '%s'", syn.kw);
 		}
 		return ret;
 	}
 	
+
 	public void toERR (int eno) {
 //		stmt.syntax = SYN_(stmt, KW.Err);//TODO SYN_ = KonohaSpace_syntax(_ctx, KS, KW, 0)
 //		stmt.build = TSTMT.ERR;

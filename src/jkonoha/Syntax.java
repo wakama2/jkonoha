@@ -57,6 +57,7 @@ public abstract class Syntax {
 class ExprSyntax extends Syntax {
 	public ExprSyntax() {
 		super("$expr");
+		this.rule = "$expr";
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
@@ -76,7 +77,7 @@ class ExprSyntax extends Syntax {
 	}
 }
 
-class IntSyntax extends Syntax {
+class IntSyntax extends TermSyntax {
 	public IntSyntax() {
 		super("$INT");
 		this.flag = SYNFLAG.ExprTerm;
@@ -118,3 +119,20 @@ class AddSyntax extends OpSyntax {
 	}
 }
 
+class BlockSyntax extends Syntax {
+	public BlockSyntax() {
+		super("$block");
+	}
+}
+
+class IfSyntax extends Syntax {
+	public IfSyntax() {
+		super("if");
+	}
+}
+
+class ReturnSyntax extends Syntax {
+	public ReturnSyntax() {
+		super("return");
+	}
+}
