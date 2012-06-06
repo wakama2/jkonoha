@@ -29,7 +29,17 @@ public class Expr extends KObject {
 		//TODO
 		throw new RuntimeException();
 	}
+	
+	public void setCons(Object... exprs) {
+		if(cons == null) {
+			cons = new ArrayList<Object>();
+		}
+		for (Object expr : exprs) {
+			cons.add(expr);
+		}
+	}	
 }
+
 class ConstExpr extends Expr {  // as if NConstExpr 
 	public final Object data;
 

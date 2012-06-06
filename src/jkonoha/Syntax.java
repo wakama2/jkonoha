@@ -231,20 +231,14 @@ abstract class OpSyntax extends Syntax {
 		}
 		if (s == c) {
 			expr = new Expr();
-			exprConsSet(expr, rexpr);
+			expr.setCons(rexpr);
 		}
 		else {
 			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
 			expr = new Expr();
-			exprConsSet(expr, tk, lexpr, rexpr);
+			expr.setCons(tk, lexpr, rexpr);
 		}
 		return expr;
-	}
-	private void exprConsSet(Expr e, Object... exprs) {
-		e.cons = new ArrayList<Object>();
-		for (Object expr : exprs) {
-			e.cons.add(expr);
-		}
 	}
 }
 

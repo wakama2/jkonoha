@@ -28,14 +28,6 @@ public class Stmt extends KObject {
 		return def;
 	}
 	
-	public String getText(CTX ctx, String kw, String def) {
-		return (String)getObject(kw);
-	}
-	
-	public Expr getExpr(CTX ctx, String kw, Expr def) {
-		return (Expr)getObject(kw);
-	}
-	
 	public int addAnnotation(CTX ctx, List<Token> tls, int s, int e) {
 		int i;
 		for (i = s; i < e; i++) {

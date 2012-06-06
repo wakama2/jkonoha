@@ -2,6 +2,8 @@ package jkonoha;
 
 import java.util.*;
 
+import jkonoha.compiler.CompilerContext;
+
 public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
@@ -129,9 +131,8 @@ public class KonohaSpace extends KObject {
 		return e;
 	}
 	
-	private int tmp_s; //FIXME
-	private boolean checkNestedSyntax(CTX ctx, List<Token> tls, int s, int e, int tt, int opench, int closech) {
-		int i = s;
+	private boolean checkNestedSyntax(CTX ctx, List<Token> tls, int[] s, int e, int tt, int opench, int closech) {
+		int i = s[0];
 		Token tk = tls.get(i);
 		String t = tk.text;
 		if(t.length() == 1 && t.charAt(0) == opench) {
@@ -142,7 +143,7 @@ public class KonohaSpace extends KObject {
 			tk.topch = opench;
 			tk.closech = closech;
 			makeSyntaxRule(ctx, tls, i+1, ne, tk.sub);
-			tmp_s = ne;//FIXME *s = ne
+			s[0] = ne;
 			return true;
 		}
 		return false;
@@ -154,10 +155,11 @@ public class KonohaSpace extends KObject {
 			Token tk = tls.get(i);
 			if(tk.tt == TK.INDENT) continue;
 			if(tk.tt == TK.TEXT) {
-				if(checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')')) {
-					i = tmp_s;//FIXME
+				int[] ia = new int[]{i};
+				if(checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')')) {
+					i = ia[0];
 				} else {
 					tk.tt = TK.CODE;
 					tk.kw = tk.text;
@@ -182,8 +184,10 @@ public class KonohaSpace extends KObject {
 				}
 			}
 			if(tk.tt == TK.OPERATOR) {
-				if(checkNestedSyntax(ctx, tls, i, e, TK.AST_OPTIONAL, '[', ']')) {
+				int[] ia = new int[]{i};
+				if(checkNestedSyntax(ctx, tls, ia, e, TK.AST_OPTIONAL, '[', ']')) {
 					adst.add(tk);
+					i = ia[0];
 					continue;
 				}
 				if(tls.get(i).topch == '$') continue;
@@ -260,15 +264,6 @@ public class KonohaSpace extends KObject {
 		}
 	}*/
 	
-	/*public Kvs getConstNULL (CTX ctx, int un) {
-		//TODO
-		Kvs kvs = new Kvs();
-		return kvs;
-	}
-	public int longid (int packdom, int un) {
-		int hcode = packdom;
-		return (hcode << (32*8)) | un;		//int is 32 bits.
-	}*/
 	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {//TODO
 		//int PN_konoha = 1;//TODO PN_konoha is Macro.
 		KClass ct = null;
@@ -310,12 +305,13 @@ public class KonohaSpace extends KObject {
 		tokenize(ctx, script, uline, tls);
 		dumpTokens(tls);
 		
-		Block bk = Parser.getInstance().newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		evalBlock(ctx, bk);
 	}
 
 	private void evalBlock(CTX ctx, Block bk) {
-		
+		CompilerContext cc = new CompilerContext(ctx);
+		cc.evalBlock(bk);
 	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {

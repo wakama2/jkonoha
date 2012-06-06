@@ -135,7 +135,7 @@ public class Compiler implements Opcodes {
 	}
 
 	public void asmErrStmt(Stmt stmt, int shift, int espidx) {
-		String str = (String)stmt.getObject("0");
+		String str = (String)stmt.getObject("$ERR");
 		System.err.println(str);
 		//asmError();
 	}
@@ -192,8 +192,8 @@ public class Compiler implements Opcodes {
 	public void asmLoopStmt(Stmt stmt, int shift, int espidx) {
 		Label lbCONTINUE = new Label();
 		Label lbBREAK = new Label();
-		stmt.setObject(ctx.kw("continue"), lbCONTINUE);
-		stmt.setObject(ctx.kw("break"), lbBREAK);
+		stmt.setObject("continue", lbCONTINUE);
+		stmt.setObject("break", lbBREAK);
 		asmLabel(lbCONTINUE);
 		asmExprJmpIf(espidx, (Expr)stmt.getObject("$expr"), false, lbBREAK, shift, espidx);
 		asmBlock((Block)stmt.getObject(KW.Block), shift);

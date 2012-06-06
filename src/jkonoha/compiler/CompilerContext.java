@@ -37,7 +37,7 @@ public class CompilerContext {
 	public void evalBlock(Block b) {
 		// new_kMethod && kMethod_setParam
 		KonohaMethod mtd = new KonohaMethod(new JavaClass(Object.class), 
-				Opcodes.ACC_STATIC, "", Type.VOID_TYPE, null, null);
+				Opcodes.ACC_STATIC, "", Type.VOID_TYPE, new String[0], new Type[0]);
 		try {
 			evalBlock(mtd, b);
 		} catch(Exception e) {

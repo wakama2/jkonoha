@@ -1,11 +1,6 @@
 package jkonoha;
 
-public class Tokenizer { // not original
-	
-	public static final FTokenizer parseINDENT = new ParseINDENT();
-	public static final FTokenizer parseOP = new ParseOP();
-	public static final FTokenizer parseLINE = new ParseLINE();
-	public static final FTokenizer parseCOMMENT = new ParseCOMMENT();
+public class Tokenizer {
 	
 	/**
 	 * This method is used to reduce character's types to 41 types.
@@ -27,47 +22,47 @@ public class Tokenizer { // not original
 	
 	static FTokenizer[] MiniKonohaTokenMatrix() {
 		FTokenizer[] fmat = new FTokenizer[KCHAR_MAX];
-		fmat[_NULL] = new ParseSKIP();
-		fmat[_UNDEF] = new ParseSKIP();
-		fmat[_DIGIT] = new ParseNUM();
-		fmat[_UALPHA] = new ParseUSYMBOL();
-		fmat[_LALPHA] = new ParseSYMBOL();
-		fmat[_MULTI] = new ParseMSYMBOL();
-		fmat[_NL] = new ParseNL();
-		fmat[_TAB] = new ParseSKIP();
-		fmat[_SP] = new ParseSKIP();
-		fmat[_LPAR] = new ParseOP1();
-		fmat[_RPAR] = new ParseOP1();
-		fmat[_LSQ] = new ParseOP1();
-		fmat[_RSQ] = new ParseOP1();
-		fmat[_LBR] = new ParseBLOCK();
-		fmat[_RBR] = new ParseOP1();
-		fmat[_LT] = new ParseOP();
-		fmat[_GT] = new ParseOP();
-		fmat[_QUOTE] = new ParseUNDEF();
-		fmat[_DQUOTE] = new ParseDQUOTE();
-		fmat[_BKQUOTE] = new ParseDQUOTE();
-		fmat[_OKIDOKI] = new ParseOP();
-		fmat[_SHARP] = new ParseOP();
-		fmat[_DOLLAR] = new ParseOP();
-		fmat[_PER] = new ParseOP();
-		fmat[_AND] = new ParseOP();
-		fmat[_STAR] = new ParseOP();
-		fmat[_PLUS] = new ParseOP();
-		fmat[_COMMA] = new ParseOP1();
-		fmat[_MINUS] = new ParseOP();
-		fmat[_DOT] = new ParseOP();
-		fmat[_SLASH] = new ParseSLASH();
-		fmat[_COLON] = new ParseOP();
-		fmat[_SEMICOLON] = new ParseOP1();
-		fmat[_EQ] = new ParseOP();
-		fmat[_QUESTION] = new ParseOP();
-		fmat[_AT] = new ParseOP1();
-		fmat[_VAR] = new ParseOP();
-		fmat[_CHILDER] = new ParseOP();
-		fmat[_BKSLASH] = new ParseUNDEF();
-		fmat[_HAT] = new ParseOP();
-		fmat[_UNDER] = new ParseSYMBOL();
+		fmat[_NULL] = parseSKIP;
+		fmat[_UNDEF] = parseSKIP;
+		fmat[_DIGIT] = parseNUM;
+		fmat[_UALPHA] = parseUSYMBOL;
+		fmat[_LALPHA] = parseSYMBOL;
+		fmat[_MULTI] = parseMSYMBOL;
+		fmat[_NL] = parseNL;
+		fmat[_TAB] = parseSKIP;
+		fmat[_SP] = parseSKIP;
+		fmat[_LPAR] = parseOP1;
+		fmat[_RPAR] = parseOP1;
+		fmat[_LSQ] = parseOP1;
+		fmat[_RSQ] = parseOP1;
+		fmat[_LBR] = parseBLOCK;
+		fmat[_RBR] = parseOP1;
+		fmat[_LT] = parseOP;
+		fmat[_GT] = parseOP;
+		fmat[_QUOTE] = parseUNDEF;
+		fmat[_DQUOTE] = parseDQUOTE;
+		fmat[_BKQUOTE] = parseDQUOTE;
+		fmat[_OKIDOKI] = parseOP;
+		fmat[_SHARP] = parseOP;
+		fmat[_DOLLAR] = parseOP;
+		fmat[_PER] = parseOP;
+		fmat[_AND] = parseOP;
+		fmat[_STAR] = parseOP;
+		fmat[_PLUS] = parseOP;
+		fmat[_COMMA] = parseOP1;
+		fmat[_MINUS] = parseOP;
+		fmat[_DOT] = parseOP;
+		fmat[_SLASH] = parseSLASH;
+		fmat[_COLON] = parseOP;
+		fmat[_SEMICOLON] = parseOP1;
+		fmat[_EQ] = parseOP;
+		fmat[_QUESTION] = parseOP;
+		fmat[_AT] = parseOP1;
+		fmat[_VAR] = parseOP;
+		fmat[_CHILDER] = parseOP;
+		fmat[_BKSLASH] = parseUNDEF;
+		fmat[_HAT] = parseOP;
+		fmat[_UNDER] = parseSYMBOL;
 		return fmat;
 	}
 	
@@ -147,349 +142,334 @@ public class Tokenizer { // not original
 	/*170  x   171  y   172  z   173  {   174  |   175  }   176  ~   177 del*/
 	_LALPHA, _LALPHA, _LALPHA, _LBR, _VAR, _RBR, _CHILDER, 1,
 	};	
-
-}
-
-final class ParseINDENT implements FTokenizer {
 	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int pos, KMethod thunk) {
-		int ch, c = 0;
-//		while((ch = tenv.source.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= tenv.source.length()) break;
-			if((ch = tenv.source.charAt(pos)) == 0) break;
-			if(ch == '\t') { c += tenv.indent_tab; }
-			else if(ch == ' ') { c += 1; }
-			break;
-		}
-		if(tk != null/* TODO IS_NOTNULL(tk) */) {
-			tk.tt = TK.INDENT;
-//			tk.lpos = 0;		
-		}
-		return pos - 1;
-	}
-}
-
-final class ParseNL implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int pos, KMethod thunk) {
-		tenv.uline += 1;
-		tenv.bol = pos + 1;
-		return Tokenizer.parseINDENT.parse(ctx, tk, tenv, pos + 1, thunk);
-	}
-}
-
-final class ParseNUM implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, pos = tok_start, dot = 0;
-		String ts = tenv.source;
-//		while((ch = ts.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= ts.length()) break;
-			if((ch = ts.charAt(pos)) == 0) break;
-			if(ch == '_') continue; // nothing
-			if(ch == '.') {
-				if(!Character.isDigit(ts.charAt(pos))) {
-					break;
-				}
-				dot++;
-				continue;
-			}
-			if((ch == 'e' || ch == 'E') && (ts.charAt(pos) == '+' || ts.charAt(pos) == '-')) {
+	public static final FTokenizer parseINDENT = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos, KMethod thunk) {
+			int ch, c = 0;
+//			while((ch = tenv.source.charAt(pos++)) != 0) {
+			while(true) {
 				pos++;
-				continue;
-			}
-			if(!Character.isLetterOrDigit(ch)) break;
-		}
-		if(tk != null /* IS_NOTNULL(tk) */) {
-//			tk.text = new KString(ts.substring(tok_start, pos - 1));
-			tk.text = ts.substring(tok_start, pos);
-			tk.tt = (dot == 0) ? TK.INT : TK.FLOAT;
-		}
-//		return pos - 1;  // next
-		return pos;  // next
-	}
-}
-
-final class ParseSYMBOL implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, pos = tok_start;
-		String ts = tenv.source;
-//		while((ch = ts.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= ts.length()) break;
-			if((ch = ts.charAt(pos)) == 0) break;
-			if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
-			break;
-		}
-		Token rtk = tk;
-		if(rtk != null /* IS_NOTNULL(tk) */) {
-			rtk.text = ts.substring(tok_start, pos);
-			assert rtk.text != null;
-			tk.tt = TK.SYMBOL;
-		}
-		return pos;  // next
-//		return pos - 1;  // next
-	}
-}	
-
-final class ParseUSYMBOL implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, pos = tok_start;
-		String ts = tenv.source;
-//		while((ch = ts.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= ts.length()) break;
-			if((ch = ts.charAt(pos)) == 0) break;
-			if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
-			break;
-		}
-		Token rtk = tk;
-		if(rtk != null /* IS_NOTNULL(tk) */) {
-//			tk.text = new KString(ts.substring(tok_start, pos - 1));
-			rtk.text = ts.substring(tok_start, pos);
-			rtk.tt = TK.USYMBOL;
-		}
-//		return pos - 1; // next
-		return pos; // next
-	}
-}
-
-final class ParseMSYMBOL implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, pos = tok_start;
-		String ts = tenv.source;
-//		while((ch = ts.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= ts.length()) break;
-			if((ch = ts.charAt(pos)) == 0) break;
-			if(!(ch < 0)) break;
-		}
-		Token rtk = tk;
-		if(rtk != null /* IS_NOTNULL(tk) */) {
-//			tk.text = new KString(ts.substring(tok_start, pos - 1));
-			rtk.text = ts.substring(tok_start, pos);
-			tk.tt = TK.MSYMBOL;
-		}
-//		return pos - 1; // next
-		return pos; // next
-	}
-}
-
-final class ParseOP1 implements FTokenizer {
-
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		Token rtk = tk;
-		if(rtk != null /* IS_NOTNULL(tk) */) {
-			String s = tenv.source.substring(tok_start);
-			rtk.text = s.substring(0, 1);
-			rtk.tt = TK.OPERATOR;
-			rtk.topch = s.charAt(0);
-		}
-		return tok_start + 1;
-	}
-}
-
-final class ParseOP implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-	
-		int ch, pos = tok_start;
-//		while((ch = tenv.source.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= tenv.source.length()) break;
-			if((ch = tenv.source.charAt(pos)) == 0) break;
-			if(Character.isLetter(ch)) break;
-			switch(ch) {
-			case '<': case '>': case '@': case '$': case '#':
-			case '+': case '-': case '*': case '%': case '/':
-			case '=': case '&': case '?': case ':': case '.':
-			case '^': case '!': case '~': case '|':
-				continue;
-			}
-			break;
-		}
-		Token rtk = tk;
-		if(rtk != null /* IS_NOTNULL(tk) */) {
-			String s = tenv.source.substring(tok_start);
-//			tk.text = new KString(s.substring(0, (pos - 1) - tok_start));
-			rtk.text = s.substring(0, pos - tok_start);
-			rtk.tt = TK.OPERATOR;
-			if(rtk.text.length() == 1) {
-				rtk.topch = rtk.text.charAt(0);
-			}
-		}
-//		return pos - 1;
-		return pos;
-	}
-}
-
-final class ParseLINE implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, pos = tok_start;
-//		while((ch = tenv.source.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= tenv.source.length()) break;
-			if((ch = tenv.source.charAt(pos)) == 0) break;
-			if(ch == '\n') break;
-		}
-//		return pos - 1;/*EOF*/
-		return pos;/*EOF*/
-	}
-}
-
-final class ParseCOMMENT implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, prev = 0, level = 1, pos = tok_start + 2;
-		/*@#nnnn is line number */
-		if(tenv.source.charAt(pos) == '@' && tenv.source.charAt(pos + 1) == '#' && Character.isDigit(tenv.source.charAt(pos + 2))) {
-			// TODO
-			// tenv->uline >>= (sizeof(kshort_t)*8);
-			// tenv->uline = (tenv->uline<<(sizeof(kshort_t)*8)) | (kshort_t)strtoll(tenv->source + pos + 2, NULL, 10);
-		}
-//		while((ch = tenv.source.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= tenv.source.length()) break;
-			if((ch = tenv.source.charAt(pos)) == 0) break;
-			if(ch == '\n') {
-				tenv.uline += 1;
-			}
-			if(prev == '*'  && ch == '/') {
-				level--;
-//				if(level == 0) return pos;
-				if(level == 0) return pos + 1;
-			} else if(prev == '/' && ch == '*') {
-				level++;
-			}
-			prev = ch;
-		}
-		if(tk != null /* CTX.IS_NOTNULL(tk) */) {
-			// TODO perror.h
-			// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with */");
-			// KToken.Token_toERR(ctx, tk, errref);
-		}
-//		return pos - 1;/*EOF*/
-		return pos;/*EOF*/
-	}
-}
-
-final class ParseSLASH implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		String ts = tenv.source.substring(tok_start);
-		if(ts.length() < 2) return Tokenizer.parseOP.parse(ctx, tk, tenv, tok_start, thunk);
-		if(ts.charAt(1) == '/') {
-			return Tokenizer.parseLINE.parse(ctx, tk, tenv, tok_start, thunk);
-		}
-		if(ts.charAt(1) == '*') {
-			return Tokenizer.parseCOMMENT.parse(ctx, tk, tenv, tok_start, thunk);
-		}
-		return Tokenizer.parseOP.parse(ctx, tk, tenv, tok_start, thunk);
-	}	
-}
-
-final class ParseDQUOTE implements FTokenizer {
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, prev = '"', pos = tok_start + 1;
-//		while((ch = tenv.source.charAt(pos++)) != 0) {
-		while(true) {
-			pos++;
-			if(pos >= tenv.source.length()) break;
-			if((ch = tenv.source.charAt(pos)) == 0) break;
-			if(ch == '\n') {
+				if(pos >= tenv.source.length()) break;
+				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if(ch == '\t') { c += tenv.indent_tab; }
+				else if(ch == ' ') { c += 1; }
 				break;
 			}
-			if(ch == '"' && prev != '\\') {
-				Token rtk = tk;
-				if(rtk != null /* CTX.IS_NOTNULL(tk) */) {
-//					tk.text = new KString(tenv.source.substring(tok_start + 1, pos - 1));
-					rtk.text = tenv.source.substring(tok_start + 1, pos);
-					rtk.tt = TK.TEXT;
-				}
-				return pos;
+			if(tk != null/* TODO IS_NOTNULL(tk) */) {
+				tk.tt = TK.INDENT;
+//				tk.lpos = 0;		
 			}
-			prev = ch;
+			return pos - 1;
 		}
-		if(tk != null /* CTX.IS_NOTNULL(tk) */) {
-			// TODO perror.h
-			// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with \"");
-			// KToken.Token_toERR(ctx, tk, errref);
-		}
-//		return pos - 1;
-		return pos;
-	}
-}
+	};
 
-final class ParseSKIP implements FTokenizer {
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		return tok_start + 1;
-	}
-}
-
-final class ParseUNDEF implements FTokenizer {
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		if(tk != null /* IS_NOTNULL(tk) */) {
-			// TODO
-			// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "undefined token character: %c", tenv->source[tok_start]);
-			// KToken.Token_toERR(ctx, tk, errref);
+	public static final FTokenizer parseNL = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos, KMethod thunk) {
+			tenv.uline += 1;
+			tenv.bol = pos + 1;
+			return parseINDENT.parse(ctx, tk, tenv, pos + 1, thunk);
 		}
-//		while(tenv.source.charAt(++tok_start) != 0);
-		while(true) {
-			tok_start++;
-			if(tok_start >= tenv.source.length()) break;
-			if(tenv.source.charAt(tok_start) != 0) break;
-		}
-		return tok_start;
-	}
-}
+	};
 
-final class ParseBLOCK implements FTokenizer { // TODO
-	
-	@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
-		int ch, level = 1, pos = tok_start + 1;
-		FTokenizer[] fmat = tenv.fmat;
-//		tk.lpos += 1;
-		while((ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
-			if(ch == Tokenizer._RBR/*}*/) {
-				level--;
-				if(level == 0) {
-					Token rtk = tk;
-					if(tk != null /* IS_NOTNULL(tk) */) {
-						rtk.text = tenv.source.substring(tok_start + 1, pos);
-						rtk.tt = TK.CODE;
-					}
-					return pos + 1;
-				}
+	public static final FTokenizer parseNUM = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, pos = tok_start, dot = 0;
+			String ts = tenv.source;
+//			while((ch = ts.charAt(pos++)) != 0) {
+			while(true) {
 				pos++;
+				if(pos >= ts.length()) break;
+				if((ch = ts.charAt(pos)) == 0) break;
+				if(ch == '_') continue; // nothing
+				if(ch == '.') {
+					if(!Character.isDigit(ts.charAt(pos))) {
+						break;
+					}
+					dot++;
+					continue;
+				}
+				if((ch == 'e' || ch == 'E') && (ts.charAt(pos) == '+' || ts.charAt(pos) == '-')) {
+					pos++;
+					continue;
+				}
+				if(!Character.isLetterOrDigit(ch)) break;
 			}
-			else if(ch == Tokenizer._LBR/*'{'*/) {
-				level++; pos++;
+			if(tk != null /* IS_NOTNULL(tk) */) {
+//				tk.text = new KString(ts.substring(tok_start, pos - 1));
+				tk.text = ts.substring(tok_start, pos);
+				tk.tt = (dot == 0) ? TK.INT : TK.FLOAT;
 			}
-			else {
-				pos = fmat[ch].parse(ctx, /* TODO K_NULLTOKEN*/null, tenv, pos, null);
-			}
+//			return pos - 1;  // next
+			return pos;  // next
 		}
-		if(tk != null /* CTX.IS_NOTNULL(tk) */) {
-			// TODO
-			// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with }");
-			// Token_toERR(_ctx, tk, errref);
+	};
+
+	public static final FTokenizer parseSYMBOL = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, pos = tok_start;
+			String ts = tenv.source;
+//			while((ch = ts.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= ts.length()) break;
+				if((ch = ts.charAt(pos)) == 0) break;
+				if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
+				break;
+			}
+			Token rtk = tk;
+			if(rtk != null /* IS_NOTNULL(tk) */) {
+				rtk.text = ts.substring(tok_start, pos);
+				assert rtk.text != null;
+				tk.tt = TK.SYMBOL;
+			}
+			return pos;  // next
+//			return pos - 1;  // next
 		}
-		return pos - 1;
-	}	
+	};
+
+	public static final FTokenizer parseUSYMBOL = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, pos = tok_start;
+			String ts = tenv.source;
+//			while((ch = ts.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= ts.length()) break;
+				if((ch = ts.charAt(pos)) == 0) break;
+				if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
+				break;
+			}
+			Token rtk = tk;
+			if(rtk != null /* IS_NOTNULL(tk) */) {
+//				tk.text = new KString(ts.substring(tok_start, pos - 1));
+				rtk.text = ts.substring(tok_start, pos);
+				rtk.tt = TK.USYMBOL;
+			}
+//			return pos - 1; // next
+			return pos; // next
+		}
+	};
+
+	public static final FTokenizer parseMSYMBOL = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, pos = tok_start;
+			String ts = tenv.source;
+//			while((ch = ts.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= ts.length()) break;
+				if((ch = ts.charAt(pos)) == 0) break;
+				if(!(ch < 0)) break;
+			}
+			Token rtk = tk;
+			if(rtk != null /* IS_NOTNULL(tk) */) {
+//				tk.text = new KString(ts.substring(tok_start, pos - 1));
+				rtk.text = ts.substring(tok_start, pos);
+				tk.tt = TK.MSYMBOL;
+			}
+//			return pos - 1; // next
+			return pos; // next
+		}
+	};
+
+	public static final FTokenizer parseOP1 = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			Token rtk = tk;
+			if(rtk != null /* IS_NOTNULL(tk) */) {
+				String s = tenv.source.substring(tok_start);
+				rtk.text = s.substring(0, 1);
+				rtk.tt = TK.OPERATOR;
+				rtk.topch = s.charAt(0);
+			}
+			return tok_start + 1;
+		}
+	};
+
+	public static final FTokenizer parseOP = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, pos = tok_start;
+//			while((ch = tenv.source.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= tenv.source.length()) break;
+				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if(Character.isLetter(ch)) break;
+				switch(ch) {
+				case '<': case '>': case '@': case '$': case '#':
+				case '+': case '-': case '*': case '%': case '/':
+				case '=': case '&': case '?': case ':': case '.':
+				case '^': case '!': case '~': case '|':
+					continue;
+				}
+				break;
+			}
+			Token rtk = tk;
+			if(rtk != null /* IS_NOTNULL(tk) */) {
+				String s = tenv.source.substring(tok_start);
+//				tk.text = new KString(s.substring(0, (pos - 1) - tok_start));
+				rtk.text = s.substring(0, pos - tok_start);
+				rtk.tt = TK.OPERATOR;
+				if(rtk.text.length() == 1) {
+					rtk.topch = rtk.text.charAt(0);
+				}
+			}
+//			return pos - 1;
+			return pos;
+		}
+	};
+
+	public static final FTokenizer parseLINE = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, pos = tok_start;
+//			while((ch = tenv.source.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= tenv.source.length()) break;
+				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if(ch == '\n') break;
+			}
+//			return pos - 1;/*EOF*/
+			return pos;/*EOF*/
+		}
+	};
+
+	public static final FTokenizer parseCOMMENT = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, prev = 0, level = 1, pos = tok_start + 2;
+			/*@#nnnn is line number */
+			if(tenv.source.charAt(pos) == '@' && tenv.source.charAt(pos + 1) == '#' && Character.isDigit(tenv.source.charAt(pos + 2))) {
+				// TODO
+				// tenv->uline >>= (sizeof(kshort_t)*8);
+				// tenv->uline = (tenv->uline<<(sizeof(kshort_t)*8)) | (kshort_t)strtoll(tenv->source + pos + 2, NULL, 10);
+			}
+//			while((ch = tenv.source.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= tenv.source.length()) break;
+				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if(ch == '\n') {
+					tenv.uline += 1;
+				}
+				if(prev == '*'  && ch == '/') {
+					level--;
+//					if(level == 0) return pos;
+					if(level == 0) return pos + 1;
+				} else if(prev == '/' && ch == '*') {
+					level++;
+				}
+				prev = ch;
+			}
+			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
+				// TODO perror.h
+				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with */");
+				// KToken.Token_toERR(ctx, tk, errref);
+			}
+//			return pos - 1;/*EOF*/
+			return pos;/*EOF*/
+		}
+	};
+
+	public static final FTokenizer parseSLASH = new FTokenizer() {
+		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			String ts = tenv.source.substring(tok_start);
+			if(ts.length() < 2) return parseOP.parse(ctx, tk, tenv, tok_start, thunk);
+			if(ts.charAt(1) == '/') {
+				return parseLINE.parse(ctx, tk, tenv, tok_start, thunk);
+			}
+			if(ts.charAt(1) == '*') {
+				return parseCOMMENT.parse(ctx, tk, tenv, tok_start, thunk);
+			}
+			return parseOP.parse(ctx, tk, tenv, tok_start, thunk);
+		}	
+	};
+
+	public static final FTokenizer parseDQUOTE = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, prev = '"', pos = tok_start + 1;
+//			while((ch = tenv.source.charAt(pos++)) != 0) {
+			while(true) {
+				pos++;
+				if(pos >= tenv.source.length()) break;
+				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if(ch == '\n') {
+					break;
+				}
+				if(ch == '"' && prev != '\\') {
+					Token rtk = tk;
+					if(rtk != null /* CTX.IS_NOTNULL(tk) */) {
+//						tk.text = new KString(tenv.source.substring(tok_start + 1, pos - 1));
+						rtk.text = tenv.source.substring(tok_start + 1, pos);
+						rtk.tt = TK.TEXT;
+					}
+					return pos;
+				}
+				prev = ch;
+			}
+			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
+				// TODO perror.h
+				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with \"");
+				// KToken.Token_toERR(ctx, tk, errref);
+			}
+//			return pos - 1;
+			return pos;
+		}
+	};
+
+	public static final FTokenizer parseSKIP = new FTokenizer() {
+		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			return tok_start + 1;
+		}
+	};
+
+	public static final FTokenizer parseUNDEF = new FTokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			if(tk != null /* IS_NOTNULL(tk) */) {
+				// TODO
+				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "undefined token character: %c", tenv->source[tok_start]);
+				// KToken.Token_toERR(ctx, tk, errref);
+			}
+//			while(tenv.source.charAt(++tok_start) != 0);
+			while(true) {
+				tok_start++;
+				if(tok_start >= tenv.source.length()) break;
+				if(tenv.source.charAt(tok_start) != 0) break;
+			}
+			return tok_start;
+		}
+	};
+
+	public static final FTokenizer parseBLOCK = new FTokenizer() {
+		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+			int ch, level = 1, pos = tok_start + 1;
+			FTokenizer[] fmat = tenv.fmat;
+//			tk.lpos += 1;
+			while((ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
+				if(ch == Tokenizer._RBR/*}*/) {
+					level--;
+					if(level == 0) {
+						Token rtk = tk;
+						if(tk != null /* IS_NOTNULL(tk) */) {
+							rtk.text = tenv.source.substring(tok_start + 1, pos);
+							rtk.tt = TK.CODE;
+						}
+						return pos + 1;
+					}
+					pos++;
+				}
+				else if(ch == Tokenizer._LBR/*'{'*/) {
+					level++; pos++;
+				}
+				else {
+					pos = fmat[ch].parse(ctx, /* TODO K_NULLTOKEN*/null, tenv, pos, null);
+				}
+			}
+			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
+				// TODO
+				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with }");
+				// Token_toERR(_ctx, tk, errref);
+			}
+			return pos - 1;
+		}	
+	};
 }
 
