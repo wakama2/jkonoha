@@ -286,15 +286,9 @@ public class KonohaSpace extends KObject {
 		}*/
 		return ct;
 	}
-
-	public void eval(CTX ctx, String script, long uline) {
-		ctx.modsugar.setup();
-		
-		List<Token> tls = new ArrayList<Token>();
-		int pos = tls.size();
-		tokenize(ctx, script, uline, tls);
-		
-		// debug: dump tokens
+	
+	private void dumpTokens(List<Token> tls) {
+			// debug: dump tokens
 		for(int i = 0; i < tls.size(); i++) {
 			Token rtk = tls.get(i);
 			System.out.print("{ token type:" + rtk.tt + ", ");
@@ -306,26 +300,23 @@ public class KonohaSpace extends KObject {
 			}
 			System.out.println("uline: " + rtk.uline + " }");
 		}
-		
-		Parser p = new Parser();
-		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
-		System.out.println("block size = " + bk.blocks.size());
-		Stmt s = bk.blocks.get(0);
-		System.out.println("stmt = " + s);
-		Expr o = (Expr)s.getObject("$expr");
-		System.out.println("cons size = " + o.cons.size());
-		//evalBlock(ctx, bk);
 	}
 
-/*	private void evalBlock(CTX ctx, Block bk) {
-		Block bk1 = ctx.ctxsugar.singleBlock;
-		KMethod mtd = new KMethod(ctx, KMethod.Static, 0, 0, 0);
-		mtd.setParam(TY.OBJECT, 0, null);
-		int i, jmpresult;
-		int result = K_CONTINUE;
+	public void eval(CTX ctx, String script, long uline) {
+		ctx.modsugar.setup();
 		
-		//TODO
-	}*/
+		List<Token> tls = new ArrayList<Token>();
+		int pos = tls.size();
+		tokenize(ctx, script, uline, tls);
+		dumpTokens(tls);
+		
+		Block bk = Parser.getInstance().newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		evalBlock(ctx, bk);
+	}
+
+	private void evalBlock(CTX ctx, Block bk) {
+		
+	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {
 		//TODO

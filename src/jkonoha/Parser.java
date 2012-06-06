@@ -3,7 +3,13 @@ package jkonoha;
 import java.util.*;
 
 public class Parser {
-
+	
+	private final static Parser singletonObject = new Parser();
+	
+	public static Parser getInstance() {
+		return singletonObject;
+	}
+	
 	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block(ctx, ks);
 		if (parent != null) {
