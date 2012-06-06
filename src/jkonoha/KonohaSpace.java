@@ -106,15 +106,15 @@ public class KonohaSpace extends KObject {
 			return parent;
 		}
 		//DBG_P("creating new syntax %s old=%p", T_kw(kw), parent);
-		Syntax syn = new Syntax(); //TODO fix Syntax.java
+		IntSyntax syn = new IntSyntax(); //TODO fix Syntax.java
 		syn.kw = kw;
 		syn.ty  = TY.unknown;
-		syn.op1 = 0/*MN_NONAME*/;
-		syn.op2 = 0/*MN_NONAME*/;
-		syn.ParseExpr = ctx.modsugar.UndefinedParseExpr;
+		syn.op1 = "TODOop1"/*MN_NONAME*/;
+		syn.op2 = "TODOop2"/*MN_NONAME*/;
+		/*syn.ParseExpr = ctx.modsugar.UndefinedParseExpr;
 		syn.TopStmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
 		syn.StmtTyCheck = ctx.modsugar.UndefinedStmtTyCheck;
-		syn.ExprTyCheck = ctx.modsugar.UndefinedExprTyCheck;
+		syn.ExprTyCheck = ctx.modsugar.UndefinedExprTyCheck;*/
 		syntaxMapNN.put(kw, syn);
 		//syn.parent = parent;
 		return syn;

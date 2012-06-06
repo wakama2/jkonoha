@@ -109,7 +109,7 @@ public class Stmt extends KObject {
 			}
 			else if (rule.tt == TK.METANAME) {
 				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
-				if (syn == null || syn.ParseStmtNULL == null) {//TODO Syntax has KMethod ParseStmtNULL
+				if (syn == null/* || syn.ParseStmtNULL == null*/) {//TODO Syntax has KMethod ParseStmtNULL
 					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
 					return -1;
 				}
@@ -185,7 +185,7 @@ public class Stmt extends KObject {
 	private boolean isUnaryOp(CTX ctx, Token tk)
 	{
 		Syntax syn = parentNULL.ks.syntax(ctx, tk.kw);
-		return (syn.op1 != 0/*MN.NONAME*/);//TODO what is MN_NONAME?
+		return (syn.op1 != "TODOop1"/*MN.NONAME*/);//TODO what is MN_NONAME?
 	}
 	
 	private int skipUnaryOp(CTX ctx, List<Token> tls, int s, int e) {
