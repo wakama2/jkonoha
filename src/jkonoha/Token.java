@@ -25,8 +25,8 @@ public class Token extends KObject {
 	}
 	
 	boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
-		String kw = "dummy"/*keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME)*/;
-		if(kw != "dummy"/*FN_NONAME*/) {
+		String kw = this.text;
+		if(kw != null) {//"dummy"/*FN_NONAME*/) {
 			Syntax syn = ks.syntax(ctx,kw);
 			if(syn != null) {
 				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)

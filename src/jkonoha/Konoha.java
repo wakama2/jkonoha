@@ -47,11 +47,6 @@ public class Konoha {
 //		
 //	}
 	
-//	public static int keyword(CTX ctx, String name, int def) {
-//		KModSugar kmodsugar = (KModSugar)ctx.kmodsugar();
-//		return kmodsugar.keywordMapNN.getcode(ctx, kmodsugar.keywordList, name, def);
-//	}
-	
 	public static void SUGAR_P_ERR(long uline, int n, String fmt, Object...args) {
 		System.err.printf(fmt, args);
 	}
@@ -59,7 +54,7 @@ public class Konoha {
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();
-		k.eval(ctx, "123  + 456");
+		k.eval(ctx, "123  + 456 + 789");
 //		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
 //		k.eval(ctx, "fibo(10);");
 //		k.load("file.k");

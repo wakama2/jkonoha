@@ -97,7 +97,7 @@ public class Parser {
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(tk.kw != KW.Err) break;  // already parsed
+			if(!tk.kw.equals(KW.Err)) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
 				tk1.tt = TK.METANAME;
 				tk1.kw = KW.Err;
@@ -125,7 +125,7 @@ public class Parser {
 			if(tk.topch == delim && tk.tt == TK.OPERATOR) {
 				return i+1;
 			}
-			if(tk.kw != KW.Err) {
+			if(!tk.kw.equals(KW.Err)) {
 				tlsdst.add(tk);
 				continue;
 			}
@@ -182,6 +182,7 @@ public class Parser {
 			tk.kw = KW.Brace;
 		}
 		if (tk.kw == KW.Type) {
+			dst.add(tk);
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
 				if (tkN.topch != '[' ) break;

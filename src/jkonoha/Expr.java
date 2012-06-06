@@ -9,7 +9,7 @@ public class Expr extends KObject {
 	
 	//union
 	public KObject data;
-	public List<Expr> cons;
+	public List<Object> cons;
 	public Expr single;
 	public Block block;
 	
@@ -22,12 +22,12 @@ public class Expr extends KObject {
 	public int cid;
 
 	public Expr at(int n) {
-		return cons.get(n);
+		return (Expr)cons.get(n);
 	}
 	
 	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
-	//TODO
-	return null;
+		//TODO
+		throw new RuntimeException();
 	}
 }
 class ConstExpr extends Expr {  // as if NConstExpr 

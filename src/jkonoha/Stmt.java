@@ -99,7 +99,7 @@ public class Stmt extends KObject {
 			Token tk = tls.get(ti);
 			uline = tk.uline;
 			if (rule.tt == TK.CODE) {
-				if (rule.kw != tk.kw) {
+				if (!rule.kw.equals(tk.kw)) {
 					if (optional)	return s;
 					//kToken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
 					throw new RuntimeException(syntax.kw + " needs " + rule.kw);
@@ -150,6 +150,9 @@ public class Stmt extends KObject {
 					int next = matchSyntaxRule(ctx, rule.sub, uline, tk.sub, 0, tk.sub.size(), false);
 					if (next == -1) return -1;
 					ti++;
+				} else {
+					if(optional) return s;
+					throw new RuntimeException();
 				}
 			}
 		}
@@ -158,7 +161,8 @@ public class Stmt extends KObject {
 				Token rule = rules.get(ri);
 				if (rule.tt != TK.AST_OPTIONAL) {
 					//SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
-					return -1;
+					throw new RuntimeException(syntax.kw + " needs syntax pattern: " + rule.kw);
+					//return -1;
 				}
 			}
 			//WARN_Ignored(ctx, tls, ti, e);
@@ -168,11 +172,11 @@ public class Stmt extends KObject {
 	
 	public boolean parseSyntaxRule(CTX ctx, List<Token> tls, int s, int e) {
 		boolean ret = false;
-		Syntax syn = parentNULL.ks.getSyntaxRule(ctx, tls, s, e);//TODO KonohaSpace_getSyntaxRule
+		Syntax syn = parentNULL.ks.getSyntaxRule(ctx, tls, s, e);
 		assert (syn != null);
 		if (syn.syntaxRuleNULL != null) {
 			syntax = syn;
-			ret = (matchSyntaxRule(ctx, syn.syntaxRuleNULL, uline, tls, s, e, false) != -1);//TODO matchSyntaxRule
+			ret = (matchSyntaxRule(ctx, syn.syntaxRuleNULL, uline, tls, s, e, false) != -1);
 		}
 		else {
 			Konoha.SUGAR_P_ERR(uline, 0, "undefined syntax rule for '%s'", syn.kw);

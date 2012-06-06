@@ -3,12 +3,12 @@ package jkonoha;
 import java.util.*;
 
 public abstract class Syntax {
-	public final String kw;
-	public int flag;
+	public String kw;   // id
+	public int flag; // flag
 	public String rule;
 	public List<Token> syntaxRuleNULL;
 
-	public int ty;
+	public int ty = TY.unknown;        // "void" ==> TY_void
 	public int priority;  // op2   
 	public String op2;
 	public String op1;
@@ -26,7 +26,7 @@ public abstract class Syntax {
 		//TODO default parseStmt?
 		return 0;
 	}
-	
+
 	public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
 		//TODO tycheck.h:107
 		return null;
@@ -40,7 +40,6 @@ public abstract class Syntax {
 	public final/*FIXME*/ boolean topStmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
 		return stmtTyCheck(ctx, stmt, gamma);
 	}
-	
 }
 
 /*private void dumpTokenArray (CTX ctx, int nest, List<Token> a, int s, int e) {
@@ -53,6 +52,13 @@ public abstract class Syntax {
 		}
 	}
 }*/
+
+class ERRSyntax extends Syntax {
+	public ERRSyntax() {
+		super("$ERR");
+		this.flag = SYNFLAG.StmtBreakExec;
+	}
+}
 
 class ExprSyntax extends Syntax {
 	public ExprSyntax() {
@@ -77,6 +83,74 @@ class ExprSyntax extends Syntax {
 	}
 }
 
+class SYMBOLSyntax extends Syntax {
+	public SYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		super("$SYMBOL");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		int r = -1;
+		Token tk = tls.get(s);
+		if(tk.tt == TK.SYMBOL) {
+			stmt.setObject(name, tk);
+			r = s + 1;
+		}
+		return r;
+	}
+//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		return expr.tyCheckVariable2(ctx, gamma, ty);
+//	}
+}
+
+class USYMBOLSyntax extends Syntax {
+	public USYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		super("$USYMBOL");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		int r = -1;
+		Token tk = tls.get(s);
+		if(tk.tt == TK.USYMBOL) {
+			stmt.setObject(name, tk);
+			r = s + 1;
+		}
+		return r;
+	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		DBG_P("USYMBOL...");
+//		Token tk = expr.tk;
+//		int ukey = kuname(S_text(tk.text), S_size(tk.text), 0, FN_NONAME);
+//		if(ukey != FN_NONAME){
+//			Kvs kv = gamma.genv.ks.getConstNULL(ctx, ukey);
+//			if(kv != null) {
+//				if(FN_isBOXED(kv.key)) {
+//					expr.setConstValue(kv.ty, kv.oval);
+//				}
+//				else {
+//					expr.setNConstValue(kv.ty, kv.uval);
+//				}
+//				return expr;
+//			}
+//		}
+//		KObject v = gamma.genv.ks.getSymbolValueNULL(ctx, S_text(tk.text), S_size(tk.text));
+//		Expr texpr = (v == null) ?
+//		kToken_p(tk, ERR_, "undefined name: %s", kToken_s(tk)) : kExpr_setConstValue(expr, O_cid(v), v);
+//		return texpr;
+		return null;
+	}
+}
+
+class TextSyntax extends Syntax {
+	public TextSyntax() {
+		super("$TEXT");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+		//return expr.tyCheckVariable2(ctx, gamma, ty);
+		return null;
+	}
+}
+
 class IntSyntax extends TermSyntax {
 	public IntSyntax() {
 		super("$INT");
@@ -87,6 +161,44 @@ class IntSyntax extends TermSyntax {
 		long l = Long.parseLong(tk.text);
 		return new ConstExpr(l);
 	}
+}
+
+class FloatSyntax extends TermSyntax {
+	public FloatSyntax() {
+		super("$FLOAT");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+}
+
+class TypeSyntax extends TermSyntax {
+	public TypeSyntax() {
+		super("$type");
+		this.flag = SYNFLAG.ExprTerm;
+		this.rule = "$type $expr";
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		int r = -1;
+		Token tk = tls.get(s);
+		if(tk.kw == KW.Type) {
+			stmt.setObject(name, tk);
+			r = s + 1;
+		}
+		return r;
+	}
+//	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
+//		Token tk  = stmt.token(KW.Type, null);
+//		Expr expr = stmt.expr(KW.Expr, null);
+//		if(tk == null || tk.kw != KW.Type || expr == null) {
+//			ERR_SyntaxError(stmt.uline);
+//			return false;
+//		}
+//		stmt.done(); //kStmt_done(stmt)
+//		return expr.declType(ctx, gamma, tk.ty, stmt);
+//	}
+//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		assert(expr.tk.kw == KW.Type);
+//		return expr.setVariable(null, expr.tk.ty, 0, gamma);
+//	}
 }
 
 abstract class TermSyntax extends Syntax {
@@ -119,18 +231,19 @@ abstract class OpSyntax extends Syntax {
 		}
 		if (s == c) {
 			expr = new Expr();
-			exprConsSet(rexpr);
+			exprConsSet(expr, rexpr);
 		}
 		else {
-			Expr  lexpr = stmt.newExpr2(ctx, tls, s, c);
+			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
 			expr = new Expr();
-			exprConsSet(lexpr, rexpr);
+			exprConsSet(expr, tk, lexpr, rexpr);
 		}
 		return expr;
 	}
-	private void exprConsSet(Expr... exprs) {
-		for (Expr expr : exprs) {
-			expr.cons.add(expr);
+	private void exprConsSet(Expr e, Object... exprs) {
+		e.cons = new ArrayList<Object>();
+		for (Object expr : exprs) {
+			e.cons.add(expr);
 		}
 	}
 }

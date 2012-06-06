@@ -92,6 +92,7 @@ public class KonohaSpace extends KObject {
 				new ExprSyntax(),
 				new IntSyntax(),
 				new AddSyntax(),
+				new TypeSyntax(),
 				//TODO
 		};
 		defineSyntax(ctx, s);
@@ -103,6 +104,7 @@ public class KonohaSpace extends KObject {
 		//TODO
 		if(kw.equals("Int")) kw = "$INT";
 		if(kw.equals("Expr")) kw = "$expr";
+		if(kw.equals("Type")) kw = "$type";
 		while(ks != null) {
 			if(ks.syntaxMapNN != null) {
 				Syntax parent = ks.syntaxMapNN.get(kw);
@@ -310,14 +312,8 @@ public class KonohaSpace extends KObject {
 		System.out.println("block size = " + bk.blocks.size());
 		Stmt s = bk.blocks.get(0);
 		System.out.println("stmt = " + s);
-		s.dumpObjects();
 		Expr o = (Expr)s.getObject("$expr");
-		o.dumpObjects();
-		for(Expr e : o.cons) {
-			e.dumpObjects();
-		}
-		
-		
+		System.out.println("cons size = " + o.cons.size());
 		//evalBlock(ctx, bk);
 	}
 
