@@ -100,7 +100,7 @@ abstract class TermSyntax extends Syntax {
 		Expr expr = new Expr();
 		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
 		//Expr_setTerm(expr, 1);
-		//KSETv(expr->tk, tk);
+		expr.tk = tk;
 		return expr;
 	}
 }

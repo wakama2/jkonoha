@@ -312,6 +312,7 @@ public class KonohaSpace extends KObject {
 		System.out.println("stmt = " + s);
 		s.dumpObjects();
 		Expr o = (Expr)s.getObject("$expr");
+		o.dumpObjects();
 		for(Expr e : o.cons) {
 			e.dumpObjects();
 		}

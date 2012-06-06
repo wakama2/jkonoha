@@ -102,7 +102,8 @@ public class Stmt extends KObject {
 				if (rule.kw != tk.kw) {
 					if (optional)	return s;
 					//kToken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
-					return -1;
+					throw new RuntimeException(syntax.kw + " needs " + rule.kw);
+					//return -1;
 				}
 				ti++;
 				continue;
@@ -111,7 +112,8 @@ public class Stmt extends KObject {
 				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
 				if (syn == null/* || syn.ParseStmtNULL == null*/) {//TODO Syntax has KMethod ParseStmtNULL
 					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
-					return -1;
+					throw new RuntimeException("unknown syntax pattern: " + rule.kw);
+					//return -1;
 				}
 				int c = e;
 				if (ri +1 < ruleSize && rules.get(ri+1).tt == TK.CODE) {
@@ -119,7 +121,8 @@ public class Stmt extends KObject {
 					if (c == -1) {
 						if (optional) return s;
 						//kTOken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
-						return -1;
+						throw new RuntimeException(syntax.kw + " needs " + rule.kw);
+						//return -1;
 					}
 					ri++;
 				}
@@ -129,6 +132,7 @@ public class Stmt extends KObject {
 					if (optional) return s;
 					if (errCount == ctx.ctxsugar.errCount) {
 						//kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
+						throw new RuntimeException("needs syntax pattern");
 					}
 					return -1;
 				}
