@@ -305,7 +305,7 @@ public class KonohaSpace extends KObject {
 		System.out.println("block size = " + bk.blocks.size());
 		Stmt s = bk.blocks.get(0);
 		System.out.println("stmt = " + s);
-		Object s0 = s.getObject(0);
+		Object s0 = s.getObject("0");
 		System.out.println("stmt[0] = " + s0);
 		
 		//evalBlock(ctx, bk);

@@ -4,8 +4,6 @@ class Param {
 	int ty;
 	int fn;
 	
-
-	
 	private int Kparam(CTX ctx, int rtype, int psize, Param[] p) {
 		int hcode = hashparam(rtype, psize, p);
 		return hcode;//Kmap_getparamid(ctx, ctx.share.paramMapNN, ctx.share.paramList, hcode, equalsParam, rtype, psize, this);

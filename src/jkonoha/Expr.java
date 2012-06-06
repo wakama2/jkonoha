@@ -47,7 +47,11 @@ class TermExpr extends Expr {
 }
 
 class ConstExpr extends Expr {  // as if NConstExpr 
-	public Object data;
+	public final Object data;
+	
+	public ConstExpr(Object data) {
+		this.data = data;
+	}
 	
 	@Override public Object getData() {
 		return data;

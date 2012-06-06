@@ -227,7 +227,7 @@ public class Parser {
 			KClass ct = null;
 			if(psize > 0) {
 				ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
-				if(ct.bcid == KClass.CLASS_Func) {
+				if(ct.bcid == CLASS.Func) {
 					//TODO
 //					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
 				}
