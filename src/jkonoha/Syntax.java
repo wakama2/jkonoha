@@ -43,13 +43,31 @@ public abstract class Syntax {
 	
 }
 
+/*private void dumpTokenArray (CTX ctx, int nest, List<Token> a, int s, int e) {
+	if (verboseSugar) {
+		if (nest ==0) System.out.println ("rf. dumpTokenArray");
+		while (s < e) {
+			Token tk = a.get(s);
+			dumpIndent(nest);
+			if (tk.sub.h.ct.bcid == TY.ARRAY)
+		}
+	}
+}*/
+
 class ExprSyntax extends Syntax {
 	public ExprSyntax() {
 		super("$expr");
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
-		// TODO ParseStmt_Expr
-		return 0;
+		int r = -1;
+		//dumpTokenArray (ctx, 0, tls, s, e);
+		Expr expr = stmt.newExpr2(ctx, tls, s, e);
+		if (expr != null) {
+			//dumpExpr (ctx, 0, 0, expr);
+			stmt.setObject(name, expr);
+			r = e;
+		}
+		return r;
 	}
 	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
 		boolean r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, TY.var, TPOL.ALLOWVOID);
@@ -93,6 +111,10 @@ abstract class OpSyntax extends Syntax {
 class AddSyntax extends OpSyntax {
 	public AddSyntax() {
 		super("+");
+		this.flag = SYNFLAG.ExprOp;
+		this.op1 = "opPULS";
+		this.op2 = "opADD";
+		this.priority = 64;
 	}
 }
 
