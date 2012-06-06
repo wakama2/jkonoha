@@ -1,6 +1,8 @@
 package jkonoha;
 
 public interface KW {
+	String[] TK_KW = {"Err", "Expr", "Symbol", "Usymbol", "Text", "Int", "Float", "Type", "Parenthesis", "Brancet", "Brace"};
+
 	String Err     = "Err";
 	String Expr    = "Expr";
 	String Symbol  = "Symbol";
@@ -17,7 +19,6 @@ public interface KW {
 	String Brace        = "Brace";
 	
 	String[] TK_KW = {"Err", "Expr", "Symbol", "Usymbol", "Text", "Int", "Float", "Type", "Parenthesis", "Brancet", "Brace"};
-
 
 	String Block   = "Block";
 	String Params  = "Params";

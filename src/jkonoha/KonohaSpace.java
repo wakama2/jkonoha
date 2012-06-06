@@ -91,6 +91,14 @@ public class KonohaSpace extends KObject {
 		return syn;
 	}
 	
+	public void defineDefaultSyntax(CTX ctx) {
+		Syntax[] s = {
+				new ExprSyntax(),
+				//TODO
+		};
+		defineSyntax(ctx, s);
+	}
+	
 	public Syntax syntax(CTX ctx, String kw) {
 		assert(this != null);/* scan-build: remove warning */
 		Syntax parent = syntaxMapNN.get(kw);
@@ -213,6 +221,12 @@ public class KonohaSpace extends KObject {
 		
 		Parser p = new Parser();
 		Block bk = p.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		System.out.println("block size = " + bk.blocks.size());
+		Stmt s = bk.blocks.get(0);
+		System.out.println("stmt = " + s);
+		Object s0 = s.getObject(0);
+		System.out.println("stmt[0] = " + s0);
+		
 		//evalBlock(ctx, bk);
 	}
 
