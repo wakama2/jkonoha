@@ -311,6 +311,11 @@ public class KonohaSpace extends KObject {
 		Stmt s = bk.blocks.get(0);
 		System.out.println("stmt = " + s);
 		s.dumpObjects();
+		Expr o = (Expr)s.getObject("$expr");
+		for(Expr e : o.cons) {
+			e.dumpObjects();
+		}
+		
 		
 		//evalBlock(ctx, bk);
 	}

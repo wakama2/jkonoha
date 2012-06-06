@@ -215,8 +215,8 @@ public class Compiler implements Opcodes {
 	}
 	
 	private void asmCall(int a, Expr expr, int shift, int espidx) {
-		List<Expr> l = expr.getCons();
-		KMethod mtd = (KMethod)expr.cons.get(0);
+		List<Expr> l = expr.cons;
+		KMethod mtd = null;//(KMethod)expr.cons.get(0);//TODO
 		//int s = mtd.isStatic() ? 2 : 1;//TODO
 		int s = 1;
 		int thisidx = espidx + K.CALLDELTA;
@@ -231,10 +231,10 @@ public class Compiler implements Opcodes {
 		Expr exprL = expr.at(1);
 		Expr exprR = expr.at(2);
 		if(exprL.build == TEXPR.LOCAL) {
-			asmExpr(exprL.getIndex(), exprR, shift, espidx);
+			asmExpr(exprL.index, exprR, shift, espidx);
 			if(a != espidx) {
 				Type type = typeStack.peek();
-				String name = "local_" + exprL.getIndex();
+				String name = "local_" + exprL.index;
 				addLocal(name, type);
 				storeLocal(name);
 			}
@@ -246,7 +246,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmOr(int a, Expr expr, int shift, int espidx) {
-		List<Expr> l = expr.getCons();
+		List<Expr> l = expr.cons;
 		Label lbTRUE = new Label();
 		Label lbFALSE = new Label();
 		for(int i=1; i<l.size(); i++) {
@@ -260,7 +260,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmAnd(int a, Expr expr, int shift, int espidx) {
-		List<Expr> l = expr.getCons();
+		List<Expr> l = expr.cons;
 		Label lbTRUE = new Label();
 		Label lbFALSE = new Label();
 		for(int i=1; i<l.size(); i++) {
@@ -277,7 +277,7 @@ public class Compiler implements Opcodes {
 		switch(expr.build) {
 		case TEXPR.CONST:
 		case TEXPR.NCONST:
-			loadConst(expr.getData());
+			loadConst(expr.data);
 			break;
 		case TEXPR.NEW:
 			//TODO
@@ -287,10 +287,10 @@ public class Compiler implements Opcodes {
 			typeStack.push(Type.getType(Object.class));//TODO
 			break;
 		case TEXPR.LOCAL:
-			loadLocal("local_" + expr.getIndex());
+			loadLocal("local_" + expr.index);
 			break;
 		case TEXPR.BLOCK:
-			asmBlock((Block)expr.getData(), espidx);
+			asmBlock((Block)expr.data, espidx);
 			//NMOV
 			break;
 		case TEXPR.FIELD:
