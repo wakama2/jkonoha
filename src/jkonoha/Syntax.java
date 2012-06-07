@@ -97,9 +97,9 @@ class SYMBOLSyntax extends Syntax {
 		}
 		return r;
 	}
-	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-		return expr.tyCheckVariable2(ctx, gamma, ty);
-	}
+//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		return expr.tyCheckVariable2(ctx, gamma, ty);
+//	}
 }
 
 class USYMBOLSyntax extends Syntax {
@@ -116,27 +116,27 @@ class USYMBOLSyntax extends Syntax {
 		}
 		return r;
 	}
-	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-		DBG_P("USYMBOL...");
-		Token tk = expr.tk;
-		int ukey = kuname(S_text(tk.text), S_size(tk.text), 0, FN_NONAME);
-		if(ukey != FN_NONAME){
-			Kvs kv = gamma.genv.ks.getConstNULL(ctx, ukey);
-			if(kv != null) {
-				if(FN_isBOXED(kv.key)) {
-					expr.setConstValue(kv.ty, kv.oval);
-				}
-				else {
-					expr.setNConstValue(kv.ty, kv.uval);
-				}
-				return expr;
-			}
-		}
-		KObject v = gamma.genv.ks.getSymbolValueNULL(ctx, S_text(tk.text), S_size(tk.text));
-		Expr texpr = (v == null) ?
-				kToken_p(tk, ERR_, "undefined name: %s", kToken_s(tk)) : kExpr_setConstValue(expr, O_cid(v), v);
-				return texpr;
-	}
+//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		DBG_P("USYMBOL...");
+//		Token tk = expr.tk;
+//		int ukey = kuname(S_text(tk.text), S_size(tk.text), 0, FN_NONAME);
+//		if(ukey != FN_NONAME){
+//			Kvs kv = gamma.genv.ks.getConstNULL(ctx, ukey);
+//			if(kv != null) {
+//				if(FN_isBOXED(kv.key)) {
+//					expr.setConstValue(kv.ty, kv.oval);
+//				}
+//				else {
+//					expr.setNConstValue(kv.ty, kv.uval);
+//				}
+//				return expr;
+//			}
+//		}
+//		KObject v = gamma.genv.ks.getSymbolValueNULL(ctx, S_text(tk.text), S_size(tk.text));
+//		Expr texpr = (v == null) ?
+//				kToken_p(tk, ERR_, "undefined name: %s", kToken_s(tk)) : kExpr_setConstValue(expr, O_cid(v), v);
+//				return texpr;
+//	}
 }
 
 class TextSyntax extends Syntax {
@@ -144,9 +144,9 @@ class TextSyntax extends Syntax {
 		super("$TEXT");
 		this.flag = SYNFLAG.ExprTerm;
 	}
-	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-		return expr.tyCheckVariable2(ctx, gamma, ty);
-	}
+//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		return expr.tyCheckVariable2(ctx, gamma, ty);
+//	}
 }
 
 class IntSyntax extends TermSyntax {
@@ -183,20 +183,20 @@ class TypeSyntax extends Syntax {
 		}
 		return r;
 	}
-	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
-		Token tk  = stmt.token(KW.Type, null);
-		Expr expr = stmt.expr(KW.Expr, null);
-		if(tk == null || tk.kw != KW.Type || expr == null) {
-			ERR_SyntaxError(stmt.uline);
-			return false;
-		}
-		stmt.done(); //kStmt_done(stmt)
-		return expr.declType(ctx, gamma, tk.ty, stmt);
-	}
-	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-		assert(expr.tk.kw == KW.Type);
-		return expr.setVariable(null, expr.tk.ty, 0, gamma);
-	}
+//	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
+//		Token tk  = stmt.token(KW.Type, null);
+//		Expr expr = stmt.expr(KW.Expr, null);
+//		if(tk == null || tk.kw != KW.Type || expr == null) {
+//			ERR_SyntaxError(stmt.uline);
+//			return false;
+//		}
+//		stmt.done(); //kStmt_done(stmt)
+//		return expr.declType(ctx, gamma, tk.ty, stmt);
+//	}
+//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+//		assert(expr.tk.kw == KW.Type);
+//		return expr.setVariable(null, expr.tk.ty, 0, gamma);
+//	}
 }
 
 abstract class TermSyntax extends Syntax {
