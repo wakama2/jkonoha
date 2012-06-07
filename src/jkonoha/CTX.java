@@ -25,7 +25,7 @@ public class CTX extends KObject {
 	public void DBG_P(String fmt, Object...args) {
 		if(debug) {
 			StackTraceElement e = Thread.currentThread().getStackTrace()[2];
-			System.out.printf("DEBUG(%s/%s:%d) ", e.getClassName(), e.getMethodName() ,e.getLineNumber());
+			System.out.printf("DEBUG(%s.%s:%d) ", e.getClassName(), e.getMethodName() ,e.getLineNumber());
 			System.out.printf(fmt, args);
 			System.out.println();
 		}

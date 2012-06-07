@@ -146,7 +146,7 @@ public class Parser {
 				KClass ct = ks.getCT(ctx, null, tk.text, tk.text.length(), TY.unknown); // TODO Konohaspace_getCT?
 				if(ct != null) {
 					tk.kw = KW.Type;
-					tk.ty = ct.cid;
+					tk.ty = ct.getID();
 				}
 			}
 		}
@@ -207,11 +207,11 @@ public class Parser {
 			KClass ct = null;
 			if(psize > 0) {
 				//ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
-				if(ct.bcid == CLASS.Func) {
+				if(ct.getBaseClass().getID() == CLASS.Func) {
 					//TODO
 //					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
 				}
-				else if(ct.p0 == TY.VOID) {
+				else if(ct.getP0().getID() == TY.VOID) {
 //					SUGAR_P(ERR_, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
 					return tk;
 				}
@@ -222,7 +222,7 @@ public class Parser {
 			else {
 				//ct = ct.CT_p0(ctx, tk.ty);
 			}
-			tk.ty = ct.cid;
+			tk.ty = ct.getID();
 			return tk;
 		}
 		return null;

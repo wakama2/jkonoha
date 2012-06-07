@@ -1,11 +1,20 @@
 package jkonoha;
 
-public class KClass {
-	public int cid;
-	public int cflag;
-	public int bcid;
-	public int supcid;
-	public int p0;
+import java.util.List;
+
+public abstract class KClass extends KObject {
+	
+//	public int cflag;
+	
+	public abstract int getID();
+	
+	public abstract String getName();
+	public abstract KClass getSuperClass(); // supcid
+	public abstract KClass getBaseClass(); // bcid
+	public abstract KClass getP0(); // p0
+	
+	public abstract List<KMethod> getMethods();
+	
 //	//-add--------------------
 //	public int packid;
 //	public int paramdom;
