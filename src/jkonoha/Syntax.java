@@ -146,7 +146,7 @@ class TextSyntax extends TermSyntax {
 		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-		//return expr.tyCheckVariable2(ctx, gamma, ty);
+		//return expr.serConstValue(ctx, gamma, ty);
 		return null;
 	}
 }
@@ -258,6 +258,138 @@ class AddSyntax extends OpSyntax {
 	}
 }
 
+class LTSyntax extends OpSyntax {
+	public LTSyntax () {
+		super("<");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opLT";
+		this.priority = 256;
+	}
+}
+
+class LTESyntax extends OpSyntax {
+	public LTESyntax () {
+		super("<=");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opLTE";
+		this.priority = 256;
+	}
+}
+
+class GTSyntax extends OpSyntax {
+	public GTSyntax () {
+		super(">");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opGT";
+		this.priority = 256;
+	}
+}
+
+class GTESyntax extends OpSyntax {
+	public GTESyntax () {
+		super(">=");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opGTE";
+		this.priority = 256;
+	}
+}
+
+class EQSyntax extends OpSyntax {
+	public EQSyntax () {
+		super("==");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opEQ";
+		this.priority = 512;
+	}
+}
+
+class NEQSyntax extends OpSyntax {
+	public NEQSyntax () {
+		super("!=");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opNEQ";
+		this.priority = 512;
+	}
+}
+
+class ANDSyntax extends OpSyntax {
+	public ANDSyntax () {
+		super("&&");
+		this.flag = SYNFLAG.ExprOp;
+		this.priority = 1024;
+	}
+}
+
+class ORSyntax extends OpSyntax {
+	public ORSyntax () {
+		super("||");
+		this.flag = SYNFLAG.ExprOp;
+		this.priority = 2048;
+	}
+}
+
+class NOTSyntax extends OpSyntax {
+	public NOTSyntax () {
+		super("!");
+		this.flag = SYNFLAG.ExprOp;
+		this.op1 = "opNOT";
+	}
+}
+
+class OPLEFTSyntax extends OpSyntax {
+	public OPLEFTSyntax () {
+		super("=");
+		this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
+		this.priority = 4096;
+	}
+}
+
+class COMMASyntax extends OpSyntax {
+	public COMMASyntax () {
+		super(",");
+		this.flag = SYNFLAG.ExprOp;
+		this.op1 = "opNOT";
+		this.op2 = "*";
+		this.priority = 8192;
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		Expr expr = new Expr();
+		exprConsSet(expr, tls.get(c));
+		//TODO expr = stmt.addExprParams(ctx, expr, tls, s, e, 0);
+		return expr;
+	}
+	private void exprConsSet(Expr e, Object... exprs) {
+		e.cons = new ArrayList<Object>();
+		for (Object expr : exprs) {
+			e.cons.add(expr);
+		}	
+	}
+}
+
+class DOLLARSyntax extends OpSyntax {
+	public DOLLARSyntax () {
+		super("$");
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		if (s == c && c + 1 < e) {
+			Token tk = tls.get(c + 1);
+			if (tk.tt == TK.CODE) {
+				//TODO Token_toBRACE(_ctx, (struct _kToken*)tk, kStmt_ks(stmt));
+			}
+			if (tk.tt == TK.AST_BRACE) {
+				Expr expr = new Expr();
+				//expr.setTerm(expr, 1);//TODO
+				expr.tk = tk;
+				expr.block = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
+				return expr;
+				}
+			}
+			//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
+			return null;
+		}
+	}
+
+
 class BlockSyntax extends Syntax {
 	public BlockSyntax() {
 		super("$block");
@@ -288,17 +420,17 @@ class ParamsSyntax extends Syntax {
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 	//TODO ParseStmt_Params (ast.h : 814)
-	int r = -1;
-	Token tk = tls.get(s);
-	if(tk.tt == TK.AST_PARENTHESIS) {
-		tls = tk.sub;//kArray *tls = tk->sub;
-		int ss = 0, ee = tls.size();
-		if(0 < ee && tls.get(0).kw == KW._void) ss = 1;  //  f(void) = > f()
-		Block bk = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
-		stmt.setObject(name, bk);
-		r = s + 1;
-	}
-	return r;
+		int r = -1;
+		Token tk = tls.get(s);
+		if(tk.tt == TK.AST_PARENTHESIS) {
+			tls = tk.sub;//kArray *tls = tk->sub;
+			int ss = 0, ee = tls.size();
+			if(0 < ee && tls.get(0).kw == KW._void) ss = 1;  //  f(void) = > f()
+			Block bk = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
+			stmt.setObject(name, bk);
+			r = s + 1;
+		}
+		return r;
 	}
 }
 
@@ -321,16 +453,16 @@ class ToksSyntax extends Syntax {
 	}
 }
 
-class VoidSyntax extends Syntax {
-	public VoidSyntax () {
+class VOIDSyntax extends Syntax {
+	public VOIDSyntax () {
 		super("void");
 		this.ty = TY.VOID;
 		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
 	}
 }
 
-class BooleanSyntax extends Syntax {
-	public BooleanSyntax () {
+class BOOLEANSyntax extends Syntax {
+	public BOOLEANSyntax () {
 		super("boolean");
 		this.ty = TY.BOOLEAN;
 	}
@@ -343,35 +475,35 @@ class INTSyntax extends Syntax {
 	}
 }
 
-class TrueSyntax extends TermSyntax {
-	public TrueSyntax () {
+class TRUESyntax extends TermSyntax {
+	public TRUESyntax () {
 		super("true");
 		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
-class FalseSyntax extends TermSyntax {
-	public FalseSyntax () {
+class FALSESyntax extends TermSyntax {
+	public FALSESyntax () {
 		super("false");
 		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
-class IfSyntax extends Syntax {
-	public IfSyntax() {
+class IFSyntax extends Syntax {
+	public IFSyntax() {
 		super("if");
 		this.rule = "\"if\" \"(\" $expr \")\" $block [\"else\" else: $block]";
 	}
 }
 
-class ElseSyntax extends Syntax {
-	public ElseSyntax () {
+class ELSESyntax extends Syntax {
+	public ELSESyntax () {
 		super("else");
 		this.rule = "\"else\" $block";
 	}
 }
-class ReturnSyntax extends Syntax {
-	public ReturnSyntax() {
+class RETURNSyntax extends Syntax {
+	public RETURNSyntax() {
 		super("return");
 		this.rule = "\"return\" [$expr]";
 		this.flag = SYNFLAG.StmtBreakExec;
