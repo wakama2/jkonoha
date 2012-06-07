@@ -2,22 +2,22 @@ package jkonoha;
 
 public interface KW {
 
-	String Err     = "Err";
-	String Expr    = "Expr";
-	String Symbol  = "Symbol";
+	String Err     = "$ERR";
+	String Expr    = "$expr";
+	String Symbol  = "$SYMBOL";
 //	String name   = 2;
-	String Usymbol = "Usymbol";
+	String Usymbol = "$USYMBOL";
 //	String cname  = 3;
-	String Text    = "Text";
-	String Int     = "Int";
-	String String     = "String";
-	String Float   = "Float";
-	String Type    = "Type";
+	String Text    = "$TEXT";
+	String Int     = "$INT";
+	String Float   = "$FLOAT";
+	String Type    = "$type";
 	String StmtTypeDecl = Type;
-	String Parenthesis  = "Parenthesis";
-	String Brancet      = "Brancet";
-	String Brace        = "Brace";
+	String Parenthesis  = "()";
+	String Brancet      = "[]";
+	String Brace        = "{}";
 	
+	String String     = "String";
 	String Block   = "Block";
 	String Params  = "Params";
 	String ExprMethodCall = "ExprMethodCall";/*FIXME*/

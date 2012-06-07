@@ -2,6 +2,8 @@ package jkonoha;
 
 import java.util.*;
 
+import jkonoha.compiler.CompilerContext;
+
 public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
@@ -11,42 +13,18 @@ public class KonohaSpace extends KObject {
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
 		TEnv tenv = new TEnv(source, uline, toks, 4, this);
-		tokenize(ctx, tenv);
+		Tokenizer.tokenize(ctx, tenv);
 		if(uline == 0) {
 			for(i = pos; i < toks.size(); i++) {
 				toks.get(i).uline = 0;
 			}
 		}
-	}
-
-	private void tokenize(CTX ctx, TEnv tenv) {
-		int ch, pos = 0;
-		FTokenizer fmat[] = tenv.fmat;
-		Token tk = new Token(tenv.uline);
-		assert(tk.tt == TK.NONE);
-		tk.uline = tenv.uline;
-//		tk.lpos = tenv.lpos(0);
-		pos = Tokenizer.parseINDENT.parse(ctx, tk, tenv, pos, null);
-		while(pos < tenv.source.length() && (ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
-			if(tk.tt != TK.NONE) {
-				tenv.list.add(tk);
-				tk = new Token(tenv.uline);
-				tk.uline = tenv.uline;
-				//tk.lpos = tenv.lpos(pos);
-			}
-			int pos2 = fmat[ch].parse(ctx, tk, tenv, pos, null);
-			assert pos2 > pos;
-			pos = pos2;
-		}
-		if(tk.tt != TK.NONE) {
-			tenv.list.add(tk);
-		}
-	}
-
+	}	
+	
 	public FTokenizer[] tokenizerMatrix(CTX ctx) {
 		//TODO
 		return null;
-	}
+	}	
 
 	public void setTokenizer(int ch, FTokenizer f, KMethod mtd) {
 		//TODO
@@ -101,10 +79,6 @@ public class KonohaSpace extends KObject {
 	public Syntax syntax(CTX ctx, String kw) {
 		KonohaSpace ks0 = this;
 		KonohaSpace ks = ks0;
-		//TODO
-		if(kw.equals("Int")) kw = "$INT";
-		if(kw.equals("Expr")) kw = "$expr";
-		if(kw.equals("Type")) kw = "$type";
 		while(ks != null) {
 			if(ks.syntaxMapNN != null) {
 				Syntax parent = ks.syntaxMapNN.get(kw);
@@ -129,9 +103,8 @@ public class KonohaSpace extends KObject {
 		return e;
 	}
 	
-	private int tmp_s; //FIXME
-	private boolean checkNestedSyntax(CTX ctx, List<Token> tls, int s, int e, int tt, int opench, int closech) {
-		int i = s;
+	private boolean checkNestedSyntax(CTX ctx, List<Token> tls, int[] s, int e, int tt, int opench, int closech) {
+		int i = s[0];
 		Token tk = tls.get(i);
 		String t = tk.text;
 		if(t.length() == 1 && t.charAt(0) == opench) {
@@ -142,7 +115,7 @@ public class KonohaSpace extends KObject {
 			tk.topch = opench;
 			tk.closech = closech;
 			makeSyntaxRule(ctx, tls, i+1, ne, tk.sub);
-			tmp_s = ne;//FIXME *s = ne
+			s[0] = ne;
 			return true;
 		}
 		return false;
@@ -154,10 +127,11 @@ public class KonohaSpace extends KObject {
 			Token tk = tls.get(i);
 			if(tk.tt == TK.INDENT) continue;
 			if(tk.tt == TK.TEXT) {
-				if(checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, i, e, TK.AST_PARENTHESIS, '(', ')')) {
-					i = tmp_s;//FIXME
+				int[] ia = new int[]{i};
+				if(checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')')) {
+					i = ia[0];
 				} else {
 					tk.tt = TK.CODE;
 					tk.kw = tk.text;
@@ -182,8 +156,10 @@ public class KonohaSpace extends KObject {
 				}
 			}
 			if(tk.tt == TK.OPERATOR) {
-				if(checkNestedSyntax(ctx, tls, i, e, TK.AST_OPTIONAL, '[', ']')) {
+				int[] ia = new int[]{i};
+				if(checkNestedSyntax(ctx, tls, ia, e, TK.AST_OPTIONAL, '[', ']')) {
 					adst.add(tk);
+					i = ia[0];
 					continue;
 				}
 				if(tls.get(i).topch == '$') continue;
@@ -260,15 +236,6 @@ public class KonohaSpace extends KObject {
 		}
 	}*/
 	
-	/*public Kvs getConstNULL (CTX ctx, int un) {
-		//TODO
-		Kvs kvs = new Kvs();
-		return kvs;
-	}
-	public int longid (int packdom, int un) {
-		int hcode = packdom;
-		return (hcode << (32*8)) | un;		//int is 32 bits.
-	}*/
 	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {//TODO
 		//int PN_konoha = 1;//TODO PN_konoha is Macro.
 		KClass ct = null;
@@ -287,35 +254,25 @@ public class KonohaSpace extends KObject {
 		return ct;
 	}
 	
-	private void dumpTokens(List<Token> tls) {
-			// debug: dump tokens
-		for(int i = 0; i < tls.size(); i++) {
-			Token rtk = tls.get(i);
-			System.out.print("{ token type:" + rtk.tt + ", ");
-			if(rtk.text != null) {
-				System.out.print("text: " + rtk.text + ", ");
-			}
-			else {
-				System.out.print("text: null, ");
-			}
-			System.out.println("uline: " + rtk.uline + " }");
-		}
-	}
-
 	public void eval(CTX ctx, String script, long uline) {
 		ctx.modsugar.setup();
 		
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
-		dumpTokens(tls);
+		Token.dumpTokenArray(System.out, tls);
 		
-		Block bk = Parser.getInstance().newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		for(Stmt stmt : bk.blocks) {
+			stmt.dump(System.out);
+		}
 		evalBlock(ctx, bk);
 	}
 
 	private void evalBlock(CTX ctx, Block bk) {
-		
+		CompilerContext cc = new CompilerContext(ctx);
+		bk.tyCheckAll(ctx, null);
+		cc.evalBlock(bk);
 	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {

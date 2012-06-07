@@ -12,6 +12,10 @@ public class KInt extends KNumber {
 		return new KInt(n);
 	}
 	
+	public static KInt box(long n) {
+		return new KInt((int)n);
+	}
+	
 	public int unbox() {
 		return value;
 	}
