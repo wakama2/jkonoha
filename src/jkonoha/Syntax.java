@@ -335,7 +335,7 @@ class DotSyntax extends Syntax {
 			return expr;
 		}
 		if(c + 1 < e) c++;
-		return tls.get(c).p(ctx, ERR_, "expected field name: not %s", tls.get(c).s(ctx));
+		return tls.get(c).p(ctx, ReportLevel.ERR, "expected field name: not %s", tls.get(c).s(ctx));
 	}
 }
 
@@ -536,12 +536,12 @@ class DOLLARSyntax extends Syntax {
 				expr.tk = tk;
 				expr.block = Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
 				return expr;
-				}
 			}
-			//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
-			return null;
 		}
+		//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
+		return null;
 	}
+}
 
 class VOIDSyntax extends Syntax {
 	public VOIDSyntax () {
