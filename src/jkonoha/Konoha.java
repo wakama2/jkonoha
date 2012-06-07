@@ -46,7 +46,6 @@ public class Konoha {
 //	public Object eval(String script, long uline) {
 //		
 //	}
-		
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();

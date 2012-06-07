@@ -2,6 +2,9 @@ package jkonoha;
 
 public class KMethod extends KObject {
 	
+	//public Param[] p;
+	//List<Param> p;
+	
 	public int flag;
 	public int cid;
 	public int mn;
