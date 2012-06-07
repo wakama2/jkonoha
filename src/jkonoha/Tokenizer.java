@@ -1,12 +1,31 @@
 package jkonoha;
 
-public class Tokenizer { // not original
-	
-	public static final FTokenizer parseINDENT = new ParseINDENT();
-	public static final FTokenizer parseOP = new ParseOP();
-	public static final FTokenizer parseLINE = new ParseLINE();
-	public static final FTokenizer parseCOMMENT = new ParseCOMMENT();
-	
+public class Tokenizer {
+
+	public static void tokenize(CTX ctx, TEnv tenv) {
+		int ch, pos = 0;
+		FTokenizer fmat[] = tenv.fmat;
+		Token tk = new Token(tenv.uline);
+		assert(tk.tt == TK.NONE);
+		tk.uline = tenv.uline;
+//		tk.lpos = tenv.lpos(0);
+		pos = Tokenizer.parseINDENT.parse(ctx, tk, tenv, pos, null);
+		while(pos < tenv.source.length() && (ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
+			if(tk.tt != TK.NONE) {
+				tenv.list.add(tk);
+				tk = new Token(tenv.uline);
+				tk.uline = tenv.uline;
+				//tk.lpos = tenv.lpos(pos);
+			}
+			int pos2 = fmat[ch].parse(ctx, tk, tenv, pos, null);
+			assert pos2 > pos;
+			pos = pos2;
+		}
+		if(tk.tt != TK.NONE) {
+			tenv.list.add(tk);
+		}
+	}
+
 	/**
 	 * This method is used to reduce character's types to 41 types.
 	 * 
@@ -15,7 +34,7 @@ public class Tokenizer { // not original
 	 * @return character type
 	 */
 	
-	public static final int kchar(String t, int pos) {
+	public static int kchar(String t, int pos) {
 		int ch = t.charAt(pos);
 		return (ch < 0) ? _MULTI : cMatrix[ch];
 	}	
@@ -25,7 +44,7 @@ public class Tokenizer { // not original
 	 * @return matrix of parser about each character code
 	 */
 	
-	static FTokenizer[] MiniKonohaTokenMatrix() {
+	public static FTokenizer[] MiniKonohaTokenMatrix() {
 		FTokenizer[] fmat = new FTokenizer[KCHAR_MAX];
 		fmat[_NULL] = new ParseSKIP();
 		fmat[_UNDEF] = new ParseSKIP();

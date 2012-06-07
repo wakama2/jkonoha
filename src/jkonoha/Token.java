@@ -1,5 +1,6 @@
 package jkonoha;
 
+import java.io.PrintStream;
 import java.util.*;
 
 public class Token extends KObject {
@@ -24,9 +25,9 @@ public class Token extends KObject {
 		this.uline = uline;
 	}
 	
-	boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
-		String kw = "dummy"/*keyword(ctx, S_text(tk.text), S_size(tk.text), FN_NONAME)*/;
-		if(kw != "dummy"/*FN_NONAME*/) {
+	public boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
+		String kw = this.text;
+		if(kw != null) {//"dummy"/*FN_NONAME*/) {
 			Syntax syn = ks.syntax(ctx,kw);
 			if(syn != null) {
 				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
@@ -39,6 +40,84 @@ public class Token extends KObject {
 			}
 		}
 		return false;
+	}
+	
+	@Override public String toString() {
+		switch(this.tt) {
+		case TK.INDENT: return "end of line";
+		case TK.CODE:
+		case TK.AST_BRACE: return "{... }";
+		case TK.AST_PARENTHESIS: return "(... )";
+		case TK.AST_BRANCET: return "[... ]";
+		default: return this.text;
+		}
+	}
+	
+	private String ttToStr(int t) {
+		String[] symTKDATA = {
+			"TK_NONE",
+			"TK_INDENT",
+			"TK_SYMBOL",
+			"TK_USYMBOL",
+			"TK_TEXT",
+			"TK_INT",
+			"TK_FLOAT",
+			"TK_TYPE",
+			"AST_()",
+			"AST_[]",
+			"AST_{}",
+
+			"TK_OPERATOR",
+			"TK_MSYMBOL",
+			"TK_ERR",
+			"TK_CODE",
+			"TK_WHITESPACE",
+			"TK_METANAME",
+			"TK_MN",
+			"AST_OPTIONAL[]",
+		};
+		if(t <= TK.AST_OPTIONAL) {
+			return symTKDATA[t];
+		}
+		return "TK_UNKNOWN";
+	}
+	
+	public void dump(PrintStream out) {
+		if(this.tt == TK.MN) {
+			out.printf("%s %d+%d: %s(%s)\n", ttToStr(this.tt), this.uline, this.lpos, null/*TODO*/, this.toString());
+		} else {
+			out.printf("%s %d+%d: kw=%s '%s'\n", ttToStr(this.tt), this.uline, this.lpos, this.kw, this.toString());
+		}
+	}
+	
+	public static void dumpIndent(PrintStream out, int nest) {
+		for(int i=0; i<nest; i++) {
+			out.print(" ");
+		}
+	}
+	
+	public static void dumpTokenArray(PrintStream out, List<Token> a) {
+		dumpTokenArray(out, 0, a, 0, a.size());
+	}
+	
+	public static void dumpTokenArray(PrintStream out, int nest, List<Token> a, int s, int e) {
+		if(nest == 0) out.println();
+		while(s < e) {
+			Token tk = a.get(s);
+			dumpIndent(out, nest);
+			if(tk.sub != null) {
+				out.println((char)tk.topch);
+				dumpTokenArray(out, nest+1, tk.sub, 0, tk.sub.size());
+				dumpIndent(out, nest);
+				out.println((char)tk.closech);
+			} else {
+				out.printf("TK(%d) ", s);
+				tk.dump(out);
+			}
+			s++;
+		}
+		if(nest == 0) out.println("====");
+		
 	}
 }
 

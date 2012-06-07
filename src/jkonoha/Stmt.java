@@ -1,5 +1,6 @@
 package jkonoha;
 
+import java.io.PrintStream;
 import java.util.*;
 
 import jkonoha.compiler.kobject.KBoolean;
@@ -14,7 +15,6 @@ public class Stmt extends KObject {
 		this.uline = uline;
 	}
 	
-	// src/sugar/struct.h:930
 	public Block getBlock(CTX ctx, String kw, Block def) {
 		Object bk = this.getObject(kw);
 		if(bk != null) {
@@ -236,5 +236,9 @@ public class Stmt extends KObject {
 	
 	public void typed(int build) {
 		this.build = build;
+	}
+	
+	public void dump(PrintStream out) {
+		//TODO src/sugar/struct/h 839
 	}
 }
