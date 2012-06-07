@@ -264,12 +264,12 @@ class BlockSyntax extends Syntax {
 			return (s+1);
 		}
 		else if (tk.tt == TK.AST_BRACE) {
-			Block bk =  Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
+			Block bk =  Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
 			stmt.setObject(name, bk);
 			return (s+1);
 		}
 		else {
-			Block bk =  Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, s, e, ';');
+			Block bk =  Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tls, s, e, ';');
 			stmt.setObject(name, bk);
 			return e;
 		}
@@ -288,7 +288,7 @@ class ParamsSyntax extends Syntax {
 			tls = tk.sub;//kArray *tls = tk->sub;
 			int ss = 0, ee = tls.size();
 			if(0 < ee && tls.get(0).kw == KW._void) ss = 1;  //  f(void) = > f()
-			Block bk = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
+			Block bk = Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
 			stmt.setObject(name, bk);
 			r = s + 1;
 		}
@@ -328,12 +328,11 @@ class DotSyntax extends Syntax {
 		super(".");
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
-		DBG_P("s=%d, c=%d", s, c);
+		//DBG_P("s=%d, c=%d", s, c);
 		assert(s < c);
 		if(isFileName(tls, c, e)) {
 			Expr expr = stmt.newExpr2(ctx, tls, s, c);
-			expr = new_ConsExpr(_ctx, syn, 2, tls.toks[c+1], expr);
-			// TODO expr = new ConsExpr(syn); ?
+			expr = new ConsExpr(this);
 			return expr;
 		}
 		if(c + 1 < e) c++;
@@ -536,7 +535,7 @@ class DOLLARSyntax extends Syntax {
 				Expr expr = new Expr(this);
 				//expr.setTerm(expr, 1);//TODO
 				expr.tk = tk;
-				expr.block = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
+				expr.block = Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
 				return expr;
 				}
 			}
