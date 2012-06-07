@@ -67,10 +67,46 @@ public class KonohaSpace extends KObject {
 	
 	public void defineDefaultSyntax(CTX ctx) {
 		Syntax[] s = {
+				new ERRSyntax(),
 				new ExprSyntax(),
+				new SYMBOLSyntax(),
+				new USYMBOLSyntax(),
+				new TextSyntax(),
 				new IntSyntax(),
-				new AddSyntax(),
+				new FloatSyntax(),
 				new TypeSyntax(),
+				new AST_ParenthesisSyntax(),
+				new AST_BracketSyntax(),
+				new AST_BraceSyntax(),
+				new BlockSyntax(),
+				new ParamsSyntax(),
+				new ToksSyntax(),
+				new DotSyntax(),
+				new DivSyntax(),
+				new ModSyntax(),
+				new MulSyntax(),
+				new AddSyntax(),
+				new SubSyntax(),
+				new LTSyntax(),
+				new LTESyntax(),
+				new GTSyntax(),
+				new GTESyntax(),
+				new EQSyntax(),
+				new NEQSyntax(),
+				new ANDSyntax(),
+				new ORSyntax(),
+				new NOTSyntax(),
+				new OPLEFTSyntax(),
+				new COMMASyntax(),
+				new DOLLARSyntax(),
+				new VOIDSyntax(),
+				new BOOLEANSyntax(),
+				//new INTSyntax(),
+				new TRUESyntax(),
+				new FALSESyntax(),
+				new IFSyntax(),
+				new ELSESyntax(),
+				new RETURNSyntax()
 				//TODO
 		};
 		defineSyntax(ctx, s);
@@ -110,7 +146,7 @@ public class KonohaSpace extends KObject {
 		if(t.length() == 1 && t.charAt(0) == opench) {
 			int ne = findTopCh(ctx, tls, i+1, e, tk.tt, closech);
 			tk.tt = tt;
-			tk.kw = KW.TK_KW[tt];
+			if(tt >= 0 && tt < KW.TK_KW.length) tk.kw = KW.TK_KW[tt];
 			tk.sub = new ArrayList<Token>();
 			tk.topch = opench;
 			tk.closech = closech;

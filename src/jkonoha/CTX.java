@@ -42,6 +42,28 @@ public class CTX extends KObject {
 //	public static final int MOD_llvm = 15;
 //	public static final int MOD_REGEX = 16;
 	
+	
+//	public static final int KObject_NullObject = (1<<0);
+//	
+//	public static boolean IS_NOTNULL(Object o) {
+//		if(!(o instanceof K_Object)) return false;
+//		return ((((K_Object)o).h.magicflag & KObject_NullObject) != KObject_NullObject);
+//	}
+//	
+//	
+//	public static void DBG_ASSERT(boolean a) {
+//		assert(a);
+//	}
+//	
+//	// sugar.h
+//	public final KModLocal ctxsugar() {
+//		return this.modlocal.get(MOD_sugar);
+//	}
+//	
+//	public final KModShare kmodsugar() {
+//		return this.modshare.get(MOD_sugar);
+//	}
+//	
 //	public final KClass CT_Token() {
 //		return ((KModSugar)this.kmodsugar()).cToken;
 //	}

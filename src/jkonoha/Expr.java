@@ -50,6 +50,10 @@ public class Expr extends KObject {
 		}
 	}
 	
+	public Expr add(CTX ctx, Expr e) {
+		return null;//TODO
+	}
+	
 	public boolean isTerm() {
 		return false;//TODO
 	}

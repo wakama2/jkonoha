@@ -92,7 +92,7 @@ abstract class TermSyntax extends Syntax {
 }
 
 class SYMBOLSyntax extends TermSyntax {
-	public SYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	public SYMBOLSyntax() {
 		super("$SYMBOL");
 		this.flag = SYNFLAG.ExprTerm;
 	}
@@ -111,7 +111,7 @@ class SYMBOLSyntax extends TermSyntax {
 }
 
 class USYMBOLSyntax extends TermSyntax {
-	public USYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	public USYMBOLSyntax() {
 		super("$USYMBOL");
 		this.flag = SYNFLAG.ExprTerm;
 	}
@@ -241,7 +241,7 @@ class AST_ParenthesisSyntax extends Syntax {
 class AST_BracketSyntax extends Syntax {
 
 	public AST_BracketSyntax() {
-		super("");
+		super("[]");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -250,7 +250,7 @@ class AST_BracketSyntax extends Syntax {
 class AST_BraceSyntax extends Syntax {
 
 	public AST_BraceSyntax() {
-		super("");
+		super("{}");
 		// TODO Auto-generated constructor stub
 	}
 
@@ -561,12 +561,12 @@ class BOOLEANSyntax extends Syntax {
 	}
 }
 
-class INTSyntax extends Syntax {
-	public INTSyntax () {
-		super("int");
-		this.ty = TY.INT;
-	}
-}
+//class INTSyntax extends Syntax {
+//	public INTSyntax () {
+//		super("int");
+//		this.ty = TY.INT;
+//	}
+//}
 
 class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {
