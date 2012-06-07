@@ -44,17 +44,6 @@ public abstract class Syntax {
 	}
 }
 
-/*private void dumpTokenArray (CTX ctx, int nest, List<Token> a, int s, int e) {
-	if (verboseSugar) {
-		if (nest ==0) System.out.println ("rf. dumpTokenArray");
-		while (s < e) {
-			Token tk = a.get(s);
-			dumpIndent(nest);
-			if (tk.sub.h.ct.bcid == TY.ARRAY)
-		}
-	}
-}*/
-
 class ERRSyntax extends Syntax {
 	public ERRSyntax() {
 		super("$ERR");
@@ -69,7 +58,7 @@ class ExprSyntax extends Syntax {
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
-		//dumpTokenArray (ctx, 0, tls, s, e);
+		Token.dumpTokenArray (System.out, 0, tls, s, e);
 		Expr expr = stmt.newExpr2(ctx, tls, s, e);
 		if (expr != null) {
 			//dumpExpr (ctx, 0, 0, expr);
