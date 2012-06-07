@@ -226,15 +226,29 @@ public class Stmt extends KObject {
 		this.build = build;
 	}
 	
-	public void dump(PrintStream out) {
-		//TODO src/sugar/struct/h 839
-		if (this.syntax == null) {
-			out.println( "STMT (DONE)");
+	private void dumpToken(PrintStream out, String key, Object value) {
+		out.printf("key='%s': ", key);
+		if(value instanceof Token) {
+			((Token)value).dump(out);
+		} else if(value instanceof Expr){
+			((Expr)value).dump(out, 0, 0);
 		} else {
-			out.println ("STMT" + this.syntax.kw + "{");
-			//kObject_protoEach(stmt, NULL, _dumpToken);//TODO
-			out.println("" + "}");
+			out.println(value);
 		}
+	}
+	
+	public void dump(PrintStream out) {
+		if (this.syntax == null) {
+			out.println("STMT (DONE)");
+		} else {
+			out.println("STMT " + this.syntax.kw + " {");
+			for(Map.Entry<String, Object> e : this.entrySet()) {
+				dumpToken(out, e.getKey(), e.getValue());
+			}
+			out.println();
+			out.println("}");
+		}
+		out.flush();
 	}
 	public Expr addExprParams(CTX ctx, Expr expr, List<Token> tls, int s, int e, int allowEmpty) {
 		int i, start = s;

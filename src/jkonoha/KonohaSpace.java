@@ -299,9 +299,6 @@ public class KonohaSpace extends KObject {
 		//Token.dumpTokenArray(System.out, tls);
 		
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
-		for(Stmt stmt : bk.blocks) {
-			stmt.dump(System.out);
-		}
 		evalBlock(ctx, bk);
 	}
 

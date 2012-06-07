@@ -61,7 +61,7 @@ class ExprSyntax extends Syntax {
 		Token.dumpTokenArray (System.out, 0, tls, s, e);
 		Expr expr = stmt.newExpr2(ctx, tls, s, e);
 		if (expr != null) {
-			//dumpExpr (ctx, 0, 0, expr);
+			expr.dump(System.out, 0, 0);
 			stmt.setObject(name, expr);
 			r = e;
 		}
@@ -85,8 +85,8 @@ abstract class TermSyntax extends Syntax {
 		Token tk = tls.get(c);
 		Expr expr = new Expr(this);
 		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
-		//Expr_setTerm(expr, 1);
-		//KSETv(expr->tk, tk);
+		expr.setTerm(true);
+		expr.tk = tk;
 		return expr;
 	}
 }
