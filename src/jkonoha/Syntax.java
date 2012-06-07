@@ -235,8 +235,7 @@ class AST_ParenthesisSyntax extends Syntax {
 			}
 			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
-				lexpr = new_ConsExpr(ctx, syn, 2, lexpr, K_NULL);
-				// TODO lexpr = new ConsExpr(syn); ?
+				lexpr = new ConsExpr(syn);
 			}
 			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);
 			return lexpr;
@@ -244,13 +243,13 @@ class AST_ParenthesisSyntax extends Syntax {
 	}
 }
 
-class AST_BracketSyntax extends Syntax {
-
-}
-
-class AST_BraceSyntax extends Syntax {
-
-}
+//class AST_BracketSyntax extends Syntax {
+//
+//}
+//
+//class AST_BraceSyntax extends Syntax {
+//
+//}
 
 class BlockSyntax extends Syntax {
 	public BlockSyntax() {
@@ -336,7 +335,7 @@ class DotSyntax extends Syntax {
 			return expr;
 		}
 		if(c + 1 < e) c++;
-		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
+		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c]));
 	}
 }
 
@@ -593,6 +592,7 @@ class ELSESyntax extends Syntax {
 		this.rule = "\"else\" $block";
 	}
 }
+
 class RETURNSyntax extends Syntax {
 	public RETURNSyntax() {
 		super("return");

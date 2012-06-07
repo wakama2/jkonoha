@@ -53,6 +53,14 @@ public class Expr extends KObject {
 	public void dump(PrintStream out, int n, int nest) {
 		//TODO src/sugar/struct.h 702
 	}
+	
+	public Expr add(CTX ctx, Expr e) {
+		if(this != null && e != null) {
+			this.cons.add(e);
+			return this;
+		}
+		return null;
+	}
 }
 class ConstExpr extends Expr {  // as if NConstExpr 
 	//public final Object data;

@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Parser {
 
-	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
+	public static Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block(ctx, ks);
 		if (parent != null) {
 			bk.parentNULL = parent;
@@ -24,7 +24,7 @@ public class Parser {
 		return bk;
 	}
 	
-	public void Block_addStmtLine (CTX ctx, Block bk, List<Token> tls, int s, int e, Token tkERR) {
+	public static void Block_addStmtLine (CTX ctx, Block bk, List<Token> tls, int s, int e, Token tkERR) {
 		Stmt stmt = new Stmt(tls.get(s).uline);
 		bk.blocks.add(stmt);
 		stmt.parentNULL = bk;
@@ -43,7 +43,7 @@ public class Parser {
 		assert (stmt.syntax != null);
 	}
 
-	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
+	public static int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
 		assert(tk.kw == KW.Err);
@@ -91,7 +91,7 @@ public class Parser {
 		return e;
 	}
 	
-	public int selectStmtLine(CTX ctx, KonohaSpace ks, int[] indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
+	public static int selectStmtLine(CTX ctx, KonohaSpace ks, int[] indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
 		int i = s;
 		assert(e <= tls.size());
 		for(; i < e - 1; i++) {
@@ -151,7 +151,7 @@ public class Parser {
 		return i;
 	}
 	
-	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
+	private static int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
 		int next = s; // don't add
 		Token tk = tls.get(s);
 		if(tk.tt < TK.OPERATOR) {
@@ -208,7 +208,7 @@ public class Parser {
 		return next;
 	}
 	
-	private Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
+	private static Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
 			Param[] p = new Param[size];

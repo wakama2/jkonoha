@@ -241,4 +241,21 @@ public class Stmt extends KObject {
 	public void dump(PrintStream out) {
 		//TODO src/sugar/struct/h 839
 	}
+	
+	public Expr addExprParams(CTX ctx, Expr expr, List<Token> tls, int s, int e, int allowEmpty)
+	{
+		int i, start = s;
+		for(i = s; i < e; i++) {
+			Token tk = tls.get(i);
+			if(tk.kw.equals(KW.COMMA)) {
+				expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
+				start = i + 1;
+			}
+		}
+		if(allowEmpty == 0 || start < i) {
+			expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
+		}
+		tls.remove(s);
+		return expr;
+	}
 }
