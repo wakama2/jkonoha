@@ -94,7 +94,7 @@ abstract class TermSyntax extends Syntax {
 		//TODO src/sugar/ast.h:638 ParseExpr_Term
 		assert(s == c);
 		Token tk = tls.get(c);
-		Expr expr = new Expr();
+		Expr expr = new Expr(this);
 		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
 		//Expr_setTerm(expr, 1);
 		//KSETv(expr->tk, tk);
@@ -509,7 +509,7 @@ class COMMASyntax extends Syntax {
 		this.priority = 8192;
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
-		Expr expr = new Expr();
+		Expr expr = new Expr(this);
 		exprConsSet(expr, tls.get(c));
 		//TODO expr = stmt.addExprParams(ctx, expr, tls, s, e, 0);
 		return expr;
@@ -533,7 +533,7 @@ class DOLLARSyntax extends Syntax {
 				//TODO Token_toBRACE(_ctx, (struct _kToken*)tk, kStmt_ks(stmt));
 			}
 			if (tk.tt == TK.AST_BRACE) {
-				Expr expr = new Expr();
+				Expr expr = new Expr(this);
 				//expr.setTerm(expr, 1);//TODO
 				expr.tk = tk;
 				expr.block = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
