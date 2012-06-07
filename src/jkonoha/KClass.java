@@ -1,5 +1,17 @@
 package jkonoha;
 
+<<<<<<< HEAD
+import java.util.*;
+
+import jkonoha.compiler.KField;
+
+public class KClass {
+	public int cid;
+	public int cflag;
+	public int bcid;
+	public int supcid;
+	public int p0;
+=======
 import java.util.List;
 
 public abstract class KClass extends KObject {
@@ -15,6 +27,7 @@ public abstract class KClass extends KObject {
 	
 	public abstract List<KMethod> getMethods();
 	
+>>>>>>> refs/remotes/wakama2/master
 //	//-add--------------------
 //	public int packid;
 //	public int paramdom;

@@ -3,7 +3,7 @@ package jkonoha;
 import java.util.*;
 
 public class Parser {
-	
+
 	public static Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block(ctx, ks);
 		if (parent != null) {
@@ -17,11 +17,30 @@ public class Parser {
 			i = selectStmtLine (ctx, ks, indent, tls, i, e, delim, tls, tkERR);//TODO How to tkERR?
 			int asize = tls.size();
 			if (asize > atop) {
-				bk.addStmtLine(ctx, tls, atop, asize, tkERR);
+				Block_addStmtLine (ctx, bk, tls, atop, asize, tkERR);
 				tls.remove(atop);
 			}
 		}
 		return bk;
+	}
+	
+	public static void Block_addStmtLine (CTX ctx, Block bk, List<Token> tls, int s, int e, Token tkERR) {
+		Stmt stmt = new Stmt(tls.get(s).uline);
+		bk.blocks.add(stmt);
+		stmt.parentNULL = bk;
+		if (tkERR != null) {
+			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Err);
+			stmt.build = TSTMT.ERR;
+			stmt.setObject(KW.Err, tkERR);
+		}
+		else {
+			int estart = ctx.ctxsugar.errors.size();
+			s = stmt.addAnnotation(ctx, tls, s, e);
+			if (!stmt.parseSyntaxRule(ctx, tls, s, e)) {
+				stmt.toERR(estart);
+			}
+		}
+		assert (stmt.syntax != null);
 	}
 
 	public static int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
@@ -78,7 +97,7 @@ public class Parser {
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(!tk.kw.equals(KW.Err)) break;  // already parsed
+			if(tk.kw != KW.Err) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
 				tk1.tt = TK.METANAME;
 				tk1.kw = KW.Err;
@@ -106,7 +125,7 @@ public class Parser {
 			if(tk.topch == delim && tk.tt == TK.OPERATOR) {
 				return i+1;
 			}
-			if(!tk.kw.equals(KW.Err)) {
+			if(tk.kw != KW.Err) {
 				tlsdst.add(tk);
 				continue;
 			}
@@ -163,7 +182,6 @@ public class Parser {
 			tk.kw = KW.Brace;
 		}
 		if (tk.kw == KW.Type) {
-			dst.add(tk);
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
 				if (tkN.topch != '[' ) break;
