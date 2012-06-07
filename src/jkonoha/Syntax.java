@@ -261,7 +261,6 @@ class BlockSyntax extends Syntax {
 		super("$block");
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
-		//TODO ParseStmt_Block (ast.h : 830)
 		Token tk = tls.get(s);
 		if (tk.tt == TK.CODE) {
 			stmt.setObject(name, tk);
@@ -285,13 +284,12 @@ class ParamsSyntax extends Syntax {
 		super("$params");
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
-	//TODO ParseStmt_Params (ast.h : 814)
 		int r = -1;
 		Token tk = tls.get(s);
 		if(tk.tt == TK.AST_PARENTHESIS) {
-			tls = tk.sub;//kArray *tls = tk->sub;
+			tls = tk.sub;
 			int ss = 0, ee = tls.size();
-			if(0 < ee && tls.get(0).kw == KW._void) ss = 1;  //  f(void) = > f()
+			if(0 < ee && tls.get(0).kw.equals(KW._void)) ss = 1;  //  f(void) = > f()
 			Block bk = Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
 			stmt.setObject(name, bk);
 			r = s + 1;
@@ -305,11 +303,10 @@ class ToksSyntax extends Syntax {
 		super("$toks");
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
-		//TODO ParseStmt_Toks (ast.h : 851)
 		if(s < e) {
-			List<Token> a = new ArrayList<Token>();//TODO Is this right?
+			List<Token> a = new ArrayList<Token>();
 			while(s < e) {
-				a.add(tls.get(s));//kArray_add(a, tls->toks[s]);
+				a.add(tls.get(s));
 				s++;
 			}
 			stmt.setObject(name, a);
@@ -561,12 +558,13 @@ class BOOLEANSyntax extends Syntax {
 	}
 }
 
-//class INTSyntax extends Syntax {
-//	public INTSyntax () {
-//		super("int");
-//		this.ty = TY.INT;
-//	}
-//}
+// can't name INTSyntax, why??
+class INTTypeSyntax extends Syntax {
+	public INTTypeSyntax () {
+		super("int");
+		this.ty = TY.INT;
+	}
+}
 
 class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {

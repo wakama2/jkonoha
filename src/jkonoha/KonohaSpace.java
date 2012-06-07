@@ -101,7 +101,7 @@ public class KonohaSpace extends KObject {
 				new DOLLARSyntax(),
 				new VOIDSyntax(),
 				new BOOLEANSyntax(),
-				//new INTSyntax(),
+				new INTTypeSyntax(),
 				new TRUESyntax(),
 				new FALSESyntax(),
 				new IFSyntax(),
