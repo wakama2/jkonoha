@@ -46,16 +46,6 @@ public class Konoha {
 //	public Object eval(String script, long uline) {
 //		
 //	}
-	
-//	public static int keyword(CTX ctx, String name, int def) {
-//		KModSugar kmodsugar = (KModSugar)ctx.kmodsugar();
-//		return kmodsugar.keywordMapNN.getcode(ctx, kmodsugar.keywordList, name, def);
-//	}
-	
-	public static void SUGAR_P_ERR(long uline, int n, String fmt, Object...args) {
-		System.err.printf(fmt, args);
-	}
-		
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();

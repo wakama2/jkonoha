@@ -53,7 +53,7 @@ public class Token extends KObject {
 		}
 	}
 	
-	private String ttToStr(int t) {
+	public static String ttToStr(int t) {
 		String[] symTKDATA = {
 			"TK_NONE",
 			"TK_INDENT",
@@ -117,7 +117,6 @@ public class Token extends KObject {
 			s++;
 		}
 		if(nest == 0) out.println("====");
-		
 	}
 }
 
