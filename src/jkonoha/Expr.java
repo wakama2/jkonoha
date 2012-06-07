@@ -27,7 +27,7 @@ public class Expr extends KObject {
 	}
 
 	public Expr at(int n) {
-		return cons.get(n);
+		return (Expr)cons.get(n);
 	}
 	
 	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
