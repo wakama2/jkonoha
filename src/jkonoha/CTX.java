@@ -1,6 +1,10 @@
 package jkonoha;
 
+import java.io.PrintStream;
+
 public class CTX extends KObject {
+	private static final boolean debug = true;
+	
 	public Konoha konoha;
 	public CtxSugar ctxsugar = new CtxSugar();
 	public ModSugar modsugar = new ModSugar();
@@ -14,14 +18,17 @@ public class CTX extends KObject {
 		return this.konoha.S_file(uline);
 	}
 
-	public final Block NULLBLOCK = null;//TODO
+	public void SUGAR_P(PrintStream out, long uline, int pos, String fmt, Object...args) {
+		out.printf(fmt, args);
+	}	
 	
-	public String kw(String s) {
-		return "-1";//TODO
-	}
-	
-	public KClass ct(int ty) {
-		return null;//TODO
+	public void DBG_P(String fmt, Object...args) {
+		if(debug) {
+			StackTraceElement e = Thread.currentThread().getStackTrace()[2];
+			System.out.printf("DEBUG(%s.%s:%d) ", e.getClassName(), e.getMethodName() ,e.getLineNumber());
+			System.out.printf(fmt, args);
+			System.out.println();
+		}
 	}
 	
 //	public static final int CLASS_newid = -1;

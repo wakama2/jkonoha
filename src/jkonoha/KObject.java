@@ -30,16 +30,19 @@ public class KObject {
 		}
 	}
 	
-	// debug
-	void dumpObjects() {
-		System.out.println("*** dump " + this);
-		if(kvproto == null) {
-			System.out.println("null");
-		} else
-		for(Map.Entry<String, Object> e : kvproto.entrySet()) {
-			System.out.println("" + e.getKey() + ": " + e.getValue());
+	public void removeKey(String key) {
+		if(kvproto != null) {
+			kvproto.remove(key);
 		}
-		System.out.println("***");
+	}
+	
+	public Set<Map.Entry<String, Object>> entrySet() {
+		if(kvproto != null) {
+			return kvproto.entrySet();
+		} else {
+			Map<String, Object> m = Collections.emptyMap();
+			return m.entrySet();
+		}
 	}
 	
 	public static boolean isNull(KObject o) {

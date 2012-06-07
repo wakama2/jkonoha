@@ -50,13 +50,13 @@ public class KonohaSpace extends KObject {
 		}
 		Syntax syn = syntax(ctx, tk.kw);
 		if(syn.syntaxRuleNULL == null) {
-			//		DBG_P("kw='%s', %d, %d", T_kw(syn.kw), syn.ParseExpr == kmodsugar.UndefinedParseExpr, kmodsugar.UndefinedExprTyCheck == syn.ExprTyCheck);
+			ctx.DBG_P("kw='%s', %d, %d", syn.kw, 0, 0);//TODO syn.ParseExpr == kmodsugar.UndefinedParseExpr, kmodsugar.UndefinedExprTyCheck == syn.ExprTyCheck);
 			int i;
 			for(i = s + 1; i < e; i++) {
 				tk = tls.get(i);
 				syn = syntax(ctx, tk.kw);
 				if(syn.syntaxRuleNULL != null && syn.priority > 0) {
-					//SUGAR_P(DEBUG_, tk.uline, tk.lpos, "binary operator syntax kw='%s'", T_kw(syn.kw));   // sugar $expr "=" $expr;
+					ctx.SUGAR_P(System.out, tk.uline, tk.lpos, "binary operator syntax kw='%s'", syn.kw);
 					return syn;
 				}
 			}
@@ -67,9 +67,46 @@ public class KonohaSpace extends KObject {
 	
 	public void defineDefaultSyntax(CTX ctx) {
 		Syntax[] s = {
+				new ERRSyntax(),
 				new ExprSyntax(),
+				new SYMBOLSyntax(),
+				new USYMBOLSyntax(),
+				new TextSyntax(),
 				new IntSyntax(),
+				new FloatSyntax(),
+				new TypeSyntax(),
+				new AST_ParenthesisSyntax(),
+				new AST_BracketSyntax(),
+				new AST_BraceSyntax(),
+				new BlockSyntax(),
+				new ParamsSyntax(),
+				new ToksSyntax(),
+				new DotSyntax(),
+				new DivSyntax(),
+				new ModSyntax(),
+				new MulSyntax(),
 				new AddSyntax(),
+				new SubSyntax(),
+				new LTSyntax(),
+				new LTESyntax(),
+				new GTSyntax(),
+				new GTESyntax(),
+				new EQSyntax(),
+				new NEQSyntax(),
+				new ANDSyntax(),
+				new ORSyntax(),
+				new NOTSyntax(),
+				new OPLEFTSyntax(),
+				new COMMASyntax(),
+				new DOLLARSyntax(),
+				new VOIDSyntax(),
+				new BOOLEANSyntax(),
+				//new INTSyntax(),
+				new TRUESyntax(),
+				new FALSESyntax(),
+				new IFSyntax(),
+				new ELSESyntax(),
+				new RETURNSyntax()
 				//TODO
 		};
 		defineSyntax(ctx, s);
@@ -110,7 +147,7 @@ public class KonohaSpace extends KObject {
 		if(t.length() == 1 && t.charAt(0) == opench) {
 			int ne = findTopCh(ctx, tls, i+1, e, tk.tt, closech);
 			tk.tt = tt;
-			tk.kw = KW.TK_KW[tt];
+			if(tt >= 0 && tt < KW.TK_KW.length) tk.kw = KW.TK_KW[tt];
 			tk.sub = new ArrayList<Token>();
 			tk.topch = opench;
 			tk.closech = closech;
@@ -262,7 +299,7 @@ public class KonohaSpace extends KObject {
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
-		Token.dumpTokenArray(System.out, tls);
+		//Token.dumpTokenArray(System.out, tls);
 		
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		for(Stmt stmt : bk.blocks) {
@@ -272,9 +309,9 @@ public class KonohaSpace extends KObject {
 	}
 
 	private void evalBlock(CTX ctx, Block bk) {
-		CompilerContext cc = new CompilerContext(ctx);
+		//CompilerContext cc = new CompilerContext(ctx);
 		bk.tyCheckAll(ctx, null);
-		cc.evalBlock(bk);
+		//cc.evalBlock(bk);
 	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {

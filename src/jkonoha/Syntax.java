@@ -44,17 +44,6 @@ public abstract class Syntax {
 	}
 }
 
-/*private void dumpTokenArray (CTX ctx, int nest, List<Token> a, int s, int e) {
-	if (verboseSugar) {
-		if (nest ==0) System.out.println ("rf. dumpTokenArray");
-		while (s < e) {
-			Token tk = a.get(s);
-			dumpIndent(nest);
-			if (tk.sub.h.ct.bcid == TY.ARRAY)
-		}
-	}
-}*/
-
 class ERRSyntax extends Syntax {
 	public ERRSyntax() {
 		super("$ERR");
@@ -69,7 +58,7 @@ class ExprSyntax extends Syntax {
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
-		//dumpTokenArray (ctx, 0, tls, s, e);
+		Token.dumpTokenArray (System.out, 0, tls, s, e);
 		Expr expr = stmt.newExpr2(ctx, tls, s, e);
 		if (expr != null) {
 			//dumpExpr (ctx, 0, 0, expr);
@@ -103,7 +92,7 @@ abstract class TermSyntax extends Syntax {
 }
 
 class SYMBOLSyntax extends TermSyntax {
-	public SYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	public SYMBOLSyntax() {
 		super("$SYMBOL");
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
@@ -121,7 +110,7 @@ class SYMBOLSyntax extends TermSyntax {
 }
 
 class USYMBOLSyntax extends TermSyntax {
-	public USYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	public USYMBOLSyntax() {
 		super("$USYMBOL");
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
@@ -235,21 +224,27 @@ class AST_ParenthesisSyntax extends Syntax {
 			}
 			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
-				lexpr = new_ConsExpr(ctx, syn, 2, lexpr, K_NULL);
+				//lexpr = new_ConsExpr(ctx, syn, 2, lexpr, K_NULL);//TODO
 				// TODO lexpr = new ConsExpr(syn); ?
 			}
-			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);
+			//lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);//TODO
 			return lexpr;
 		}
 	}
 }
 
 class AST_BracketSyntax extends Syntax {
-
+	public AST_BracketSyntax() {
+		super("[]");
+		// TODO Auto-generated constructor stub
+	}
 }
 
 class AST_BraceSyntax extends Syntax {
-
+	public AST_BraceSyntax() {
+		super("{}");
+		// TODO Auto-generated constructor stub
+	}
 }
 
 class BlockSyntax extends Syntax {
@@ -315,17 +310,16 @@ class ToksSyntax extends Syntax {
 	}
 }
 
-private boolean isFileName(List<Token> tls, int c, int e){
-	if(c+1 < e) {
-		Token tk = tls.get(c+1);
-		return (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
-	}
-	return false;
-}
-
 class DotSyntax extends Syntax {
 	public DotSyntax() {
 		super(".");
+	}
+	private boolean isFileName(List<Token> tls, int c, int e){
+		if(c+1 < e) {
+			Token tk = tls.get(c+1);
+			return (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
+		}
+		return false;
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//DBG_P("s=%d, c=%d", s, c);
@@ -336,7 +330,8 @@ class DotSyntax extends Syntax {
 			return expr;
 		}
 		if(c + 1 < e) c++;
-		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
+		//return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
+		return null;//TODO
 	}
 }
 
@@ -367,6 +362,30 @@ abstract class OpSyntax extends Syntax {
 		for (Expr expr : exprs) {
 			expr.cons.add(expr);
 		}
+	}
+}
+
+class DivSyntax extends OpSyntax {
+	public DivSyntax() {
+		super("/");
+		this.op2 = "opDIV";
+		this.priority = 32;
+	}
+}
+
+class ModSyntax extends OpSyntax {
+	public ModSyntax() {
+		super("%");
+		this.op2 = "opMOD";
+		this.priority = 32;
+	}
+}
+
+class MulSyntax extends OpSyntax {
+	public MulSyntax() {
+		super("*");
+		this.op2 = "opMul";
+		this.priority = 32;
 	}
 }
 
@@ -559,12 +578,12 @@ class BOOLEANSyntax extends Syntax {
 	}
 }
 
-class INTSyntax extends Syntax {
-	public INTSyntax () {
-		super("int");
-		this.ty = TY.INT;
-	}
-}
+//class INTSyntax extends Syntax {
+//	public INTSyntax () {
+//		super("int");
+//		this.ty = TY.INT;
+//	}
+//}
 
 class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {
