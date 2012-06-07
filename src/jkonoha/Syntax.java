@@ -140,7 +140,7 @@ class USYMBOLSyntax extends Syntax {
 	}
 }
 
-class TextSyntax extends Syntax {
+class TextSyntax extends TermSyntax {
 	public TextSyntax() {
 		super("$TEXT");
 		this.flag = SYNFLAG.ExprTerm;
@@ -262,16 +262,118 @@ class BlockSyntax extends Syntax {
 	public BlockSyntax() {
 		super("$block");
 	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		//TODO ParseStmt_Block (ast.h : 830)
+		Token tk = tls.get(s);
+		if (tk.tt == TK.CODE) {
+			stmt.setObject(name, tk);
+			return (s+1);
+		}
+		else if (tk.tt == TK.AST_BRACE) {
+			Block bk =  Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
+			stmt.setObject(name, bk);
+			return (s+1);
+		}
+		else {
+			Block bk =  Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, s, e, ';');
+			stmt.setObject(name, bk);
+			return e;
+		}
+	}
+}
+
+class ParamsSyntax extends Syntax {
+	public ParamsSyntax () {
+		super("$params");
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	//TODO ParseStmt_Params (ast.h : 814)
+	int r = -1;
+	Token tk = tls.get(s);
+	if(tk.tt == TK.AST_PARENTHESIS) {
+		tls = tk.sub;//kArray *tls = tk->sub;
+		int ss = 0, ee = tls.size();
+		if(0 < ee && tls.get(0).kw == KW._void) ss = 1;  //  f(void) = > f()
+		Block bk = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
+		stmt.setObject(name, bk);
+		r = s + 1;
+	}
+	return r;
+	}
+}
+
+class ToksSyntax extends Syntax {
+	public ToksSyntax () {
+		super("$toks");
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		//TODO ParseStmt_Toks (ast.h : 851)
+		if(s < e) {
+			List<Token> a = new ArrayList<Token>();//TODO Is this right?
+			while(s < e) {
+				a.add(tls.get(s));//kArray_add(a, tls->toks[s]);
+				s++;
+			}
+			stmt.setObject(name, a);
+			return e;
+		}
+		return (-1);
+	}
+}
+
+class VoidSyntax extends Syntax {
+	public VoidSyntax () {
+		super("void");
+		this.ty = TY.VOID;
+		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
+	}
+}
+
+class BooleanSyntax extends Syntax {
+	public BooleanSyntax () {
+		super("boolean");
+		this.ty = TY.BOOLEAN;
+	}
+}
+
+class INTSyntax extends Syntax {
+	public INTSyntax () {
+		super("int");
+		this.ty = TY.INT;
+	}
+}
+
+class TrueSyntax extends TermSyntax {
+	public TrueSyntax () {
+		super("true");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+}
+
+class FalseSyntax extends TermSyntax {
+	public FalseSyntax () {
+		super("false");
+		this.flag = SYNFLAG.ExprTerm;
+	}
 }
 
 class IfSyntax extends Syntax {
 	public IfSyntax() {
 		super("if");
+		this.rule = "\"if\" \"(\" $expr \")\" $block [\"else\" else: $block]";
 	}
 }
 
+class ElseSyntax extends Syntax {
+	public ElseSyntax () {
+		super("else");
+		this.rule = "\"else\" $block";
+	}
+}
 class ReturnSyntax extends Syntax {
 	public ReturnSyntax() {
 		super("return");
+		this.rule = "\"return\" [$expr]";
+		this.flag = SYNFLAG.StmtBreakExec;
 	}
 }
