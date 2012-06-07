@@ -1,10 +1,11 @@
 package jkonoha;
 
+import java.io.PrintStream;
 import java.util.*;
 
 public class Expr extends KObject {
-	public int ty;
-	public int build;
+	public int ty    = TY.var;
+	public int build = TEXPR.UNTYPED;
 	public Token tk;
 	
 	//union
@@ -20,14 +21,24 @@ public class Expr extends KObject {
 	public Object ndata;
 	public int index;
 	public int cid;
+	
+	public Expr(Syntax syn) {
+		this.syn = syn;
+	}
 
 	public Expr at(int n) {
 		return (Expr)cons.get(n);
 	}
 	
 	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
-		//TODO
-		throw new RuntimeException();
+		Expr texpr = this;
+		if(this.ty == TY.var) {
+			//TODO
+		}
+		if(this.ty == TY.VOID) {
+			return texpr;
+		}
+		return null;
 	}
 	
 	public void setCons(Object... exprs) {
@@ -37,24 +48,30 @@ public class Expr extends KObject {
 		for (Object expr : exprs) {
 			cons.add(expr);
 		}
-	}	
+	}
+	
+	public void dump(PrintStream out, int n, int nest) {
+		//TODO src/sugar/struct.h 702
+	}
 }
 
 class ConstExpr extends Expr {  // as if NConstExpr 
-	public final Object data;
+	//public final Object data;
 
-	public ConstExpr(Object data) {
+	public ConstExpr(Syntax syn, KObject data) {
+		super(syn);
 		this.data = data;
-	}
-
-	/*@Override */public Object getData() {
-		return data;
 	}
 
 //int CONST    =  0;
 //int NCONST   =  3;  if ty is unboxed
 }
-class ConsExpr extends Expr{
+class ConsExpr extends Expr {
+	
+	public ConsExpr(Syntax syn) {
+		super(syn);
+	}
+	
 //	public List<Expr> cons = new ArrayList<Expr>();
 //	
 //	@Override public Expr at(int n) {

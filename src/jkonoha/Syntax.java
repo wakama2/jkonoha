@@ -2,6 +2,8 @@ package jkonoha;
 
 import java.util.*;
 
+import jkonoha.compiler.kobject.KInt;
+
 public abstract class Syntax {
 	public String kw;   // id
 	public int flag; // flag
@@ -159,7 +161,7 @@ class IntSyntax extends TermSyntax {
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
 		Token tk = expr.tk;
 		long l = Long.parseLong(tk.text);
-		return new ConstExpr(l);
+		return new ConstExpr(this, KInt.box(l));
 	}
 }
 
@@ -209,8 +211,7 @@ abstract class TermSyntax extends Syntax {
 		//TODO src/sugar/ast.h:638 ParseExpr_Term
 		assert(s == c);
 		Token tk = tls.get(c);
-		Expr expr = new Expr();
-		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
+		Expr expr = new Expr(stmt.parentNULL.ks.syntax(ctx, tk.kw));
 		//Expr_setTerm(expr, 1);
 		expr.tk = tk;
 		return expr;
@@ -230,12 +231,12 @@ abstract class OpSyntax extends Syntax {
 			//TODO
 		}
 		if (s == c) {
-			expr = new Expr();
+			expr = new Expr(this);
 			expr.setCons(rexpr);
 		}
 		else {
 			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
-			expr = new Expr();
+			expr = new Expr(this);
 			expr.setCons(tk, lexpr, rexpr);
 		}
 		return expr;
