@@ -83,10 +83,26 @@ class ExprSyntax extends Syntax {
 	}
 }
 
-class SYMBOLSyntax extends Syntax {
+abstract class TermSyntax extends Syntax {
+	public TermSyntax(String kw) {
+		super(kw);
+		this.flag = SYNFLAG.ExprTerm;
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		//TODO src/sugar/ast.h:638 ParseExpr_Term
+		assert(s == c);
+		Token tk = tls.get(c);
+		Expr expr = new Expr();
+		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
+		//Expr_setTerm(expr, 1);
+		//KSETv(expr->tk, tk);
+		return expr;
+	}
+}
+
+class SYMBOLSyntax extends TermSyntax {
 	public SYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		super("$SYMBOL");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
@@ -102,10 +118,9 @@ class SYMBOLSyntax extends Syntax {
 //	}
 }
 
-class USYMBOLSyntax extends Syntax {
+class USYMBOLSyntax extends TermSyntax {
 	public USYMBOLSyntax(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		super("$USYMBOL");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
@@ -139,20 +154,19 @@ class USYMBOLSyntax extends Syntax {
 //	}
 }
 
-class TextSyntax extends Syntax {
+class TextSyntax extends TermSyntax {
 	public TextSyntax() {
 		super("$TEXT");
-		this.flag = SYNFLAG.ExprTerm;
 	}
-//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		return expr.tyCheckVariable2(ctx, gamma, ty);
-//	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+		//return expr.serConstValue(ctx, gamma, ty);
+		return null;
+	}
 }
 
 class IntSyntax extends TermSyntax {
 	public IntSyntax() {
 		super("$INT");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
 		Token tk = expr.tk;
@@ -161,17 +175,15 @@ class IntSyntax extends TermSyntax {
 	}
 }
 
-class FloatSyntax extends Syntax {
+class FloatSyntax extends TermSyntax {
 	public FloatSyntax() {
 		super("$FLOAT");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
-class TypeSyntax extends Syntax {
+class TypeSyntax extends TermSyntax {
 	public TypeSyntax() {
 		super("$type");
-		this.flag = SYNFLAG.ExprTerm;
 		this.rule = "$type $expr";
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
@@ -238,6 +250,69 @@ class AST_BraceSyntax extends Syntax {
 
 }
 
+class BlockSyntax extends Syntax {
+	public BlockSyntax() {
+		super("$block");
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		//TODO ParseStmt_Block (ast.h : 830)
+		Token tk = tls.get(s);
+		if (tk.tt == TK.CODE) {
+			stmt.setObject(name, tk);
+			return (s+1);
+		}
+		else if (tk.tt == TK.AST_BRACE) {
+			Block bk =  Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
+			stmt.setObject(name, bk);
+			return (s+1);
+		}
+		else {
+			Block bk =  Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, s, e, ';');
+			stmt.setObject(name, bk);
+			return e;
+		}
+	}
+}
+
+class ParamsSyntax extends Syntax {
+	public ParamsSyntax () {
+		super("$params");
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+	//TODO ParseStmt_Params (ast.h : 814)
+		int r = -1;
+		Token tk = tls.get(s);
+		if(tk.tt == TK.AST_PARENTHESIS) {
+			tls = tk.sub;//kArray *tls = tk->sub;
+			int ss = 0, ee = tls.size();
+			if(0 < ee && tls.get(0).kw == KW._void) ss = 1;  //  f(void) = > f()
+			Block bk = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tls, ss, ee, ',');
+			stmt.setObject(name, bk);
+			r = s + 1;
+		}
+		return r;
+	}
+}
+
+class ToksSyntax extends Syntax {
+	public ToksSyntax () {
+		super("$toks");
+	}
+	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
+		//TODO ParseStmt_Toks (ast.h : 851)
+		if(s < e) {
+			List<Token> a = new ArrayList<Token>();//TODO Is this right?
+			while(s < e) {
+				a.add(tls.get(s));//kArray_add(a, tls->toks[s]);
+				s++;
+			}
+			stmt.setObject(name, a);
+			return e;
+		}
+		return (-1);
+	}
+}
+
 private boolean isFileName(List<Token> tls, int c, int e){
 	if(c+1 < e) {
 		Token tk = tls.get(c+1);
@@ -261,55 +336,6 @@ class DotSyntax extends Syntax {
 		}
 		if(c + 1 < e) c++;
 		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
-	}
-}
-
-class DivSyntax extends OpSyntax {
-	public DivSyntax() {
-		super("/");
-		this.op2 = "opDIV";
-		this.priority = 32;
-	}
-}
-
-class ModSyntax extends OpSyntax {
-	public ModSyntax() {
-		super("%");
-		this.op2 = "opMOD";
-		this.priority = 32;
-	}
-}
-
-class MulSyntax extends OpSyntax {
-	public MulSyntax() {
-		super("*");
-		this.op2 = "opMul";
-		this.priority = 32;
-	}
-}
-
-class SubSyntax extends OpSyntax {
-	public SubSyntax() {
-		super("-");
-		this.op1 = "opMINUS";
-		this.op2 = "opSUB";
-		this.priority = 64;
-	}
-}
-
-abstract class TermSyntax extends Syntax {
-	public TermSyntax(String kw) {
-		super(kw);
-	}
-	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
-		//TODO src/sugar/ast.h:638 ParseExpr_Term
-		assert(s == c);
-		Token tk = tls.get(c);
-		Expr expr = new Expr();
-		expr.syn = stmt.parentNULL.ks.syntax(ctx, tk.kw);
-		//Expr_setTerm(expr, 1);
-		//KSETv(expr->tk, tk);
-		return expr;
 	}
 }
 
@@ -343,6 +369,30 @@ abstract class OpSyntax extends Syntax {
 	}
 }
 
+class DivSyntax extends OpSyntax {
+	public DivSyntax() {
+		super("/");
+		this.op2 = "opDIV";
+		this.priority = 32;
+	}
+}
+
+class ModSyntax extends OpSyntax {
+	public ModSyntax() {
+		super("%");
+		this.op2 = "opMOD";
+		this.priority = 32;
+	}
+}
+
+class MulSyntax extends OpSyntax {
+	public MulSyntax() {
+		super("*");
+		this.op2 = "opMul";
+		this.priority = 32;
+	}
+}
+
 class AddSyntax extends OpSyntax {
 	public AddSyntax() {
 		super("+");
@@ -353,20 +403,199 @@ class AddSyntax extends OpSyntax {
 	}
 }
 
-class BlockSyntax extends Syntax {
-	public BlockSyntax() {
-		super("$block");
+class SubSyntax extends OpSyntax {
+	public SubSyntax() {
+		super("-");
+		this.op1 = "opMINUS";
+		this.op2 = "opSUB";
+		this.priority = 64;
 	}
 }
 
-class IfSyntax extends Syntax {
-	public IfSyntax() {
+class LTSyntax extends OpSyntax {
+	public LTSyntax () {
+		super("<");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opLT";
+		this.priority = 256;
+	}
+}
+
+class LTESyntax extends OpSyntax {
+	public LTESyntax () {
+		super("<=");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opLTE";
+		this.priority = 256;
+	}
+}
+
+class GTSyntax extends OpSyntax {
+	public GTSyntax () {
+		super(">");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opGT";
+		this.priority = 256;
+	}
+}
+
+class GTESyntax extends OpSyntax {
+	public GTESyntax () {
+		super(">=");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opGTE";
+		this.priority = 256;
+	}
+}
+
+class EQSyntax extends OpSyntax {
+	public EQSyntax () {
+		super("==");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opEQ";
+		this.priority = 512;
+	}
+}
+
+class NEQSyntax extends OpSyntax {
+	public NEQSyntax () {
+		super("!=");
+		this.flag = SYNFLAG.ExprOp;
+		this.op2 = "opNEQ";
+		this.priority = 512;
+	}
+}
+
+class ANDSyntax extends OpSyntax {
+	public ANDSyntax () {
+		super("&&");
+		this.flag = SYNFLAG.ExprOp;
+		this.priority = 1024;
+	}
+}
+
+class ORSyntax extends OpSyntax {
+	public ORSyntax () {
+		super("||");
+		this.flag = SYNFLAG.ExprOp;
+		this.priority = 2048;
+	}
+}
+
+class NOTSyntax extends OpSyntax {
+	public NOTSyntax () {
+		super("!");
+		this.flag = SYNFLAG.ExprOp;
+		this.op1 = "opNOT";
+	}
+}
+
+class OPLEFTSyntax extends Syntax {
+	public OPLEFTSyntax () {
+		super("=");
+		this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
+		this.priority = 4096;
+	}
+}
+
+class COMMASyntax extends Syntax {
+	public COMMASyntax () {
+		super(",");
+		this.flag = SYNFLAG.ExprOp;
+		this.op1 = "opNOT";
+		this.op2 = "*";
+		this.priority = 8192;
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		Expr expr = new Expr();
+		exprConsSet(expr, tls.get(c));
+		//TODO expr = stmt.addExprParams(ctx, expr, tls, s, e, 0);
+		return expr;
+	}
+	private void exprConsSet(Expr e, Object... exprs) {
+		e.cons = new ArrayList<Object>();
+		for (Object expr : exprs) {
+			e.cons.add(expr);
+		}	
+	}
+}
+
+class DOLLARSyntax extends Syntax {
+	public DOLLARSyntax () {
+		super("$");
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		if (s == c && c + 1 < e) {
+			Token tk = tls.get(c + 1);
+			if (tk.tt == TK.CODE) {
+				//TODO Token_toBRACE(_ctx, (struct _kToken*)tk, kStmt_ks(stmt));
+			}
+			if (tk.tt == TK.AST_BRACE) {
+				Expr expr = new Expr();
+				//expr.setTerm(expr, 1);//TODO
+				expr.tk = tk;
+				expr.block = Parser.getInstance().newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
+				return expr;
+				}
+			}
+			//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
+			return null;
+		}
+	}
+
+class VOIDSyntax extends Syntax {
+	public VOIDSyntax () {
+		super("void");
+		this.ty = TY.VOID;
+		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
+	}
+}
+
+class BOOLEANSyntax extends Syntax {
+	public BOOLEANSyntax () {
+		super("boolean");
+		this.ty = TY.BOOLEAN;
+	}
+}
+
+class INTSyntax extends Syntax {
+	public INTSyntax () {
+		super("int");
+		this.ty = TY.INT;
+	}
+}
+
+class TRUESyntax extends TermSyntax {
+	public TRUESyntax () {
+		super("true");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+}
+
+class FALSESyntax extends TermSyntax {
+	public FALSESyntax () {
+		super("false");
+		this.flag = SYNFLAG.ExprTerm;
+	}
+}
+
+class IFSyntax extends Syntax {
+	public IFSyntax() {
 		super("if");
+		this.rule = "\"if\" \"(\" $expr \")\" $block [\"else\" else: $block]";
 	}
 }
 
-class ReturnSyntax extends Syntax {
-	public ReturnSyntax() {
+class ELSESyntax extends Syntax {
+	public ELSESyntax () {
+		super("else");
+		this.rule = "\"else\" $block";
+	}
+}
+class RETURNSyntax extends Syntax {
+	public RETURNSyntax() {
 		super("return");
+		this.rule = "\"return\" [$expr]";
+		this.flag = SYNFLAG.StmtBreakExec;
 	}
 }
