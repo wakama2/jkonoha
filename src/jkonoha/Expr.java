@@ -27,7 +27,7 @@ public class Expr extends KObject {
 	}
 
 	public Expr at(int n) {
-		return (Expr)cons.get(n);
+		return cons.get(n);
 	}
 	
 	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
@@ -54,7 +54,6 @@ public class Expr extends KObject {
 		//TODO src/sugar/struct.h 702
 	}
 }
-
 class ConstExpr extends Expr {  // as if NConstExpr 
 	//public final Object data;
 

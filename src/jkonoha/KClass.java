@@ -1,5 +1,9 @@
 package jkonoha;
 
+import java.util.*;
+
+import jkonoha.compiler.KField;
+
 public class KClass {
 	public int cid;
 	public int cflag;

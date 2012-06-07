@@ -28,6 +28,14 @@ public class Stmt extends KObject {
 		return def;
 	}
 	
+	public String getText(CTX ctx, String kw, String def) {
+		return (String)getObject(kw);
+	}
+	
+	public Expr getExpr(CTX ctx, String kw, Expr def) {
+		return (Expr)getObject(kw);
+	}
+	
 	public int addAnnotation(CTX ctx, List<Token> tls, int s, int e) {
 		int i;
 		for (i = s; i < e; i++) {
@@ -91,11 +99,10 @@ public class Stmt extends KObject {
 			Token tk = tls.get(ti);
 			uline = tk.uline;
 			if (rule.tt == TK.CODE) {
-				if (!rule.kw.equals(tk.kw)) {
+				if (rule.kw != tk.kw) {
 					if (optional)	return s;
 					//kToken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
-					throw new RuntimeException(syntax.kw + " needs " + rule.kw);
-					//return -1;
+					return -1;
 				}
 				ti++;
 				continue;
@@ -104,8 +111,7 @@ public class Stmt extends KObject {
 				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
 				if (syn == null/* || syn.ParseStmtNULL == null*/) {//TODO Syntax has KMethod ParseStmtNULL
 					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
-					throw new RuntimeException("unknown syntax pattern: " + rule.kw);
-					//return -1;
+					return -1;
 				}
 				int c = e;
 				if (ri +1 < ruleSize && rules.get(ri+1).tt == TK.CODE) {
@@ -113,8 +119,7 @@ public class Stmt extends KObject {
 					if (c == -1) {
 						if (optional) return s;
 						//kTOken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
-						throw new RuntimeException(syntax.kw + " needs " + rule.kw);
-						//return -1;
+						return -1;
 					}
 					ri++;
 				}
@@ -124,7 +129,6 @@ public class Stmt extends KObject {
 					if (optional) return s;
 					if (errCount == ctx.ctxsugar.errCount) {
 						//kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
-						throw new RuntimeException("needs syntax pattern");
 					}
 					return -1;
 				}
@@ -142,9 +146,6 @@ public class Stmt extends KObject {
 					int next = matchSyntaxRule(ctx, rule.sub, uline, tk.sub, 0, tk.sub.size(), false);
 					if (next == -1) return -1;
 					ti++;
-				} else {
-					if(optional) return s;
-					throw new RuntimeException();
 				}
 			}
 		}
@@ -153,8 +154,7 @@ public class Stmt extends KObject {
 				Token rule = rules.get(ri);
 				if (rule.tt != TK.AST_OPTIONAL) {
 					//SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
-					throw new RuntimeException(syntax.kw + " needs syntax pattern: " + rule.kw);
-					//return -1;
+					return -1;
 				}
 			}
 			//WARN_Ignored(ctx, tls, ti, e);
