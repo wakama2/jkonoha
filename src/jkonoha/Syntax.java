@@ -199,6 +199,104 @@ class TypeSyntax extends Syntax {
 //	}
 }
 
+class AST_ParenthesisSyntax extends Syntax {
+	public AST_ParenthesisSyntax() {
+		super("()");
+		this.flag = SYNFLAG.ExprPostfixOp2;
+		this.priority = 16;
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		Token tk = tls.get(c);
+		if(s == c) {
+			Expr expr = stmt.newExpr2(ctx, tk.sub, 0, tk.sub.size());
+			return expr.rightJoin(stmt, tls, s+1, c+1, e);
+		}
+		else {
+			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
+			if(lexpr == K_NULLEXPR) {
+				return lexpr;
+			}
+			if(lexpr.syn.kw.equals(KW.DOT)) {
+				lexpr.syn = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall); // CALL
+			}
+			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
+				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
+				lexpr = new_ConsExpr(ctx, syn, 2, lexpr, K_NULL);
+				// TODO lexpr = new ConsExpr(syn); ?
+			}
+			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);
+			return lexpr.rightJoin(stmt, tls, s+1, c+1, e);
+		}
+	}
+}
+
+class AST_BracketSyntax extends Syntax {
+
+}
+
+class AST_BraceSyntax extends Syntax {
+
+}
+
+private boolean isFileName(List<Token> tls, int c, int e){
+	if(c+1 < e) {
+		Token tk = tls.get(c+1);
+		return (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
+	}
+	return false;
+}
+
+class DotSyntax extends Syntax {
+	public DotSyntax() {
+		super(".");
+	}
+	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+		DBG_P("s=%d, c=%d", s, c);
+		assert(s < c);
+		if(isFileName(tls, c, e)) {
+			Expr expr = stmt.newExpr2(ctx, tls, s, c);
+			expr = new_ConsExpr(_ctx, syn, 2, tls.toks[c+1], expr);
+			// TODO expr = new ConsExpr(syn); ?
+			return expr.rightJoin(stmt, tls, c+2, c+2, e);
+		}
+		if(c + 1 < e) c++;
+		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
+	}
+}
+
+class DivSyntax extends OpSyntax {
+	public DivSyntax() {
+		super("/");
+		this.op2 = "opDIV";
+		this.priority = 32;
+	}
+}
+
+class ModSyntax extends OpSyntax {
+	public ModSyntax() {
+		super("%");
+		this.op2 = "opMOD";
+		this.priority = 32;
+	}
+}
+
+class MulSyntax extends OpSyntax {
+	public MulSyntax() {
+		super("*");
+		this.op2 = "opMul";
+		this.priority = 32;
+	}
+}
+
+class SubSyntax extends OpSyntax {
+	public SubSyntax() {
+		super("-");
+		this.op1 = "opMINUS";
+		this.op2 = "opSUB";
+		this.priority = 64;
+	}
+}
+
 abstract class TermSyntax extends Syntax {
 	public TermSyntax(String kw) {
 		super(kw);
