@@ -10,7 +10,7 @@ public abstract class Syntax {
 	public String rule;
 	public List<Token> syntaxRuleNULL;
 
-	public int ty;        // "void" ==> TY_void
+	public int ty = TY.unknown;        // "void" ==> TY_void
 	public int priority;  // op2   
 	public String op2;
 	public String op1;
@@ -94,6 +94,7 @@ abstract class TermSyntax extends Syntax {
 class SYMBOLSyntax extends TermSyntax {
 	public SYMBOLSyntax() {
 		super("$SYMBOL");
+		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
@@ -112,6 +113,7 @@ class SYMBOLSyntax extends TermSyntax {
 class USYMBOLSyntax extends TermSyntax {
 	public USYMBOLSyntax() {
 		super("$USYMBOL");
+		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
@@ -148,6 +150,7 @@ class USYMBOLSyntax extends TermSyntax {
 class TextSyntax extends TermSyntax {
 	public TextSyntax() {
 		super("$TEXT");
+		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
 		//return expr.serConstValue(ctx, gamma, ty);
@@ -158,6 +161,7 @@ class TextSyntax extends TermSyntax {
 class IntSyntax extends TermSyntax {
 	public IntSyntax() {
 		super("$INT");
+		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
 		Token tk = expr.tk;
@@ -169,6 +173,7 @@ class IntSyntax extends TermSyntax {
 class FloatSyntax extends TermSyntax {
 	public FloatSyntax() {
 		super("$FLOAT");
+		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
@@ -234,17 +239,21 @@ class AST_ParenthesisSyntax extends Syntax {
 }
 
 class AST_BracketSyntax extends Syntax {
+
 	public AST_BracketSyntax() {
 		super("[]");
 		// TODO Auto-generated constructor stub
 	}
+
 }
 
 class AST_BraceSyntax extends Syntax {
+
 	public AST_BraceSyntax() {
 		super("{}");
 		// TODO Auto-generated constructor stub
 	}
+
 }
 
 class BlockSyntax extends Syntax {
@@ -307,10 +316,12 @@ class ToksSyntax extends Syntax {
 	}
 }
 
+
 class DotSyntax extends Syntax {
 	public DotSyntax() {
 		super(".");
 	}
+	
 	private boolean isFileName(List<Token> tls, int c, int e){
 		if(c+1 < e) {
 			Token tk = tls.get(c+1);
@@ -318,6 +329,7 @@ class DotSyntax extends Syntax {
 		}
 		return false;
 	}
+
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//DBG_P("s=%d, c=%d", s, c);
 		assert(s < c);
@@ -346,43 +358,14 @@ abstract class OpSyntax extends Syntax {
 		}
 		if (s == c) {
 			expr = new Expr(this);
-			exprConsSet(rexpr);
+			expr.setCons(rexpr);
 		}
 		else {
-			Expr  lexpr = stmt.newExpr2(ctx, tls, s, c);
+			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
 			expr = new Expr(this);
-			exprConsSet(lexpr, rexpr);
+			expr.setCons(tk, lexpr, rexpr);
 		}
 		return expr;
-	}
-	private void exprConsSet(Expr... exprs) {
-		for (Expr expr : exprs) {
-			expr.cons.add(expr);
-		}
-	}
-}
-
-class DivSyntax extends OpSyntax {
-	public DivSyntax() {
-		super("/");
-		this.op2 = "opDIV";
-		this.priority = 32;
-	}
-}
-
-class ModSyntax extends OpSyntax {
-	public ModSyntax() {
-		super("%");
-		this.op2 = "opMOD";
-		this.priority = 32;
-	}
-}
-
-class MulSyntax extends OpSyntax {
-	public MulSyntax() {
-		super("*");
-		this.op2 = "opMul";
-		this.priority = 32;
 	}
 }
 

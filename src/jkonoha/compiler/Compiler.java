@@ -135,7 +135,7 @@ public class Compiler implements Opcodes {
 	}
 
 	public void asmErrStmt(Stmt stmt, int shift, int espidx) {
-		String str = (String)stmt.getObject("0");
+		String str = (String)stmt.getObject("$ERR");
 		System.err.println(str);
 		//asmError();
 	}
@@ -192,8 +192,8 @@ public class Compiler implements Opcodes {
 	public void asmLoopStmt(Stmt stmt, int shift, int espidx) {
 		Label lbCONTINUE = new Label();
 		Label lbBREAK = new Label();
-		stmt.setObject(ctx.kw("continue"), lbCONTINUE);
-		stmt.setObject(ctx.kw("break"), lbBREAK);
+		stmt.setObject("continue", lbCONTINUE);
+		stmt.setObject("break", lbBREAK);
 		asmLabel(lbCONTINUE);
 		asmExprJmpIf(espidx, (Expr)stmt.getObject("$expr"), false, lbBREAK, shift, espidx);
 		asmBlock((Block)stmt.getObject(KW.Block), shift);
@@ -215,13 +215,13 @@ public class Compiler implements Opcodes {
 	}
 	
 	private void asmCall(int a, Expr expr, int shift, int espidx) {
-		List<Expr> l = expr.cons;
-		KMethod mtd = null;//(KMethod)expr.cons.get(0);//TODO
+		List<Object> l = expr.cons;
+		KMethod mtd = (KMethod)l.get(0);
 		//int s = mtd.isStatic() ? 2 : 1;//TODO
 		int s = 1;
 		int thisidx = espidx + K.CALLDELTA;
 		for(int i=s; i<l.size(); i++) {
-			Expr e = l.get(i);
+			Expr e = (Expr)l.get(i);
 			asmExpr(thisidx + i - 1, e, shift, thisidx + i - 1);
 		}
 		call(mtd);
@@ -246,11 +246,11 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmOr(int a, Expr expr, int shift, int espidx) {
-		List<Expr> l = expr.cons;
+		List<Object> l = expr.cons;
 		Label lbTRUE = new Label();
 		Label lbFALSE = new Label();
 		for(int i=1; i<l.size(); i++) {
-			this.asmExprJmpIf(a, l.get(i), true, lbTRUE, shift, espidx);
+			this.asmExprJmpIf(a, (Expr)l.get(i), true, lbTRUE, shift, espidx);
 		}
 		mv.visitInsn(ICONST_0);//false
 		asmJump(lbFALSE);
@@ -260,11 +260,11 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmAnd(int a, Expr expr, int shift, int espidx) {
-		List<Expr> l = expr.cons;
+		List<Object> l = expr.cons;
 		Label lbTRUE = new Label();
 		Label lbFALSE = new Label();
 		for(int i=1; i<l.size(); i++) {
-			this.asmExprJmpIf(a, l.get(i), false, lbTRUE, shift, espidx);
+			this.asmExprJmpIf(a, (Expr)l.get(i), false, lbTRUE, shift, espidx);
 		}
 		mv.visitInsn(ICONST_0);//false
 		asmJump(lbFALSE);

@@ -6,19 +6,10 @@ public class KObject {
 	
 	private Map<String, Object> kvproto = null;
 	
-	@Deprecated public void setObject(int key, Object value) {
-		setObject(Integer.toString(key), value);
-	}
-	
-	@Deprecated public Object getObject(int key) {
-		return getObject(Integer.toString(key));
-	}
-	
 	public void setObject(String key, Object value) {
 		if(kvproto == null) {
 			kvproto = new HashMap<String, Object>();
 		}
-		System.out.println("setObject " + this + " " + key + " = " + value);
 		kvproto.put(key, value);
 	}
 	

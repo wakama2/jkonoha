@@ -8,7 +8,6 @@ public class Block extends KObject {
 	public final List<Stmt> blocks = new ArrayList<Stmt>();
 	public Expr esp;  // BlockScopeVariable() to record maximun used stack
 	
-	// src/sugar/struct.h:952
 	public Block(CTX ctx, KonohaSpace ks) {
 		this.ks = ks != null ? ks : ctx.modsugar.rootks;
 	}
@@ -31,4 +30,24 @@ public class Block extends KObject {
 		}
 		return result;
 	}
+	
+	public void addStmtLine(CTX ctx, List<Token> tls, int s, int e, Token tkERR) {
+		Stmt stmt = new Stmt(tls.get(s).uline);
+		this.blocks.add(stmt);
+		stmt.parentNULL = this;
+		if (tkERR != null) {
+			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Err);
+			stmt.build = TSTMT.ERR;
+			stmt.setObject(KW.Err, tkERR);
+		}
+		else {
+			int estart = ctx.ctxsugar.errors.size();
+			s = stmt.addAnnotation(ctx, tls, s, e);
+			if (!stmt.parseSyntaxRule(ctx, tls, s, e)) {
+				stmt.toERR(estart);
+			}
+		}
+		assert (stmt.syntax != null);
+	}	
+	
 }

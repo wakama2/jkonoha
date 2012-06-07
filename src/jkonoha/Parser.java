@@ -3,8 +3,8 @@ package jkonoha;
 import java.util.*;
 
 public class Parser {
-
-	public Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
+	
+	public static Block newBlock(CTX ctx, KonohaSpace ks, Stmt parent, List<Token> tls, int s, int e, int delim) {
 		Block bk = new Block(ctx, ks);
 		if (parent != null) {
 			bk.parentNULL = parent;
@@ -17,33 +17,14 @@ public class Parser {
 			i = selectStmtLine (ctx, ks, indent, tls, i, e, delim, tls, tkERR);//TODO How to tkERR?
 			int asize = tls.size();
 			if (asize > atop) {
-				Block_addStmtLine (ctx, bk, tls, atop, asize, tkERR);
+				bk.addStmtLine(ctx, tls, atop, asize, tkERR);
 				tls.remove(atop);
 			}
 		}
 		return bk;
 	}
-	
-	public void Block_addStmtLine (CTX ctx, Block bk, List<Token> tls, int s, int e, Token tkERR) {
-		Stmt stmt = new Stmt(tls.get(s).uline);
-		bk.blocks.add(stmt);
-		stmt.parentNULL = bk;
-		if (tkERR != null) {
-			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Err);
-			stmt.build = TSTMT.ERR;
-			stmt.setObject(KW.Err, tkERR);
-		}
-		else {
-			int estart = ctx.ctxsugar.errors.size();
-			s = stmt.addAnnotation(ctx, tls, s, e);
-			if (!stmt.parseSyntaxRule(ctx, tls, s, e)) {
-				stmt.toERR(estart);
-			}
-		}
-		assert (stmt.syntax != null);
-	}
 
-	public int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
+	public static int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
 		assert(tk.kw == KW.Err);
@@ -91,13 +72,13 @@ public class Parser {
 		return e;
 	}
 	
-	public int selectStmtLine(CTX ctx, KonohaSpace ks, int[] indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
+	public static int selectStmtLine(CTX ctx, KonohaSpace ks, int[] indent, List<Token> tls, int s, int e, int delim, List<Token> tlsdst, Token tkERRRef) {
 		int i = s;
 		assert(e <= tls.size());
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
 			Token tk1 = tls.get(i+1);
-			if(tk.kw != KW.Err) break;  // already parsed
+			if(!tk.kw.equals(KW.Err)) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
 				tk1.tt = TK.METANAME;
 				tk1.kw = KW.Err;
@@ -125,7 +106,7 @@ public class Parser {
 			if(tk.topch == delim && tk.tt == TK.OPERATOR) {
 				return i+1;
 			}
-			if(tk.kw != KW.Err) {
+			if(!tk.kw.equals(KW.Err)) {
 				tlsdst.add(tk);
 				continue;
 			}
@@ -151,7 +132,7 @@ public class Parser {
 		return i;
 	}
 	
-	private int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
+	private static int appendKeyword(CTX ctx, KonohaSpace ks, List<Token> tls, int s, int e, List<Token> dst, Token tkERR) {
 		int next = s; // don't add
 		Token tk = tls.get(s);
 		if(tk.tt < TK.OPERATOR) {
@@ -182,6 +163,7 @@ public class Parser {
 			tk.kw = KW.Brace;
 		}
 		if (tk.kw == KW.Type) {
+			dst.add(tk);
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
 				if (tkN.topch != '[' ) break;
@@ -208,7 +190,7 @@ public class Parser {
 		return next;
 	}
 	
-	private Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
+	private static Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
 			Param[] p = new Param[size];
@@ -245,4 +227,5 @@ public class Parser {
 		}
 		return null;
 	}
+	
 }
