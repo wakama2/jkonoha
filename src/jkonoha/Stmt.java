@@ -15,19 +15,6 @@ public class Stmt extends KObject {
 		this.uline = uline;
 	}
 	
-	public Block getBlock(CTX ctx, String kw, Block def) {
-		Object bk = this.getObject(kw);
-		if(bk != null) {
-			if(bk instanceof Block) {
-				return (Block)bk;
-			}
-			if(bk instanceof Token) {
-				//TODO
-			}
-		}
-		return def;
-	}
-	
 	public int addAnnotation(CTX ctx, List<Token> tls, int s, int e) {
 		int i;
 		for (i = s; i < e; i++) {
@@ -54,6 +41,8 @@ public class Stmt extends KObject {
 			Syntax[] syn = new Syntax[]{null};
 			int idx = findBinaryOp(ctx, tls, s, e, syn);
 			if (idx != -1) {
+				ctx.DBG_P("** Found BinaryOp: s=%d, idx=%d, e=%d, '%s'**",
+						s, idx, e, tls.get(idx).toString());
 				return syn[0].parseExpr(ctx, this, tls, s, idx, e);
 			}
 			int c = s;
@@ -62,13 +51,13 @@ public class Stmt extends KObject {
 		}
 		else {
 			if (0 < s - 1) {
-				//SUGAR_P(ERR_, uline, -1, "expected expression after %s", "TODO"/*kToken_s (tls.toks[s-1])*/);
+				ctx.SUGAR_P(System.err, uline, -1, "expected expression after %s", tls.get(s-1).toString());
 			}
 			else if (e < tls.size()) {
-				//SUGAR_P(ERR_, uline, -1, "expected expression before %s", "TODO"/*kToken_s(tls.toks[e])*/);
+				ctx.SUGAR_P(System.err, uline, -1, "expected expression before %s", tls.get(e).toString());
 			}
 			else {
-				//SUGAR_P(ERR_, uline, 0, "expected expression");
+				ctx.SUGAR_P(System.err, uline, 0, "expected expression");
 			}
 			return null;
 		}
@@ -152,9 +141,8 @@ public class Stmt extends KObject {
 			for (; ri < rules.size(); ri++) {
 				Token rule = rules.get(ri);
 				if (rule.tt != TK.AST_OPTIONAL) {
-					//SUGAR_P (ERR_, uline, -1, "%s needs syntax pattern: %s", T_statement(syntax.kw), T_kw (rule.kw));
-					throw new RuntimeException(syntax.kw + " needs syntax pattern: " + rule.kw);
-					//return -1;
+					ctx.SUGAR_P (System.err, uline, -1, "%s needs syntax pattern: %s", syntax.kw, rule.kw);
+					return -1;
 				}
 			}
 			//WARN_Ignored(ctx, tls, ti, e);
@@ -171,7 +159,7 @@ public class Stmt extends KObject {
 			ret = (matchSyntaxRule(ctx, syn.syntaxRuleNULL, uline, tls, s, e, false) != -1);
 		}
 		else {
-			Konoha.SUGAR_P_ERR(uline, 0, "undefined syntax rule for '%s'", syn.kw);
+			ctx.SUGAR_P(System.err, uline, 0, "undefined syntax rule for '%s'", syn.kw);
 		}
 		return ret;
 	}

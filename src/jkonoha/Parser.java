@@ -174,12 +174,12 @@ public class Parser {
 				Token tkB = abuf.get(atop);
 				tk = TokenType_resolveGenerics(ctx, ks, tk, tkB);
 				if(tk == null) {
-//					DBG_P("APPEND tkB.tt=%s", T_tt(tkB.tt)); // TODO T_tt?
+					ctx.DBG_P("APPEND tkB.tt=%s", Token.ttToStr(tkB.tt));
 					if(abuf != dst) {
 						dst.add(tkB);
 						abuf.remove(atop);
 					}
-					DBG_P("next=%d", next); // TODO DBG_P?
+					ctx.DBG_P("next=%d", next);
 					return next;
 				}
 			}
@@ -206,7 +206,7 @@ public class Parser {
 			}
 			KClass ct = null;
 			if(psize > 0) {
-				ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
+				//ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
 				if(ct.bcid == CLASS.Func) {
 					//TODO
 //					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics

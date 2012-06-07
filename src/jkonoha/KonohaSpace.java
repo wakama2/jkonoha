@@ -50,13 +50,13 @@ public class KonohaSpace extends KObject {
 		}
 		Syntax syn = syntax(ctx, tk.kw);
 		if(syn.syntaxRuleNULL == null) {
-			//		DBG_P("kw='%s', %d, %d", T_kw(syn.kw), syn.ParseExpr == kmodsugar.UndefinedParseExpr, kmodsugar.UndefinedExprTyCheck == syn.ExprTyCheck);
+			ctx.DBG_P("kw='%s', %d, %d", syn.kw, 0, 0);//TODO syn.ParseExpr == kmodsugar.UndefinedParseExpr, kmodsugar.UndefinedExprTyCheck == syn.ExprTyCheck);
 			int i;
 			for(i = s + 1; i < e; i++) {
 				tk = tls.get(i);
 				syn = syntax(ctx, tk.kw);
 				if(syn.syntaxRuleNULL != null && syn.priority > 0) {
-					//SUGAR_P(DEBUG_, tk.uline, tk.lpos, "binary operator syntax kw='%s'", T_kw(syn.kw));   // sugar $expr "=" $expr;
+					ctx.SUGAR_P(System.out, tk.uline, tk.lpos, "binary operator syntax kw='%s'", syn.kw);
 					return syn;
 				}
 			}
@@ -260,7 +260,7 @@ public class KonohaSpace extends KObject {
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
-		Token.dumpTokenArray(System.out, tls);
+		//Token.dumpTokenArray(System.out, tls);
 		
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		for(Stmt stmt : bk.blocks) {
@@ -270,9 +270,9 @@ public class KonohaSpace extends KObject {
 	}
 
 	private void evalBlock(CTX ctx, Block bk) {
-		CompilerContext cc = new CompilerContext(ctx);
+		//CompilerContext cc = new CompilerContext(ctx);
 		bk.tyCheckAll(ctx, null);
-		cc.evalBlock(bk);
+		//cc.evalBlock(bk);
 	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {

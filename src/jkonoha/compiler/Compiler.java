@@ -146,7 +146,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmBlockStmt(Stmt stmt, int shift, int espidx) {
-		asmBlock(stmt.getBlock(ctx, KW.Block, ctx.NULLBLOCK), shift);
+		asmBlock((Block)stmt.getObject(KW.Block), shift);
 	}
 	
 	public void asmReturnStmt(Stmt stmt, int shift, int espidx) {
@@ -180,11 +180,11 @@ public class Compiler implements Opcodes {
 		/* if */
 		asmExprJmpIf(espidx, (Expr)stmt.getObject("$expr"), false, lbELSE, shift, espidx);
 		/* then */
-		asmBlock(stmt.getBlock(ctx, KW.Block, ctx.NULLBLOCK), shift);
+		asmBlock((Block)stmt.getObject(KW.Block), shift);
 		asmJump(lbEND);
 		/* else */
 		asmLabel(lbELSE);
-		asmBlock(stmt.getBlock(ctx, KW._else, ctx.NULLBLOCK), shift);
+		asmBlock((Block)stmt.getObject(KW._else), shift);
 		/* endif */
 		asmLabel(lbEND);
 	}
