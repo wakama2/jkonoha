@@ -228,5 +228,12 @@ public class Stmt extends KObject {
 	
 	public void dump(PrintStream out) {
 		//TODO src/sugar/struct/h 839
+		if (this.syntax == null) {
+			out.println( "STMT (DONE)");
+		} else {
+			out.println ("STMT" + this.syntax.kw + "{");
+			//kObject_protoEach(stmt, NULL, _dumpToken);//TODO
+			out.println("" + "}");
+		}
 	}
 }

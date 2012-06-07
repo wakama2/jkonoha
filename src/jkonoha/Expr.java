@@ -50,11 +50,50 @@ public class Expr extends KObject {
 		}
 	}
 	
+	public boolean isTerm() {
+		return false;//TODO
+	}
+	
 	public void dump(PrintStream out, int n, int nest) {
 		//TODO src/sugar/struct.h 702
+		if (nest == 0) out.println("");
+		Token.dumpIndent(out, nest);
+		if (this == null) {
+			out.println ("[" + n + "] ExprTerm: null");
+		} else if (this.isTerm()) {
+			out.println ("[" + n + "] ExprTerm: kw = " + null + ", " + this.tk);
+			out.println("");
+		} else {
+			int i = 0;
+			if (this.syn == null) {
+				out.println ("[" + n + "] Cons: kw = null, size =" + this.cons.size());
+			} else { 
+				out.println ("[" + n + "] Cons: kw=" + null + ", size = " + this.cons.size());
+			}
+			if (this.ty != TY.var) {
+				
+			}
+			out.println ("\n");
+			for (; i < this.cons.size(); i++) {
+				Object o = this.cons.get(i);//FIXME
+				if(false/*O_ct(o) == CT_Expr*/) {//TODO
+					dump(out, i, nest+1);
+				} else {
+					Token.dumpIndent (out, nest+1);
+					if (false/*O_ct(o) == CT_Token*/) {//TODO
+						Token tk = (Token)o;
+						out.println("[" + i + "]: "/*+ T_CT(o->h.ct)*/);
+						tk.dump(out);
+					} else if (o == null) {
+						out.println("[" + i + "] O: null");
+					} else {
+						out.println("[" + i + "] O: "/*+ T_CT(o->h.ct)*/);
+					}
+				}
+			}
+		}
 	}
 }
-
 class ConstExpr extends Expr {  // as if NConstExpr 
 	//public final Object data;
 
