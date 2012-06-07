@@ -335,7 +335,7 @@ class DotSyntax extends Syntax {
 			return expr;
 		}
 		if(c + 1 < e) c++;
-		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c]));
+		return tls.get(c).p(ctx, ERR_, "expected field name: not %s", tls.get(c).s(ctx));
 	}
 }
 

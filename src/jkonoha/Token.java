@@ -121,6 +121,56 @@ public class Token extends KObject {
 	}
 }
 
+public Expr p(CTX ctx, int pe, String fmt, Object... ap)
+{
+	vperrorf(ctx, pe, this.uline, this.lpos, fmt, ap);
+	return null;
+}
+
+public String s(CTX ctx) {
+	switch(this.tt) {
+	case TK.INDENT: return "end of line";
+	case TK.CODE: ;
+	case AST_BRACE: return "{... }";
+	case AST_PARENTHESIS: return "(... )";
+	case AST_BRACKET: return "[... ]";
+	default:  return S_text(this.text); //S_text(s) ((const char*) (O_ct(s)->unbox(_ctx, (kObject*)s)))
+	}                                   //O_ct(o)   ((o)->h.ct)
+}
+
+public int vperrorf(CTX ctx, int pe, long uline, int lpos, String fmt, Object[] ap)
+{
+	String msg = T_emsg(ctx, pe);
+	int errref = -1;
+	if(msg != null) {
+		CtxSugar base = ctx.ctxsugar;
+		Kwb wb;
+		kwb_init(base.cwb, wb);
+		if(uline > 0) {
+			String file = T_file(uline);
+//			if(lpos != -1) {
+//				kwb_printf(&wb, "%s (%s:%d+%d) " , msg, shortname(file), (kushort_t)uline, (int)lpos+1);
+//			}
+//			else {
+				kwb_printf(&wb, "%s (%s:%d) " , msg, shortname(file), (kushort_t)uline);
+//			}
+		}
+		else {
+			kwb_printf(&wb, "%s " , msg);
+		}
+		kwb_vprintf(&wb, fmt, ap);
+		msg = kwb_top(&wb, 1);
+		kString *emsg = new_kString(msg, strlen(msg), 0);
+		errref = kArray_size(base->errors);
+		kArray_add(base->errors, emsg);
+		if(pe == ERR_ || pe == CRIT_) {
+			base->err_count ++;
+		}
+		kreport(pe, S_text(emsg));
+	}
+	return errref;
+}
+
 //import java.util.*;
 //
 ///**
