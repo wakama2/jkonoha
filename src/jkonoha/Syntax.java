@@ -221,11 +221,11 @@ class AST_ParenthesisSyntax extends Syntax {
 		Token tk = tls.get(c);
 		if(s == c) {
 			Expr expr = stmt.newExpr2(ctx, tk.sub, 0, tk.sub.size());
-			return expr.rightJoin(stmt, tls, s+1, c+1, e);
+			return expr;
 		}
 		else {
 			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
-			if(lexpr == K_NULLEXPR) {
+			if(lexpr == null) {
 				return lexpr;
 			}
 			if(lexpr.syn.kw.equals(KW.DOT)) {
@@ -237,7 +237,7 @@ class AST_ParenthesisSyntax extends Syntax {
 				// TODO lexpr = new ConsExpr(syn); ?
 			}
 			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);
-			return lexpr.rightJoin(stmt, tls, s+1, c+1, e);
+			return lexpr;
 		}
 	}
 }
@@ -332,7 +332,7 @@ class DotSyntax extends Syntax {
 			Expr expr = stmt.newExpr2(ctx, tls, s, c);
 			expr = new_ConsExpr(_ctx, syn, 2, tls.toks[c+1], expr);
 			// TODO expr = new ConsExpr(syn); ?
-			return expr.rightJoin(stmt, tls, c+2, c+2, e);
+			return expr;
 		}
 		if(c + 1 < e) c++;
 		return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
