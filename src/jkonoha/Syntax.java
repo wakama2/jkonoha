@@ -335,8 +335,8 @@ class DotSyntax extends Syntax {
 			return expr;
 		}
 		if(c + 1 < e) c++;
-		return tls.get(c).p(ctx, ReportLevel.ERR, "expected field name: not %s", tls.get(c).s(ctx));
-	}
+		return tls.get(c).p(ctx, ReportLevel.ERR, "expected field name: not %s", tls.get(c).toString());
+	}           // Token_p
 }
 
 abstract class OpSyntax extends Syntax {
@@ -516,7 +516,7 @@ class COMMASyntax extends Syntax {
 		e.cons = new ArrayList<Object>();
 		for (Object expr : exprs) {
 			e.cons.add(expr);
-		}	
+		}
 	}
 }
 

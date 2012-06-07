@@ -121,23 +121,6 @@ public class Token extends KObject {
 	}
 }
 
-public Expr p(CTX ctx, int pe, String fmt, Object... ap)
-{
-	Perror.vperrorf(ctx, pe, this.uline, this.lpos, fmt, ap);
-	return null;
-}
-
-public String s(CTX ctx) {
-	switch(this.tt) {
-	case TK.INDENT: return "end of line";
-	case TK.CODE: ;
-	case TK.AST_BRACE: return "{... }";
-	case TK.AST_PARENTHESIS: return "(... )";
-	case TK.AST_BRANCET: return "[... ]";
-	default:  return S_text(this.text); //S_text(s) ((const char*) (O_ct(s)->unbox(_ctx, (kObject*)s)))
-	}                                   //O_ct(o)   ((o)->h.ct)
-}
-
 //import java.util.*;
 //
 ///**

@@ -70,8 +70,8 @@ public class KonohaSpace extends KObject {
 				new ERRSyntax(),
 				new ExprSyntax(),
 //				new TermSyntax(),
-				new SYMBOLSyntax(),
-				new USYMBOLSyntax(),
+				new SYMBOLSyntax(ctx, null, null, tls, pos, pos), //TODO
+				new USYMBOLSyntax(ctx, null, null, tls, pos, pos),//TODO
 				new TextSyntax(),
 				new IntSyntax(),
 				new FloatSyntax(),
