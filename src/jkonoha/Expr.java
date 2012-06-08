@@ -79,7 +79,7 @@ public class Expr extends KObject {
 			if (this.syn == null) {
 				out.println ("[" + n + "] Cons: kw = null, size =" + size);
 			} else { 
-				out.println ("[" + n + "] Cons: kw='" + syn.kw + "', size = " + size);
+				out.println ("[" + n + "] Conshoge: kw='" + syn.kw + "', size = " + size);
 			}
 			if (this.ty != TY.var) {
 				
