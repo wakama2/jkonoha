@@ -185,7 +185,7 @@ class TypeSyntax extends TermSyntax {
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
 		Token tk = tls.get(s);
-		if(tk.kw == KW.Type) {
+		if(tk.kw.equals(KW.Type)) {
 			stmt.setObject(name, tk);
 			r = s + 1;
 		}
@@ -194,7 +194,7 @@ class TypeSyntax extends TermSyntax {
 //	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
 //		Token tk  = stmt.token(KW.Type, null);
 //		Expr expr = stmt.expr(KW.Expr, null);
-//		if(tk == null || tk.kw != KW.Type || expr == null) {
+//		if(tk == null || !tk.kw.equals(KW.Type) || expr == null) {
 //			ERR_SyntaxError(stmt.uline);
 //			return false;
 //		}
@@ -202,7 +202,7 @@ class TypeSyntax extends TermSyntax {
 //		return expr.declType(ctx, gamma, tk.ty, stmt);
 //	}
 //	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		assert(expr.tk.kw == KW.Type);
+//		assert(expr.tk.kw.equals(KW.Type));
 //		return expr.setVariable(null, expr.tk.ty, 0, gamma);
 //	}
 }

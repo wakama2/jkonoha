@@ -41,7 +41,7 @@ public class KonohaSpace extends KObject {
 			tk = lookAhead(ctx, tls, s+1, e);
 			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 				tk = lookAhead(ctx, tls, s+2, e);
-				if(tk.tt == TK.AST_PARENTHESIS || tk.kw == KW.DOT) {
+				if(tk.tt == TK.AST_PARENTHESIS || tk.kw.equals(KW.DOT)) {
 					return syntax(ctx, KW.StmtMethodDecl); //
 				}
 				return syntax(ctx, KW.StmtTypeDecl);  //
