@@ -1,50 +1,59 @@
 package jkonoha;
 
-public class KMethod extends KObject {
+import java.lang.reflect.Method;
+import java.util.*;
+
+import jkonoha.compiler.CodeGenException;
+import jkonoha.compiler.JavaMethod;
+
+import org.objectweb.asm.*;
+
+public abstract class KMethod {
+	private Type methodType = null;
 	
-	public int flag;
-	public int cid;
-	public int mn;
-	public int paramdom;
-	public int paramid;
-	public static int Public  = (1<<0);
-	public static int Virtual  = (1<<1);
-	public static int Hidden = (1<<2);
-	public static int Const  = (1<<3);
-	public static int Static  = (1<<4);
-	public static int Immutable  = (1<<5);
-	public static int Restricted  = (1<<6);
-	public static int Overloaded  = (1<<7);
-	public static int CALLCC  = (1<<8);
-	public static int FASTCALL  = (1<<9);
-	public static int D  = (1<<10);
-	public static int Abstract  = (1<<11);
-	public static int Coercion  = (1<<12);
-	public static int SmartReturn  = (1<<13);
+	public abstract KClass getParent();
+	public abstract String getName();
+	public abstract Type[] getArgTypes();
+	public abstract Type getReturnType();
+	public abstract boolean isStatic();
 	
-	public KMethod(CTX ctx, int flag, int cid, int mn, int func) {
-		this.flag = flag;
-		this.cid = cid;
-		this.mn = mn;
-		setFunc(func);
-	}
-	
-	public void setParam(CTX ctx, int rtype, int psize) {//TODO
-/*		int paramid = Kparam(ctx, rtype, psize, p); 
-		if(this != null) {
-			KMethod mtd = this;
-			mtd.paramdom = p[psize].Kparamdom(ctx);
-			mtd.paramid  = paramid;
+	public Type getMethodType() {
+		if(methodType == null) {
+			methodType = Type.getMethodType(getReturnType(), getArgTypes());
 		}
-		return ctx.share.paramList.params[paramid];*/
+		return methodType;
 	}
 	
-	public void setFunc(int func) {//TODO
-		/*static void Method_setFunc(CTX, kMethod *mtd, knh_Fmethod func)// in src/vm/asm.c : 993
-		{
-			func = (func == NULL) ? Fmethod_abstract : func;
-			((struct _kMethod*)mtd)->fcall_1 = func;
-			((struct _kMethod*)mtd)->pc_start = CODE_NCALL;
-		 }*/
+	//private static final Map<String, JavaMethod> jmtdCache;
+	
+	// get a method
+	public static JavaMethod getMethod(Class<?> klass, String name) {
+		List<JavaMethod> m = getMethods(klass, name);
+		if(m.size() == 1) {
+			return m.get(0);
+		} else {
+			throw new CodeGenException(m.size() + " methods found: " + klass.getName() + "." + name);
+		}
+	}
+	
+	public static JavaMethod getMethod(Class<?> klass, String name, Class<?>[] params) {
+		try {
+			Method m = klass.getMethod(name, params);
+			return new JavaMethod(m);
+		} catch(NoSuchMethodException e) {
+			throw new CodeGenException("method not found: " + klass.getName() + "." + name);
+		}
+	}
+	
+	// get overloaded methods
+	public static List<JavaMethod> getMethods(Class<?> klass, String name) {
+		List<JavaMethod> mtds = new ArrayList<JavaMethod>();
+		for(Method m : klass.getMethods()) {
+			if(m.getName().equals(name)) {
+				mtds.add(new JavaMethod(m));
+			}
+		}
+		return mtds;
 	}
 }
+

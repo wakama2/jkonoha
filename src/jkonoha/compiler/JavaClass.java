@@ -2,6 +2,8 @@ package jkonoha.compiler;
 
 import java.lang.reflect.Method;
 
+import jkonoha.KClass;
+
 import org.objectweb.asm.Type;
 
 public class JavaClass extends KClass {
@@ -40,14 +42,14 @@ public class JavaClass extends KClass {
 		return interfaces;
 	}
 	
-	@Override public JavaMethod getOneMethod(String name) {
+	@Override public JavaMethod getMethod(String name, KClass reqty) {
 		for(Method m : klass.getMethods()) {
 			if(m.getName().equals(name)) {
 				return new JavaMethod(m);
 			}
 		}
 		if(superClass != null) {
-			return superClass.getOneMethod(name);
+			return superClass.getMethod(name, reqty);
 		}
 		return null;
 	}

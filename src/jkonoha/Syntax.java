@@ -21,25 +21,25 @@ public abstract class Syntax {
 	
 	public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//TODO undefinedParseExpr ast.h:518
-		return null;
+		throw new RuntimeException("parseExpr");
 	}
 	
 	public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		//TODO default parseStmt?
-		return 0;
+		throw new RuntimeException("parseStmt");
 	}
 
-	public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		//TODO tycheck.h:107
-		return null;
+		throw new RuntimeException("exprTyCheck");
 	}
 	
-	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		//TODO undefinedStmtTyCheck tycheck.h:734
-		return false;
+		throw new RuntimeException("stmtTyCheck");
 	}
 	
-	public final/*FIXME*/ boolean topStmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
+	public final/*FIXME*/ boolean topStmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		return stmtTyCheck(ctx, stmt, gamma);
 	}
 }
@@ -67,8 +67,8 @@ class ExprSyntax extends Syntax {
 		}
 		return r;
 	}
-	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
-		boolean r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, TY.var, TPOL.ALLOWVOID);
+	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		boolean r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, KClass.varClass, TPOL.ALLOWVOID);
 		stmt.typed(TSTMT.EXPR);
 		return r;
 	}
@@ -105,9 +105,9 @@ class SYMBOLSyntax extends TermSyntax {
 		}
 		return r;
 	}
-//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		return expr.tyCheckVariable2(ctx, gamma, ty);
-//	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		return expr.tyCheckVariable2(ctx, gamma, ty);
+	}
 }
 
 class USYMBOLSyntax extends TermSyntax {
@@ -152,7 +152,7 @@ class TextSyntax extends TermSyntax {
 		super("$TEXT");
 		this.flag = SYNFLAG.ExprTerm;
 	}
-	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		//return expr.serConstValue(ctx, gamma, ty);
 		return null;
 	}
@@ -163,7 +163,7 @@ class IntSyntax extends TermSyntax {
 		super("$INT");
 		this.flag = SYNFLAG.ExprTerm;
 	}
-	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		Token tk = expr.tk;
 		long l = Long.parseLong(tk.text);
 		return new ConstExpr(this, KInt.box(l));
@@ -354,8 +354,8 @@ abstract class OpSyntax extends Syntax {
 		Token tk = tls.get(c);
 		Expr expr, rexpr = stmt.newExpr2(ctx, tls, c+1, e);
 		String mn = (s ==c) ? this.op1 : this.op2;
-		if (mn != null /*TODO && this.exprTyCheck(ctx, rexpr, gamma, e)*/) {
-			//TODO
+		if (mn != null) {
+			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall);
 		}
 		if (s == c) {
 			expr = new Expr(this);

@@ -2,6 +2,10 @@ package jkonoha.compiler;
 
 import java.util.*;
 
+import jkonoha.KClass;
+import jkonoha.KField;
+import jkonoha.KMethod;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -14,10 +18,14 @@ public class KonohaClass extends KClass {
 	private final List<KField> fields = new ArrayList<KField>();
 	private final List<KonohaMethod> methods = new ArrayList<KonohaMethod>();
 	
+	public KonohaClass(String name) {
+		this(name, new JavaClass(Object.class), new KClass[0]);
+	}
+	
 	public KonohaClass(String name, KClass superClass, KClass[] interfaceClass) {
 		this.name = name;
-		this.superClass = superClass != null ? superClass : new JavaClass(Object.class);
-		this.interfaceClass = interfaceClass != null ? interfaceClass : new KClass[0];
+		this.superClass = superClass;
+		this.interfaceClass = interfaceClass;
 	}
 	
 	public void addMethod(KonohaMethod m) {
@@ -45,13 +53,13 @@ public class KonohaClass extends KClass {
 		return Type.getType("L" + name + ";");
 	}
 	
-	@Override public KMethod getOneMethod(String name) {
+	@Override public KMethod getMethod(String name, KClass reqty) {
 		for(KonohaMethod m : methods) {
 			if(m.getName().equals(name)) {
 				return m;
 			}
 		}
-		return superClass.getOneMethod(name);
+		return superClass.getMethod(name, reqty);
 	}
 	
 	public void accept(ClassVisitor cv) {

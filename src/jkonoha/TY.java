@@ -20,4 +20,19 @@ public interface TY {
 	
 	int var = CLASS.Tvar;
 	int Object = CLASS.Object;
+	
+	KClass[] toClass = {
+			KClass.voidClass,
+			KClass.varClass,
+			KClass.objectClass,
+			KClass.booleanClass,
+			KClass.intClass,
+			/* follow is TODO */
+			null,
+			null,
+			null,
+			null,
+			KClass.systemClass,
+			null,
+	};
 }
