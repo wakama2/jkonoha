@@ -204,16 +204,15 @@ public class Stmt extends KObject {
 		return idx;
 	}
 	
-	public boolean tyCheckExpr(CTX ctx, String nameid, Object gamma, int reqty, int pol) {
+	public boolean tyCheckExpr(CTX ctx, String nameid, Gamma gamma, KClass reqty, int pol) {
 		Object o = this.getObject(nameid);
 		if(o != null && o instanceof Expr) {
 			Expr expr = (Expr)o;
 			Expr texpr = expr.tyCheck(ctx, gamma, reqty, pol);
-			if(texpr != null) {
-				if(texpr != expr) {
-					this.setObject(nameid, texpr);
-				}
+			if(texpr != null && texpr != expr) {
+				this.setObject(nameid, texpr);
 			}
+			return true;
 		}
 		return false;
 	}

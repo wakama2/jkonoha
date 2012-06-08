@@ -12,18 +12,18 @@ public class Block extends KObject {
 		this.ks = ks != null ? ks : ctx.modsugar.rootks;
 	}
 	
-	public boolean tyCheckAll(CTX ctx, Object gamma) {
+	public boolean tyCheckAll(CTX ctx, Gamma gamma) {
 		boolean result = true;
 		for(int i=0; i<blocks.size(); i++) {
 			Stmt stmt = blocks.get(i);
 			Syntax syn = stmt.syntax;
-			//dumpSyntax
+			stmt.dump(System.out);
 			if(syn == null) continue;
 			if(syn.kw.equals(KW.Err)) {
 				result = false;
 				break;
 			}
-			if(!syn.stmtTyCheck(ctx, stmt, gamma)) {				
+			if(!syn.stmtTyCheck(ctx, stmt, gamma)) {
 				result = false;
 				break;
 			}

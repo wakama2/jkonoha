@@ -31,14 +31,29 @@ public class Expr extends KObject {
 		return (Expr)cons.get(n);
 	}
 	
-	public Expr tyCheck(CTX ctx, Object gamma, int reqty, int pol) {
+	public Expr tyCheck(CTX ctx, Gamma gamma, KClass reqty, int pol) {
 		Expr texpr = this;
-		if(this.ty == TY.var) {
-			//TODO
+		if(texpr.ty == TY.var) {
+			texpr = texpr.syn.exprTyCheck(ctx, this, gamma, reqty);
 		}
-		if(this.ty == TY.VOID) {
+		if(texpr.ty == TY.VOID) {
+			if((pol & TPOL.ALLOWVOID) != 0) {
+				return texpr;
+			}
+			System.err.println("void is not acceptable");
+			return null;
+		}
+		if(texpr.ty == TY.var && reqty.equals(KClass.varClass) && ((pol & TPOL.NOCHECK)) != 0) {
 			return texpr;
 		}
+		return null;
+	}
+	
+	public Expr tyCheckVariable2(CTX ctx, Gamma gma, KClass reqty) {
+		String fn = tk.text;
+		KClass ct = gma.this_cid;
+		//TODO global
+		KMethod mtd = ct.getMethod(fn, reqty);
 		return null;
 	}
 	
