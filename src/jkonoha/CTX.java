@@ -20,7 +20,11 @@ public class CTX extends KObject {
 
 	public void SUGAR_P(PrintStream out, long uline, int pos, String fmt, Object...args) {
 		out.printf(fmt, args);
-	}	
+	}
+	
+	public void Token_p(Token tk, PrintStream out, String fmt, Object...args) {
+		out.printf(fmt, args);
+	}
 	
 	public void DBG_P(String fmt, Object...args) {
 		if(debug) {

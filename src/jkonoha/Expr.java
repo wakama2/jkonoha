@@ -52,7 +52,8 @@ public class Expr extends KObject {
 	}
 	
 	public Expr add(CTX ctx, Expr e) {
-		return null;//TODO
+		this.cons.add(e);
+		return this;
 	}
 	
 	public void setTerm(boolean b) {

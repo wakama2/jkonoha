@@ -127,8 +127,8 @@ public class KonohaSpace extends KObject {
 			}
 			ks = ks.parentNULL;
 		}
-		throw new RuntimeException("syntax not found: " + kw);
-		//return null;
+		//throw new RuntimeException("syntax not found: " + kw);
+		return null;
 	}
 	
 	private int findTopCh(CTX ctx, List<Token> tls, int s, int e, int tt, int closech) {

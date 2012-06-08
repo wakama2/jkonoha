@@ -18,7 +18,7 @@ public class Parser {
 			int asize = tls.size();
 			if (asize > atop) {
 				bk.addStmtLine(ctx, tls, atop, asize, tkERR);
-				tls.remove(atop);
+				KArray.clear(tls, atop);
 			}
 		}
 		return bk;
@@ -177,7 +177,7 @@ public class Parser {
 					ctx.DBG_P("APPEND tkB.tt=%s", Token.ttToStr(tkB.tt));
 					if(abuf != dst) {
 						dst.add(tkB);
-						abuf.remove(atop);
+						KArray.clear(abuf, atop);
 					}
 					ctx.DBG_P("next=%d", next);
 					return next;
@@ -212,7 +212,7 @@ public class Parser {
 //					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
 				}
 				else if(ct.getP0().getID() == TY.VOID) {
-//					SUGAR_P(ERR_, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
+					//ctx.SUGAR_P(System.err, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
 					return tk;
 				}
 				else {
