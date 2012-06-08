@@ -564,14 +564,12 @@ class INTTypeSyntax extends Syntax {
 class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {
 		super("true");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
 class FALSESyntax extends TermSyntax {
 	public FALSESyntax () {
 		super("false");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 }
 
