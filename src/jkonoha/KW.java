@@ -41,8 +41,8 @@ public interface KW {
 	String NOT     = "NOT";
 //	String COLON  = (15+DOT);
 	String LET     = "LET";
-	String COMMA   = "COMMA";
-	String DOLLAR  = "DOLLAR";
+	String COMMA   = ",";
+	String DOLLAR  = "$";
 
 	String _void      = "_void";
 	String StmtMethodDecl = _void;
