@@ -10,13 +10,15 @@ import org.objectweb.asm.Type;
 public abstract class KClass {
 	
 	// constant
-	public static KClass voidClass = new JavaClass(void.class);
-	public static KClass varClass = new JavaClass(Object.class); //FIXME
-	public static KClass objectClass = new JavaClass(Object.class);
-	public static KClass intClass = new JavaClass(int.class);
-	public static KClass booleanClass = new JavaClass(boolean.class);
-	public static KClass stringClass = new JavaClass(String.class);
-	public static KClass systemClass = new JavaClass(KSystem.class);
+	public static final KClass voidClass = new JavaClass(void.class);
+	public static final KClass varClass = new JavaClass(Object.class); //FIXME
+	public static final KClass objectClass = new JavaClass(Object.class);
+	public static final KClass intClass = new JavaClass(int.class);
+	public static final KClass booleanClass = new JavaClass(boolean.class);
+	public static final KClass stringClass = new JavaClass(String.class);
+	public static final KClass methodClass = new JavaClass(KMethod.class);
+	public static final KClass classClass = new JavaClass(KClass.class);
+	public static final KClass systemClass = new JavaClass(KSystem.class);
 	
 	public abstract String getName();
 	public abstract Type getAsmType();

@@ -31,7 +31,7 @@ public interface TY {
 			null,
 			null,
 			null,
-			null,
+			KClass.methodClass,
 			KClass.systemClass,
 			null,
 	};
