@@ -82,9 +82,8 @@ public class Stmt extends KObject {
 			if (rule.tt == TK.CODE) {
 				if (!rule.kw.equals(tk.kw)) {
 					if (optional)	return s;
-					//kToken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
-					throw new RuntimeException(syntax.kw + " needs " + rule.kw);
-					//return -1;
+					ctx.Token_p(tk, System.err, "%s needs '%s'", syntax.kw, rule.kw);
+					return -1;
 				}
 				ti++;
 				continue;
@@ -92,18 +91,16 @@ public class Stmt extends KObject {
 			else if (rule.tt == TK.METANAME) {
 				Syntax syn = parentNULL.ks.syntax(ctx, rule.kw);
 				if (syn == null/* || syn.ParseStmtNULL == null*/) {//TODO Syntax has KMethod ParseStmtNULL
-					//kToken_p (tk, ERR_, "unknown syntax pattern: %s", T_kw(rule.kw));
-					throw new RuntimeException("unknown syntax pattern: " + rule.kw);
-					//return -1;
+					ctx.Token_p (tk, System.err, "unknown syntax pattern: %s", rule.kw);
+					return -1;
 				}
 				int c = e;
 				if (ri +1 < ruleSize && rules.get(ri+1).tt == TK.CODE) {
 					c = lookAheadKeyword (tls, ti+1, e, rules.get(ri+1));
 					if (c == -1) {
 						if (optional) return s;
-						//kTOken_p(tk, ERR_, "%s needs '%s'", T_statement(syntax.kw), T_kw(rule.kw));
-						throw new RuntimeException(syntax.kw + " needs " + rule.kw);
-						//return -1;
+						ctx.Token_p(tk, System.err, "%s needs '%s'", syntax.kw, rule.kw);
+						return -1;
 					}
 					ri++;
 				}
@@ -112,8 +109,7 @@ public class Stmt extends KObject {
 				if (next == -1) {
 					if (optional) return s;
 					if (errCount == ctx.ctxsugar.errCount) {
-						//kToken_p(tk, ERR_, "%s needs syntax pattern %s, not %s ..", T_statement(syntax.kw), T_kw(rule.kw), kToken_s(tk));
-						throw new RuntimeException("needs syntax pattern");
+						ctx.Token_p(tk, System.err, "%s needs syntax pattern %s, not %s ..", syntax.kw, rule.kw, tk);
 					}
 					return -1;
 				}
@@ -255,14 +251,14 @@ public class Stmt extends KObject {
 		for(i = s; i < e; i++) {
 			Token tk = tls.get(i);
 			if(tk.kw.equals(KW.COMMA)) {
-				expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
+				if(expr != null) expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
 				start = i + 1;
 			}
 		}
 		if(allowEmpty == 0 || start < i) {
-			expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
+			if(expr != null) expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
 		}
-		tls.remove(s);
+		KArray.clear(tls, s);
 		return expr;
 	}
 }

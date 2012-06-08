@@ -229,10 +229,11 @@ class AST_ParenthesisSyntax extends Syntax {
 			}
 			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
-				//lexpr = new_ConsExpr(ctx, syn, 2, lexpr, K_NULL);//TODO
-				// TODO lexpr = new ConsExpr(syn); ?
+				Expr l = new Expr(syn);
+				l.setCons(lexpr, null);
+				lexpr = l;
 			}
-			//lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);//TODO
+			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);//TODO
 			return lexpr;
 		}
 	}
@@ -501,22 +502,16 @@ class OPLEFTSyntax extends Syntax {
 class COMMASyntax extends Syntax {
 	public COMMASyntax () {
 		super(",");
-		this.flag = SYNFLAG.ExprOp;
-		this.op1 = "opNOT";
+		//this.flag = SYNFLAG.ExprOp;
+		//this.op1 = "opNOT";
 		this.op2 = "*";
 		this.priority = 8192;
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		Expr expr = new Expr(this);
-		exprConsSet(expr, tls.get(c));
-		//TODO expr = stmt.addExprParams(ctx, expr, tls, s, e, 0);
+		expr.setCons(tls.get(c));
+		stmt.addExprParams(ctx, expr, tls, s, e, 0);
 		return expr;
-	}
-	private void exprConsSet(Expr e, Object... exprs) {
-		e.cons = new ArrayList<Object>();
-		for (Object expr : exprs) {
-			e.cons.add(expr);
-		}	
 	}
 }
 
