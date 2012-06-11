@@ -26,7 +26,7 @@ public class KonohaSpace extends KObject {
 		return null;
 	}	
 
-	public void setTokenizer(int ch, FTokenizer f, KMethod mtd) {
+	public void setTokenizer(int ch, FTokenizer f) {
 		//TODO
 	}
 
@@ -292,20 +292,17 @@ public class KonohaSpace extends KObject {
 	
 	public void eval(CTX ctx, String script, long uline) {
 		ctx.modsugar.setup();
-		
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
-		//Token.dumpTokenArray(System.out, tls);
-		
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		evalBlock(ctx, bk);
 	}
 
 	private void evalBlock(CTX ctx, Block bk) {
-		//CompilerContext cc = new CompilerContext(ctx);
-		bk.tyCheckAll(ctx, null);
-		//cc.evalBlock(bk);
+		bk.tyCheckAll(ctx, ctx.modsugar.gamma);
+		CompilerContext cc = new CompilerContext(ctx);
+		cc.evalBlock(bk);
 	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {

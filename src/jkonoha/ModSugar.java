@@ -9,6 +9,7 @@ public class ModSugar {
 	public List<String> packageList;
 	public Map<String, Syntax> packageMapNO;
 	public KonohaSpace rootks;
+	public Gamma gamma = new Gamma();
 
 	public void setup() {
 		//TODO
