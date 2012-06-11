@@ -46,6 +46,16 @@ public class Expr extends KObject {
 		if(texpr.ty == TY.var && reqty.equals(KClass.varClass) && ((pol & TPOL.NOCHECK)) != 0) {
 			return texpr;
 		}
+		return texpr;
+	}
+	
+	public Expr tyCheckAt(CTX ctx, int pos, Gamma gma, KClass reqty, int pol) {
+		if(!this.isTerm() && pos < cons.size()) {
+			Expr expr = (Expr)cons.get(pos);
+			expr = expr.tyCheck(ctx, gma, reqty, pol);
+			cons.set(pos, expr);
+			return expr;
+		}
 		return null;
 	}
 	
@@ -121,10 +131,10 @@ public class Expr extends KObject {
 	}
 }
 class ConstExpr extends Expr {  // as if NConstExpr 
-	//public final Object data;
-
-	public ConstExpr(Syntax syn, KObject data) {
+	public ConstExpr(Syntax syn, int ty, KObject data) {
 		super(syn);
+		this.build = TEXPR.NCONST;
+		this.ty = ty;
 		this.data = data;
 	}
 

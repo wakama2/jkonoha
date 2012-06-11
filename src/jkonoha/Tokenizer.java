@@ -9,8 +9,8 @@ public class Tokenizer {
 		assert(tk.tt == TK.NONE);
 		tk.uline = tenv.uline;
 //		tk.lpos = tenv.lpos(0);
-		pos = Tokenizer.parseINDENT.parse(ctx, tk, tenv, pos, null);
-		while(pos < tenv.source.length() && (ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
+		pos = parseINDENT.parse(ctx, tk, tenv, pos, null);
+		while(pos < tenv.source.length() && (ch = kchar(tenv.source, pos)) != 0) {
 			if(tk.tt != TK.NONE) {
 				tenv.list.add(tk);
 				tk = new Token(tenv.uline);

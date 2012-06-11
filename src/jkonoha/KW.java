@@ -18,10 +18,10 @@ public interface KW {
 	String Brace        = "{}";
 	
 	String String     = "String";
-	String Block   = "Block";
-	String Params  = "Params";
-	String ExprMethodCall = "ExprMethodCall";/*FIXME*/
-	String Toks    = "Toks";
+	String Block   = "$block";
+	String Params  = "$params";
+	String ExprMethodCall = Params;//"ExprMethodCall";/*FIXME*/
+	String Toks    = "$toks";
 	String[] TK_KW = { Err, Expr, Symbol, Usymbol, Text, Int, Float, Type, Parenthesis, Brancet, Brace };
 
 	String DOT     = "DOT";

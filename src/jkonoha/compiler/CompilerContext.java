@@ -35,15 +35,12 @@ public class CompilerContext {
 	}
 	
 	public void evalBlock(Block b) {
-		KClass klass = new KonohaClass("TopLevelScript");
+		KonohaClass klass = new KonohaClass("Script");
+		classMap.put(klass.getName(), klass);
 		KonohaMethod mtd = new KonohaMethod(klass, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, 
-				"main", Type.VOID_TYPE, new String[0], new Type[0]);
-		try {
-			evalBlock(mtd, b);
-		} catch(Exception e) {
-			System.err.println("Catch eval exception");
-			e.printStackTrace();
-		}
+				"main", Type.INT_TYPE, new String[0], new Type[0]);
+		klass.addMethod(mtd);
+		evalBlock(mtd, b);
 	}
 	
 	public void evalBlock(KonohaMethod mtd, Block b) {
