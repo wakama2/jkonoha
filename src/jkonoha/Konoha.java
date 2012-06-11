@@ -51,7 +51,8 @@ public class Konoha {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();
 //		k.eval(ctx, "(1+2) * (3-4)");
-		k.eval(ctx, "System.p(12);");
+		k.eval(ctx, "System.p(12)");
+//			k.eval(ctx, "if (1<2) System.p(1); else System.p(2);");
 //		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
 //		k.eval(ctx, "fibo(10);");
 //		k.load("file.k");

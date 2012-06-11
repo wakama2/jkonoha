@@ -18,7 +18,7 @@ public class Stmt extends KObject {
 	public int addAnnotation(CTX ctx, List<Token> tls, int s, int e) {
 		int i;
 		for (i = s; i < e; i++) {
-			Token tk = tls.get(i);
+			Token tk = tls.get(i);//Not set the other token except "System"
 			if (tk.tt != TK.METANAME) break;
 			if (i+1 < e) {
 				String kw = "@" + tk.text;

@@ -230,7 +230,7 @@ class AST_ParenthesisSyntax extends Syntax {
 			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
 				Expr l = new Expr(syn);
-				l.setCons(lexpr, null);
+				l.setCons(lexpr, null);//Joseph The args is only lexpr(System). More needs.
 				lexpr = l;
 			}
 			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);//TODO
@@ -321,6 +321,7 @@ class ToksSyntax extends Syntax {
 class DotSyntax extends Syntax {
 	public DotSyntax() {
 		super(".");
+		this.priority = 16;//Joseph try to give priority.	/sugar.c:64
 	}
 	
 	private boolean isFileName(List<Token> tls, int c, int e){
@@ -337,11 +338,11 @@ class DotSyntax extends Syntax {
 		if(isFileName(tls, c, e)) {
 			Expr expr = stmt.newExpr2(ctx, tls, s, c);
 			expr = new ConsExpr(this);
+			expr.setCons(tls.get(c+1), tls.get(c-1));//	ast.h:685
 			return expr;
 		}
 		if(c + 1 < e) c++;
-		//return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
-		return null;//TODO
+		return null;
 	}
 }
 
