@@ -14,7 +14,7 @@ public class Token extends KObject {
 	public int ty;
 	public int closech;
 	public int mn_type;
-	public int mn;
+	public String mn;
 	public String nameid;
 	
 	public Token() {
@@ -84,7 +84,7 @@ public class Token extends KObject {
 	
 	public void dump(PrintStream out) {
 		if(this.tt == TK.MN) {
-			out.printf("%s %d+%d: %s(%s)\n", ttToStr(this.tt), this.uline, this.lpos, null/*TODO*/, this.toString());
+			out.printf("%s %d+%d: %s(%s)\n", ttToStr(this.tt), this.uline, this.lpos, this.mn, this.toString());
 		} else {
 			out.printf("%s %d+%d: kw=%s '%s'\n", ttToStr(this.tt), this.uline, this.lpos, this.kw, this.toString());
 		}
