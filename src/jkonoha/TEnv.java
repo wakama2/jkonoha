@@ -2,7 +2,7 @@ package jkonoha;
 
 import java.util.*;
 
-class TEnv {
+public class TEnv {
 	
 	public String source;
 	public long uline;
