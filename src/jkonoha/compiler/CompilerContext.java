@@ -38,7 +38,7 @@ public class CompilerContext {
 		KonohaClass klass = new KonohaClass("Script");
 		classMap.put(klass.getName(), klass);
 		KonohaMethod mtd = new KonohaMethod(klass, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, 
-				"main", Type.INT_TYPE, new String[0], new Type[0]);
+				"main", KClass.objectClass.getAsmType(), new String[0], new Type[0]);
 		klass.addMethod(mtd);
 		evalBlock(mtd, b);
 	}

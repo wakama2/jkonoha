@@ -3,7 +3,6 @@ package jkonoha;
 import java.io.PrintStream;
 import java.util.*;
 
-import jkonoha.compiler.kobject.KBoolean;
 
 public class Stmt extends KObject {
 	public long uline;

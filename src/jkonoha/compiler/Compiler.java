@@ -5,7 +5,6 @@ import java.util.*;
 import org.objectweb.asm.*;
 
 import jkonoha.*;
-import jkonoha.compiler.kobject.KInt;
 
 public class Compiler implements Opcodes {
 	
@@ -90,14 +89,14 @@ public class Compiler implements Opcodes {
 	private void box() {
 		Type type = typeStack.pop();
 		if(type == Type.INT_TYPE) {
-			mv.visitMethodInsn(INVOKESTATIC, "konoha/K_Int", "box", "(Lkonoha/K_Int;)I");
-			typeStack.push(Type.getType("konoha/K_Int"));
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KInt", "box", "(I)Ljkonoha/KInt;");
+			typeStack.push(Type.getType("jkonoha/KInt"));
 		} else if(type == Type.DOUBLE_TYPE) {
-			mv.visitMethodInsn(INVOKESTATIC, "konoha/K_Float", "box", "(Lkonoha/K_Float;)I");
-			typeStack.push(Type.getType("konoha/K_Float"));
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KFloat", "box", "(D)Ljkonoha/KFloat;");
+			typeStack.push(Type.getType("jkonoha/KFloat"));
 		} else if(type == Type.BOOLEAN_TYPE) {
-			mv.visitMethodInsn(INVOKESTATIC, "konoha/K_Boolean", "box", "(Lkonoha/K_Boolean;)I");
-			typeStack.push(Type.getType("konoha/K_Boolean"));
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KBoolean", "box", "(Z)Ljkonoha/KBoolean;");
+			typeStack.push(Type.getType("jkonoha/KBoolean"));
 		} else {
 			typeStack.push(type);
 		}
@@ -105,15 +104,18 @@ public class Compiler implements Opcodes {
 	
 	private void unbox() {
 		Type type = typeStack.pop();
-		if(type == Type.INT_TYPE) {//TODO
-			mv.visitTypeInsn(CHECKCAST, "konoha/K_Int");
-			mv.visitMethodInsn(INVOKESTATIC, "konoha/K_Int", "unbox", "(Lkonoha/K_Int;)I");
-		} else if(type == Type.DOUBLE_TYPE) {
-			mv.visitTypeInsn(CHECKCAST, "konoha/K_Float");
-			mv.visitMethodInsn(INVOKESTATIC, "konoha/K_Float", "unbox", "(Lkonoha/K_Float;)D");
-		} else if(type == Type.BOOLEAN_TYPE) {
-			mv.visitTypeInsn(CHECKCAST, "konoha/K_Boolean");
-			mv.visitMethodInsn(INVOKESTATIC, "konoha/K_Boolean", "unbox", "(Lkonoha/K_Boolean;)Z");
+		if(type.equals(KClass.intClass)) {
+			mv.visitTypeInsn(CHECKCAST, "jkonoha/KInt");
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KInt", "unbox", "(Ljkonoha/KInt;)I");
+			typeStack.push(Type.INT_TYPE);
+		} else if(type.equals(KClass.floatClass)) {
+			mv.visitTypeInsn(CHECKCAST, "jkonoha/KFloat");
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KFloat", "unbox", "(Ljkonoha/KFloat;)D");
+			typeStack.push(Type.DOUBLE_TYPE);
+		} else if(type.equals(KClass.booleanClass)) {
+			mv.visitTypeInsn(CHECKCAST, "jkonoha/KBoolean");
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KBoolean", "unbox", "(Ljkonoha/KBoolean;)Z");
+			typeStack.push(Type.BOOLEAN_TYPE);
 		} else {
 			typeStack.push(type);
 		}
@@ -124,6 +126,7 @@ public class Compiler implements Opcodes {
 		String type = method.getMethodType().getDescriptor();
 		int inst = method.isStatic() ? INVOKESTATIC : INVOKEVIRTUAL;
 		mv.visitMethodInsn(inst, klassName, method.getName(), type);
+		typeStack.push(method.getReturnType());
 	}
 	
 	private void asmJump(Label lb) {
@@ -136,13 +139,13 @@ public class Compiler implements Opcodes {
 	}
 
 	public void asmErrStmt(Stmt stmt, int shift, int espidx) {
-		String str = (String)stmt.getObject("$ERR");
+		String str = (String)stmt.getObject(KW.Err);
 		System.err.println(str);
 		//asmError();
 	}
 	
 	public void asmExprStmt(Stmt stmt, int shift, int espidx) {
-		Expr expr = (Expr)stmt.getObject("$expr");
+		Expr expr = (Expr)stmt.getObject(KW.Expr);
 		asmExpr(espidx, expr, shift, espidx);
 	}
 	
@@ -151,7 +154,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmReturnStmt(Stmt stmt, int shift, int espidx) {
-		Object o = stmt.getObject("$expr");
+		Object o = stmt.getObject(KW.Expr);
 		if(o != null && o instanceof Expr) {
 			Expr expr = (Expr)o;
 			if(expr.ty != TY.VOID) {
@@ -162,12 +165,14 @@ public class Compiler implements Opcodes {
 		if(mtd.getReturnType().equals(Type.VOID_TYPE)) {
 			mv.visitInsn(RETURN);
 		} else {
+			Type ty = typeStack.pop();
 			mv.visitInsn(mtd.getReturnType().getOpcode(IRETURN));
 		}
 	}
 	
 	private void asmExprJmpIf(int a, Expr expr, boolean isTrue, Label label, int shift, int espidx) {
 		asmExpr(a, expr, shift, espidx);
+		Type ty = typeStack.pop();
 		if(isTrue) {
 			mv.visitJumpInsn(Opcodes.IFNE, label);//POP() != 0 -> jump
 		} else {
@@ -224,6 +229,7 @@ public class Compiler implements Opcodes {
 		for(int i=s; i<l.size(); i++) {
 			Expr e = (Expr)l.get(i);
 			asmExpr(thisidx + i - 1, e, shift, thisidx + i - 1);
+			typeStack.pop();
 		}
 		call(mtd);
 	}
@@ -281,6 +287,7 @@ public class Compiler implements Opcodes {
 			if(expr.data instanceof KInt) {
 				KInt i = (KInt)expr.data;
 				loadConst(i.unbox());
+				typeStack.push(Type.INT_TYPE);
 			} else {
 				throw new CodeGenException("err const");
 			}
@@ -347,8 +354,8 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void close() {
+		box();
 		mv.visitInsn(mtd.getReturnType().getOpcode(IRETURN));
-		//mv.visitLabel(lbEND);
 		mv.visitEnd();
 	}
 	
