@@ -1,6 +1,5 @@
-package jkonoha.compiler.kobject;
+package jkonoha;
 
-import jkonoha.KObject;
 
 public class KBoolean extends KObject {
 	
@@ -20,6 +19,14 @@ public class KBoolean extends KObject {
 	
 	public static boolean opNOT(boolean self) {
 		return !self;
+	}
+	
+	public static String toString(boolean self) {
+		return Boolean.toString(self);
+	}
+	
+	@Override public String toString() {
+		return toString(value);
 	}
 	
 }

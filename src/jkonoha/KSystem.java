@@ -1,6 +1,6 @@
-package jkonoha.compiler.kobject;
+package jkonoha;
 
-public class KSystem {
+public class KSystem extends KObject {
 	
 //	public static void assert(boolean b) {
 //		

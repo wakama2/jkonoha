@@ -1,4 +1,4 @@
-package jkonoha.compiler.kobject;
+package jkonoha;
 
 public class KInt extends KNumber {
 	
@@ -20,7 +20,11 @@ public class KInt extends KNumber {
 		return value;
 	}
 	
-	public static int opMinus(int self) {
+	public static int opPLUS(int self) {
+		return self;
+	}
+	
+	public static int opMINUS(int self) {
 		return -self;
 	}
 	
@@ -70,6 +74,10 @@ public class KInt extends KNumber {
 	
 	public static String toString(int self) {
 		return Integer.toString(self);
+	}
+	
+	@Override public String toString() {
+		return toString(value);
 	}
 	
 }
