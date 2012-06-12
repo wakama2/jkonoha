@@ -230,7 +230,7 @@ class AST_ParenthesisSyntax extends Syntax {
 			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
 				Expr l = new Expr(syn);
-				l.setCons(lexpr, null);//Joseph The args is only lexpr(System). More needs.
+				l.setCons(lexpr);//Joseph
 				lexpr = l;
 			}
 			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);//TODO
