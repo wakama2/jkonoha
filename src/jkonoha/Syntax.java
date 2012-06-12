@@ -356,6 +356,7 @@ class ToksSyntax extends Syntax {
 class DotSyntax extends Syntax {
 	public DotSyntax() {
 		super(".");
+		this.priority = 16;
 	}
 	
 	private boolean isFileName(List<Token> tls, int c, int e){
@@ -371,8 +372,9 @@ class DotSyntax extends Syntax {
 		assert(s < c);
 		if(isFileName(tls, c, e)) {
 			Expr expr = stmt.newExpr2(ctx, tls, s, c);
-			expr = new ConsExpr(this);
-			return expr;
+			Expr expr2 = new ConsExpr(this);
+			expr2.setCons(tls.get(c+1), expr);
+			return expr2;
 		}
 		if(c + 1 < e) c++;
 		//return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));

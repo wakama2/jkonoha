@@ -95,7 +95,7 @@ public class Compiler implements Opcodes {
 			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KFloat", "box", "(D)Ljkonoha/KFloat;");
 			typeStack.push(Type.getType("jkonoha/KFloat"));
 		} else if(type == Type.BOOLEAN_TYPE) {
-			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KBoolean", "box", "(Z)jkonoha/KBoolean;");
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KBoolean", "box", "(Z)Ljkonoha/KBoolean;");
 			typeStack.push(Type.getType("jkonoha/KBoolean"));
 		} else {
 			typeStack.push(type);

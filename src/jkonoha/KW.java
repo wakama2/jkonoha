@@ -24,7 +24,7 @@ public interface KW {
 	String Toks    = "$toks";
 	String[] TK_KW = { Err, Expr, Symbol, Usymbol, Text, Int, Float, Type, Parenthesis, Brancet, Brace };
 
-	String DOT     = "DOT";
+	String DOT     = ".";
 	String DIV     = "DIV";
 	String MOD     = "MOD";
 	String MUL     = "MUL";
