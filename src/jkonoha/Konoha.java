@@ -46,16 +46,17 @@ public class Konoha {
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();
-		System.out.println("Please input: ");
-		Scanner scan = new Scanner(System.in);
-		k.eval(ctx, scan.nextLine());
-//		k.eval(ctx, "System.p(1);");
-//		k.eval(ctx, "(1+2) * (3-4)");
-//		k.eval(ctx, "if (1<2) System.p(10); else System.p(20);");
-//		k.eval(ctx, "System.p(12);");
-//		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
-//		k.eval(ctx, "fibo(10);");
-//		k.load("file.k");
+		while (true) {
+			System.out.println("Please input: ");
+			Scanner scan = new Scanner(System.in);
+			k.eval(ctx, scan.nextLine());
+//			k.eval(ctx, "System.p(1);");
+//			k.eval(ctx, "(1+2) * (3-4)");
+//			k.eval(ctx, "if (1<2) System.p(10); else System.p(20);");
+//			k.eval(ctx, "System.p(12);");
+//			k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
+//			k.eval(ctx, "fibo(10);");
+//			k.load("file.k");
+		}
 	}
-	
 }
