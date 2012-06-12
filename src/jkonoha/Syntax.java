@@ -607,12 +607,21 @@ class TRUESyntax extends TermSyntax {
 		super("true");
 		this.flag = SYNFLAG.ExprTerm;
 	}
+
+	@Override
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		return new ConstExpr(this, TY.BOOLEAN, KBoolean.box(true));
+	}
 }
 
 class FALSESyntax extends TermSyntax {
 	public FALSESyntax () {
 		super("false");
 		this.flag = SYNFLAG.ExprTerm;
+	}
+	@Override
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		return new ConstExpr(this, TY.BOOLEAN, KBoolean.box(false));
 	}
 }
 
