@@ -49,11 +49,11 @@ public interface KW {
 	String _boolean   = "_boolean";
 	String _String       = "_String";
 //	String _null     = (3+_void);
-	String _true      = "_true";
-	String _false     = "_false";
-	String _if        = "_if";
-	String _else      = "_else";
-	String _return    = "_return";
+	String _true      = "true";
+	String _false     = "false";
+	String _if        = "if";
+	String _else      = "else";
+	String _return    = "return";
 // reserved
-	String _new       = "_new";
+	String _new       = "new";
 }

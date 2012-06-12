@@ -288,6 +288,10 @@ public class Compiler implements Opcodes {
 				KInt i = (KInt)expr.data;
 				loadConst(i.unbox());
 				typeStack.push(Type.INT_TYPE);
+			} else if(expr.data instanceof KBoolean) {
+				KBoolean i = (KBoolean)expr.data;
+				loadConst(i.unbox());
+				typeStack.push(Type.BOOLEAN_TYPE);
 			} else {
 				throw new CodeGenException("err const");
 			}

@@ -290,30 +290,32 @@ public class KonohaSpace extends KObject {
 		return ct;
 	}
 	
-	public void eval(CTX ctx, String script, long uline) {
+	public KObject eval(CTX ctx, String script, long uline) {
 		ctx.modsugar.setup();
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
-		evalBlock(ctx, bk);
+		return evalBlock(ctx, bk);
 	}
 
-	private void evalBlock(CTX ctx, Block bk) {
+	private KObject evalBlock(CTX ctx, Block bk) {
 		bk.tyCheckAll(ctx, ctx.modsugar.gamma);
 		CompilerContext cc = new CompilerContext(ctx);
 		cc.evalBlock(bk);
 		try {
-			// write class file
-			cc.writeClassFile("/Users/wakamatsu/");
 			// exec
 			ClassLoader cl = cc.createClassLoader();
 			Class<?> c = cl.loadClass("Script");
 			Object r = c.getMethod("main").invoke(null);
-			System.out.println(r);
-			
+			if(r != null) {
+				return (KObject)r;
+			} else {
+				return null;
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 

@@ -606,11 +606,20 @@ class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {
 		super("true");
 	}
+
+	@Override
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		return new ConstExpr(this, TY.BOOLEAN, KBoolean.box(true));
+	}
 }
 
 class FALSESyntax extends TermSyntax {
 	public FALSESyntax () {
 		super("false");
+	}
+	@Override
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		return new ConstExpr(this, TY.BOOLEAN, KBoolean.box(false));
 	}
 }
 
