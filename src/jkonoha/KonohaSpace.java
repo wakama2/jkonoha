@@ -303,6 +303,18 @@ public class KonohaSpace extends KObject {
 		bk.tyCheckAll(ctx, ctx.modsugar.gamma);
 		CompilerContext cc = new CompilerContext(ctx);
 		cc.evalBlock(bk);
+		try {
+			// write class file
+			cc.writeClassFile("/Users/wakamatsu/");
+			// exec
+			ClassLoader cl = cc.createClassLoader();
+			Class<?> c = cl.loadClass("Script");
+			Object r = c.getMethod("main").invoke(null);
+			System.out.println(r);
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean importPackage(CTX ctx, String name, long pline) {

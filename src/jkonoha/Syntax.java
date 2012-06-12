@@ -166,7 +166,7 @@ class IntSyntax extends TermSyntax {
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		Token tk = expr.tk;
 		long l = Long.parseLong(tk.text);
-		return new ConstExpr(this, KInt.box(l));
+		return new ConstExpr(this, TY.INT, KInt.box(l));
 	}
 }
 
@@ -297,6 +297,42 @@ class ParamsSyntax extends Syntax {
 		}
 		return r;
 	}
+	
+	private Expr tyCheckCallParams(CTX ctx, Expr expr, KMethod mtd, Gamma gma, KClass reqty) {
+		int size = expr.cons.size();
+		for(int i=2; i<size; i++) {
+			Expr e = expr.tyCheckAt(ctx, i, gma, KClass.varClass, 0);
+			if(e == null) {
+				return null;
+			}
+		}
+		//TODO param check
+		expr.build = TEXPR.CALL;
+		expr.ty = TY.INT;
+		return expr;
+	}
+	
+	private Expr lookupMethod(CTX ctx, Expr expr, int this_cid, Gamma gma, KClass reqty) {
+		//TODO
+		Token tk = (Token)expr.cons.get(0);
+		KClass k = TY.toClass[this_cid];
+		System.out.println(tk.mn);
+		KMethod mtd = k.getMethod(tk.mn, reqty);
+		if(mtd == null) {
+			throw new RuntimeException("method not found: " + k.getName() + "." + tk.mn);
+		}
+		expr.cons.set(0, mtd);
+		return tyCheckCallParams(ctx, expr, mtd, gma, reqty);
+	}
+	
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		Expr texpr = expr.tyCheckAt(ctx, 1, gamma, KClass.varClass, 0);
+		if(texpr != null) {
+			int this_cid = texpr.ty;
+			return lookupMethod(ctx, expr, this_cid, gamma, ty);
+		}
+		return null;
+	}
 }
 
 class ToksSyntax extends Syntax {
@@ -353,17 +389,21 @@ abstract class OpSyntax extends Syntax {
 		//TODO src/sugar/ast.h:650 ParseExpr_Op
 		Token tk = tls.get(c);
 		Expr expr, rexpr = stmt.newExpr2(ctx, tls, c+1, e);
-		String mn = (s ==c) ? this.op1 : this.op2;
+		String mn = (s == c) ? op1 : op2;
+		Syntax syn = this;
 		if (mn != null) {
-			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall);
+			tk.tt = TK.MN;
+			tk.mn = mn;
+			tk.mn_type = (s == c) ? MNTYPE.unary : MNTYPE.binary;
+			syn = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall);
 		}
 		if (s == c) {
-			expr = new Expr(this);
-			expr.setCons(rexpr);
+			expr = new Expr(syn);
+			expr.setCons(tk, rexpr);
 		}
 		else {
 			Expr lexpr = stmt.newExpr2(ctx, tls, s, c);
-			expr = new Expr(this);
+			expr = new Expr(syn);
 			expr.setCons(tk, lexpr, rexpr);
 		}
 		return expr;
@@ -389,7 +429,7 @@ class ModSyntax extends OpSyntax {
 class MulSyntax extends OpSyntax {
 	public MulSyntax() {
 		super("*");
-		this.op2 = "opMul";
+		this.op2 = "opMUL";
 		this.priority = 32;
 	}
 }
