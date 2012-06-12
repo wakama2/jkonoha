@@ -3,7 +3,6 @@ package jkonoha;
 import java.util.List;
 
 import jkonoha.compiler.JavaClass;
-import jkonoha.compiler.kobject.*;
 
 import org.objectweb.asm.Type;
 
@@ -12,8 +11,9 @@ public abstract class KClass {
 	// constant
 	public static final KClass voidClass = new JavaClass(void.class);
 	public static final KClass varClass = new JavaClass(Object.class); //FIXME
-	public static final KClass objectClass = new JavaClass(Object.class);
+	public static final KClass objectClass = new JavaClass(KObject.class);
 	public static final KClass intClass = new JavaClass(KInt.class);
+	public static final KClass floatClass = new JavaClass(KFloat.class);
 	public static final KClass booleanClass = new JavaClass(KBoolean.class);
 	public static final KClass stringClass = new JavaClass(String.class);
 	public static final KClass methodClass = new JavaClass(KMethod.class);

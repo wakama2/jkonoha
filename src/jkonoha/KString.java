@@ -1,6 +1,7 @@
-package jkonoha.compiler.kobject;
+package jkonoha;
 
-public class KString {
+
+public class KString extends KObject {
 	
 	private final String text;
 	
