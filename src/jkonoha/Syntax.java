@@ -2,7 +2,6 @@ package jkonoha;
 
 import java.util.*;
 
-import jkonoha.compiler.kobject.KInt;
 
 public abstract class Syntax {
 	public String kw;   // id
@@ -438,7 +437,7 @@ class AddSyntax extends OpSyntax {
 	public AddSyntax() {
 		super("+");
 		this.flag = SYNFLAG.ExprOp;
-		this.op1 = "opPULS";
+		this.op1 = "opPLUS";
 		this.op2 = "opADD";
 		this.priority = 64;
 	}
