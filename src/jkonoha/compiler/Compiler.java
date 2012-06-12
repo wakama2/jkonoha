@@ -5,6 +5,7 @@ import java.util.*;
 import org.objectweb.asm.*;
 
 import jkonoha.*;
+import jkonoha.compiler.kobject.KInt;
 
 public class Compiler implements Opcodes {
 	
@@ -277,7 +278,12 @@ public class Compiler implements Opcodes {
 		switch(expr.build) {
 		case TEXPR.CONST:
 		case TEXPR.NCONST:
-			loadConst(expr.data);
+			if(expr.data instanceof KInt) {
+				KInt i = (KInt)expr.data;
+				loadConst(i.unbox());
+			} else {
+				throw new CodeGenException("err const");
+			}
 			break;
 		case TEXPR.NEW:
 			//TODO
@@ -318,7 +324,7 @@ public class Compiler implements Opcodes {
 			//TODO
 			break;
 		default:
-			System.out.println("ERROR");	
+			throw new CodeGenException("error");
 		}
 	}
 	
@@ -341,6 +347,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void close() {
+		mv.visitInsn(mtd.getReturnType().getOpcode(IRETURN));
 		//mv.visitLabel(lbEND);
 		mv.visitEnd();
 	}

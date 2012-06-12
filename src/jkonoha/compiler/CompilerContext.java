@@ -5,6 +5,7 @@ import java.util.*;
 
 import jkonoha.CTX;
 import jkonoha.Block;
+import jkonoha.KClass;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -33,17 +34,13 @@ public class CompilerContext {
 		return cw.toByteArray();
 	}
 	
-	// tycheck.h 1335
 	public void evalBlock(Block b) {
-		// new_kMethod && kMethod_setParam
-		KonohaMethod mtd = new KonohaMethod(new JavaClass(Object.class), 
-				Opcodes.ACC_STATIC, "", Type.VOID_TYPE, new String[0], new Type[0]);
-		try {
-			evalBlock(mtd, b);
-		} catch(Exception e) {
-			System.err.println("Catch eval exception");
-			e.printStackTrace();
-		}
+		KonohaClass klass = new KonohaClass("Script");
+		classMap.put(klass.getName(), klass);
+		KonohaMethod mtd = new KonohaMethod(klass, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, 
+				"main", Type.INT_TYPE, new String[0], new Type[0]);
+		klass.addMethod(mtd);
+		evalBlock(mtd, b);
 	}
 	
 	public void evalBlock(KonohaMethod mtd, Block b) {

@@ -3,6 +3,9 @@ package jkonoha.compiler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import jkonoha.KClass;
+import jkonoha.KMethod;
+
 import org.objectweb.asm.Type;
 
 public class JavaMethod extends KMethod {
