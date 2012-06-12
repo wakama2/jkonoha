@@ -210,6 +210,7 @@ public class KonohaSpace extends KObject {
 		int pos = tls.size();
 		tokenize(ctx, rule, uline, tls);
 		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
+		KArray.clear(tls, pos);
 	}
 
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {
