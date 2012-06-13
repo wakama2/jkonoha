@@ -8,7 +8,8 @@ public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
 	public FTokenizer[] fmat;
-	public Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
+	private final Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
+	private final Map<String, KObject> cl = new HashMap<String, KObject>();
 
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
@@ -165,8 +166,8 @@ public class KonohaSpace extends KObject {
 			if(tk.tt == TK.TEXT) {
 				int[] ia = new int[]{i};
 				if(checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')')) {
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_BRANCET, '[', ']') ||
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_BRACE, '{', '}')) {
 					i = ia[0];
 				} else {
 					tk.tt = TK.CODE;
@@ -221,6 +222,17 @@ public class KonohaSpace extends KObject {
 			}
 			this.syntaxMapNN.put(syn.kw, syn);
 		}
+	}
+	
+	public KObject getSymbolValue(CTX ctx, String key) {
+		if(key.equals("K") || key.equals("Konoha")) {
+			return this;
+		}
+		return null;
+	}
+	
+	public KObject getConst(CTX ctx, String key) {
+		return cl.get(key);
 	}
 
 	public void setSyntaxMethod(CTX ctx, KMethod f, KMethod[] synp, KMethod p, KMethod[] mp) {

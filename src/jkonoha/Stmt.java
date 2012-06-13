@@ -159,7 +159,6 @@ public class Stmt extends KObject {
 		return ret;
 	}
 	
-
 	public void toERR (int eno) {
 //		stmt.syntax = SYN_(stmt, KW.Err);//TODO SYN_ = KonohaSpace_syntax(_ctx, KS, KW, 0)
 //		stmt.build = TSTMT.ERR;

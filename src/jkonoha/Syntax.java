@@ -123,27 +123,27 @@ class USYMBOLSyntax extends TermSyntax {
 		}
 		return r;
 	}
-//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		DBG_P("USYMBOL...");
-//		Token tk = expr.tk;
-//		int ukey = kuname(S_text(tk.text), S_size(tk.text), 0, FN_NONAME);
-//		if(ukey != FN_NONAME){
-//			Kvs kv = gamma.genv.ks.getConstNULL(ctx, ukey);
-//			if(kv != null) {
-//				if(FN_isBOXED(kv.key)) {
-//					expr.setConstValue(kv.ty, kv.oval);
-//				}
-//				else {
-//					expr.setNConstValue(kv.ty, kv.uval);
-//				}
-//				return expr;
-//			}
-//		}
-//		KObject v = gamma.genv.ks.getSymbolValueNULL(ctx, S_text(tk.text), S_size(tk.text));
-//		Expr texpr = (v == null) ?
-//				kToken_p(tk, ERR_, "undefined name: %s", kToken_s(tk)) : kExpr_setConstValue(expr, O_cid(v), v);
-//				return texpr;
-//	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		ctx.DBG_P("USYMBOL...");
+		Token tk = expr.tk;
+		String ukey = tk.text;
+		//if(ukey != FN_NONAME){
+			KObject val = gamma.ks.getConst(ctx, ukey);
+			if(val != null) {
+				// expr.ty = ?//TODO
+				expr.data = val;
+				return expr;
+			}
+		//}
+		KObject v = gamma.ks.getSymbolValue(ctx, tk.text);
+		if(v == null) {
+			ctx.Token_p(tk, System.err, "undefined name: %s", tk.toString());
+			return null;
+		} else {
+			expr.data = v;
+			return expr;
+		}
+	}
 }
 
 class TextSyntax extends TermSyntax {
