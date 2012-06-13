@@ -574,7 +574,7 @@ class DOLLARSyntax extends Syntax {
 				return expr;
 				}
 			}
-			//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
+			//RETURN_(kToken_p(tls.toks[c], ERR_, "unknown %s parser", kToken_s(tls.toks[c])));
 			return null;
 		}
 	}
@@ -627,6 +627,19 @@ class IFSyntax extends Syntax {
 	public IFSyntax() {
 		super("if");
 		this.rule = "\"if\" \"(\" $expr \")\" $block [\"else\" else: $block]";
+	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		boolean r = true;
+		if((r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, KClass.booleanClass, 0))) {
+			Block bkThen = stmt.block(ctx, KW.Block, null);
+			Block bkElse = stmt.block(ctx, KW._else, null);
+			r = bkThen.tyCheckAll(ctx, gamma);
+			r = r & bkElse.tyCheckAll(ctx, gamma);
+			stmt.typed(TSTMT.IF);
+		}
+		return r;
 	}
 }
 

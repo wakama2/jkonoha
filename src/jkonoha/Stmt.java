@@ -259,5 +259,23 @@ public class Stmt extends KObject {
 		KArray.clear(tls, s);
 		return expr;
 	}
+
+	public Block block(CTX ctx, String kw, Block def) {
+		Object bk = getObject(kw);
+		if(bk != null) {
+			if(bk instanceof Token) {
+				Token tk = (Token)bk;
+				if (tk.tt == TK.CODE) {
+					tk.toBRACE(ctx, this.parentNULL.ks);
+				}
+				if (tk.tt == TK.AST_BRACE) {
+					bk = Parser.newBlock(ctx, this.parentNULL.ks, this, tk.sub, 0, tk.sub.size(), ';');
+					this.setObject(kw, bk);
+				}
+			}
+			if(bk instanceof Block) return (Block)bk;
+		}
+		return def;
+	}
 }
 
