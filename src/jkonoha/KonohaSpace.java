@@ -41,7 +41,7 @@ public class KonohaSpace extends KObject {
 			tk = lookAhead(ctx, tls, s+1, e);
 			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 				tk = lookAhead(ctx, tls, s+2, e);
-				if(tk.tt == TK.AST_PARENTHESIS || tk.kw == KW.DOT) {
+				if(tk.tt == TK.AST_PARENTHESIS || tk.kw.equals(KW.DOT)) {
 					return syntax(ctx, KW.StmtMethodDecl); //
 				}
 				return syntax(ctx, KW.StmtTypeDecl);  //
@@ -210,6 +210,7 @@ public class KonohaSpace extends KObject {
 		int pos = tls.size();
 		tokenize(ctx, rule, uline, tls);
 		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
+		KArray.clear(tls, pos);
 	}
 
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {
@@ -295,7 +296,9 @@ public class KonohaSpace extends KObject {
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
+		Token.dumpTokenArray(System.out,tls);
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		Token.dumpTokenArray(System.out,tls);
 		return evalBlock(ctx, bk);
 	}
 
