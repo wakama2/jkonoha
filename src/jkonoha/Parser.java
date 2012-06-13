@@ -27,7 +27,7 @@ public class Parser {
 	public static int makeTree(CTX ctx, KonohaSpace ks, int tt, List<Token> tls, int s, int e, int closech, List<Token> tlsdst, Token tkERRRef) {
 		int i, probablyCloseBefore = e - 1;
 		Token tk = tls.get(s);
-		assert(tk.kw == KW.Err);
+		assert(tk.kw.equals(KW.Err));
 //		if(TK.AST_PARENTHESIS <= tk.tt && tk.tt <= TK.AST_BRACE) {  // already transformed
 //			kArray_add(tlsdst, tk);
 //			return s;
@@ -38,7 +38,7 @@ public class Parser {
 		tkP.sub = new ArrayList<Token>();
 		for(i = s + 1; i < e; i++) {
 			tk = tls.get(i);
-			if(tk.kw != KW.Err) {
+			if(!tk.kw.equals(KW.Err)) {
 				tkP.sub.add(tk);
 				continue;
 			}
@@ -162,7 +162,7 @@ public class Parser {
 		else if (tk.tt == TK.CODE) {
 			tk.kw = KW.Brace;
 		}
-		if (tk.kw == KW.Type) {
+		if (tk.kw.equals(KW.Type)) {
 			dst.add(tk);
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
@@ -184,7 +184,7 @@ public class Parser {
 				}
 			}
 		}
-		else if(tk.kw != KW.Err && tk.kw != KW.Expr) {
+		else if(!tk.kw.equals(KW.Err) && !tk.kw.equals(KW.Expr)) {
 			dst.add(tk);
 		}
 		return next;
@@ -196,7 +196,7 @@ public class Parser {
 			Param[] p = new Param[size];
 			for(i = 0; i < size; i++) {
 				Token tkT = tkP.sub.get(i);
-				if(tkT.kw == KW.Type) {
+				if(tkT.kw.equals(KW.Type)) {
 					p[psize].ty = tkT.ty;
 					psize++;
 					continue;

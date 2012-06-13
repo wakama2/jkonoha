@@ -184,7 +184,7 @@ class TypeSyntax extends TermSyntax {
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
 		Token tk = tls.get(s);
-		if(tk.kw == KW.Type) {
+		if(tk.kw.equals(KW.Type)) {
 			stmt.setObject(name, tk);
 			r = s + 1;
 		}
@@ -193,7 +193,7 @@ class TypeSyntax extends TermSyntax {
 //	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
 //		Token tk  = stmt.token(KW.Type, null);
 //		Expr expr = stmt.expr(KW.Expr, null);
-//		if(tk == null || tk.kw != KW.Type || expr == null) {
+//		if(tk == null || !tk.kw.equals(KW.Type) || expr == null) {
 //			ERR_SyntaxError(stmt.uline);
 //			return false;
 //		}
@@ -201,7 +201,7 @@ class TypeSyntax extends TermSyntax {
 //		return expr.declType(ctx, gamma, tk.ty, stmt);
 //	}
 //	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		assert(expr.tk.kw == KW.Type);
+//		assert(expr.tk.kw.equals(KW.Type));
 //		return expr.setVariable(null, expr.tk.ty, 0, gamma);
 //	}
 }
@@ -574,7 +574,7 @@ class DOLLARSyntax extends Syntax {
 				return expr;
 				}
 			}
-			//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
+			//RETURN_(kToken_p(tls.toks[c], ERR_, "unknown %s parser", kToken_s(tls.toks[c])));
 			return null;
 		}
 	}
@@ -605,7 +605,6 @@ class INTTypeSyntax extends Syntax {
 class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {
 		super("true");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 
 	@Override
@@ -617,7 +616,6 @@ class TRUESyntax extends TermSyntax {
 class FALSESyntax extends TermSyntax {
 	public FALSESyntax () {
 		super("false");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override
 	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -629,6 +627,19 @@ class IFSyntax extends Syntax {
 	public IFSyntax() {
 		super("if");
 		this.rule = "\"if\" \"(\" $expr \")\" $block [\"else\" else: $block]";
+	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		boolean r = true;
+		if((r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, KClass.booleanClass, 0))) {
+			Block bkThen = stmt.block(ctx, KW.Block, null);
+			Block bkElse = stmt.block(ctx, KW._else, null);
+			r = bkThen.tyCheckAll(ctx, gamma);
+			r = r & bkElse.tyCheckAll(ctx, gamma);
+			stmt.typed(TSTMT.IF);
+		}
+		return r;
 	}
 }
 
