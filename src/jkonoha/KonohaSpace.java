@@ -10,6 +10,10 @@ public class KonohaSpace extends KObject {
 	public FTokenizer[] fmat;
 	private final Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
 	private final Map<String, KObject> cl = new HashMap<String, KObject>();
+	
+	public KonohaSpace() {
+		cl.put("System", KClass.systemClass);
+	}
 
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
@@ -307,6 +311,7 @@ public class KonohaSpace extends KObject {
 	
 	public KObject eval(CTX ctx, String script, long uline) {
 		ctx.modsugar.setup();
+		ctx.modsugar.gamma.ks = this;
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
