@@ -8,7 +8,8 @@ public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
 	public FTokenizer[] fmat;
-	public Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
+	private final Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
+	private final Map<String, KObject> cl = new HashMap<String, KObject>();
 
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
@@ -41,7 +42,7 @@ public class KonohaSpace extends KObject {
 			tk = lookAhead(ctx, tls, s+1, e);
 			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 				tk = lookAhead(ctx, tls, s+2, e);
-				if(tk.tt == TK.AST_PARENTHESIS || tk.kw == KW.DOT) {
+				if(tk.tt == TK.AST_PARENTHESIS || tk.kw.equals(KW.DOT)) {
 					return syntax(ctx, KW.StmtMethodDecl); //
 				}
 				return syntax(ctx, KW.StmtTypeDecl);  //
@@ -165,8 +166,8 @@ public class KonohaSpace extends KObject {
 			if(tk.tt == TK.TEXT) {
 				int[] ia = new int[]{i};
 				if(checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')') ||
-				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_PARENTHESIS, '(', ')')) {
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_BRANCET, '[', ']') ||
+				   checkNestedSyntax(ctx, tls, ia, e, TK.AST_BRACE, '{', '}')) {
 					i = ia[0];
 				} else {
 					tk.tt = TK.CODE;
@@ -210,6 +211,7 @@ public class KonohaSpace extends KObject {
 		int pos = tls.size();
 		tokenize(ctx, rule, uline, tls);
 		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
+		KArray.clear(tls, pos);
 	}
 
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {
@@ -220,6 +222,17 @@ public class KonohaSpace extends KObject {
 			}
 			this.syntaxMapNN.put(syn.kw, syn);
 		}
+	}
+	
+	public KObject getSymbolValue(CTX ctx, String key) {
+		if(key.equals("K") || key.equals("Konoha")) {
+			return this;
+		}
+		return null;
+	}
+	
+	public KObject getConst(CTX ctx, String key) {
+		return cl.get(key);
 	}
 
 	public void setSyntaxMethod(CTX ctx, KMethod f, KMethod[] synp, KMethod p, KMethod[] mp) {
@@ -295,7 +308,9 @@ public class KonohaSpace extends KObject {
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
+		Token.dumpTokenArray(System.out,tls);
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		Token.dumpTokenArray(System.out,tls);
 		return evalBlock(ctx, bk);
 	}
 

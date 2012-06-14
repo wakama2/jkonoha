@@ -118,6 +118,17 @@ public class Token extends KObject {
 		}
 		if(nest == 0) out.println("====");
 	}
+
+	public boolean toBRACE(CTX ctx, KonohaSpace ks) {
+		if(this.tt == TK.CODE) {
+			ArrayList<Token> a = new ArrayList<Token>();
+			ks.tokenize(ctx, this.text, this.uline, a);
+			this.tt = TK.AST_BRACE; this.topch = '{'; this.closech = '}';
+			this.sub = a;
+			return true;
+		}
+		return false;
+	}
 }
 
 //import java.util.*;

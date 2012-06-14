@@ -123,27 +123,27 @@ class USYMBOLSyntax extends TermSyntax {
 		}
 		return r;
 	}
-//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		DBG_P("USYMBOL...");
-//		Token tk = expr.tk;
-//		int ukey = kuname(S_text(tk.text), S_size(tk.text), 0, FN_NONAME);
-//		if(ukey != FN_NONAME){
-//			Kvs kv = gamma.genv.ks.getConstNULL(ctx, ukey);
-//			if(kv != null) {
-//				if(FN_isBOXED(kv.key)) {
-//					expr.setConstValue(kv.ty, kv.oval);
-//				}
-//				else {
-//					expr.setNConstValue(kv.ty, kv.uval);
-//				}
-//				return expr;
-//			}
-//		}
-//		KObject v = gamma.genv.ks.getSymbolValueNULL(ctx, S_text(tk.text), S_size(tk.text));
-//		Expr texpr = (v == null) ?
-//				kToken_p(tk, ERR_, "undefined name: %s", kToken_s(tk)) : kExpr_setConstValue(expr, O_cid(v), v);
-//				return texpr;
-//	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		ctx.DBG_P("USYMBOL...");
+		Token tk = expr.tk;
+		String ukey = tk.text;
+		//if(ukey != FN_NONAME){
+			KObject val = gamma.ks.getConst(ctx, ukey);
+			if(val != null) {
+				// expr.ty = ?//TODO
+				expr.data = val;
+				return expr;
+			}
+		//}
+		KObject v = gamma.ks.getSymbolValue(ctx, tk.text);
+		if(v == null) {
+			ctx.Token_p(tk, System.err, "undefined name: %s", tk.toString());
+			return null;
+		} else {
+			expr.data = v;
+			return expr;
+		}
+	}
 }
 
 class TextSyntax extends TermSyntax {
@@ -184,7 +184,7 @@ class TypeSyntax extends TermSyntax {
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
 		Token tk = tls.get(s);
-		if(tk.kw == KW.Type) {
+		if(tk.kw.equals(KW.Type)) {
 			stmt.setObject(name, tk);
 			r = s + 1;
 		}
@@ -193,7 +193,7 @@ class TypeSyntax extends TermSyntax {
 //	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
 //		Token tk  = stmt.token(KW.Type, null);
 //		Expr expr = stmt.expr(KW.Expr, null);
-//		if(tk == null || tk.kw != KW.Type || expr == null) {
+//		if(tk == null || !tk.kw.equals(KW.Type) || expr == null) {
 //			ERR_SyntaxError(stmt.uline);
 //			return false;
 //		}
@@ -201,7 +201,7 @@ class TypeSyntax extends TermSyntax {
 //		return expr.declType(ctx, gamma, tk.ty, stmt);
 //	}
 //	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		assert(expr.tk.kw == KW.Type);
+//		assert(expr.tk.kw.equals(KW.Type));
 //		return expr.setVariable(null, expr.tk.ty, 0, gamma);
 //	}
 }
@@ -573,7 +573,7 @@ class DOLLARSyntax extends Syntax {
 				return expr;
 				}
 			}
-			//RETURN_(kToken_p(tls->toks[c], ERR_, "unknown %s parser", kToken_s(tls->toks[c])));
+			//RETURN_(kToken_p(tls.toks[c], ERR_, "unknown %s parser", kToken_s(tls.toks[c])));
 			return null;
 		}
 	}
@@ -604,7 +604,6 @@ class INTTypeSyntax extends Syntax {
 class TRUESyntax extends TermSyntax {
 	public TRUESyntax () {
 		super("true");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 
 	@Override
@@ -616,7 +615,6 @@ class TRUESyntax extends TermSyntax {
 class FALSESyntax extends TermSyntax {
 	public FALSESyntax () {
 		super("false");
-		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override
 	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -628,6 +626,19 @@ class IFSyntax extends Syntax {
 	public IFSyntax() {
 		super("if");
 		this.rule = "\"if\" \"(\" $expr \")\" $block [\"else\" else: $block]";
+	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		boolean r = true;
+		if((r = stmt.tyCheckExpr(ctx, KW.Expr, gamma, KClass.booleanClass, 0))) {
+			Block bkThen = stmt.block(ctx, KW.Block, null);
+			Block bkElse = stmt.block(ctx, KW._else, null);
+			r = bkThen.tyCheckAll(ctx, gamma);
+			r = r & bkElse.tyCheckAll(ctx, gamma);
+			stmt.typed(TSTMT.IF);
+		}
+		return r;
 	}
 }
 
