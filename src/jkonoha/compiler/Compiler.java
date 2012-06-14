@@ -348,6 +348,7 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmBlock(Block bk, int shift) {
+		if (bk == null) return;
 		int espidx = 0; //TODO
 		for(Stmt stmt : bk.blocks) {
 			//if(stmt.syntax == null) continue;

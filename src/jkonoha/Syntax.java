@@ -659,7 +659,24 @@ class ELSESyntax extends Syntax {
 		super("else");
 		this.rule = "\"else\" $block";
 	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		boolean r = true;
+		Stmt stmtIf = stmt.lookupIfStmtNULL(ctx);
+		if(stmtIf != null) {
+			Block bkElse = stmt.block(ctx, KW.Block, null);
+			stmtIf.setObject(KW._else, bkElse);
+			r = bkElse.tyCheckAll(ctx, gamma);
+		}
+		else {
+			ctx.SUGAR_P(System.err, stmt.uline, -1, "else is not statement");
+			r = false;
+		}
+		return r;
+	}
 }
+
 class RETURNSyntax extends Syntax {
 	public RETURNSyntax() {
 		super("return");
