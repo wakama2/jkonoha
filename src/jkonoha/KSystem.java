@@ -6,8 +6,8 @@ public class KSystem extends KObject {
 //		
 //	}
 	
-	public static void p(String s) {
-		System.out.println(s);
+	public static void p(KObject o) {
+		System.out.println(o);
 	}
 	
 	public static void gc() {

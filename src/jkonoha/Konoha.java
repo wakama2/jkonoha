@@ -36,7 +36,10 @@ public class Konoha {
 	public void eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
 		KonohaSpace ks = new KonohaSpace();
 		ks.defineDefaultSyntax(ctx);
-		System.out.println(ks.eval(ctx, source, 0));
+		Object o = ks.eval(ctx, source, 0);
+		if(o != null) {
+			System.out.println(o);
+		}
 	}
 	
 	public void load(String script) {
@@ -50,9 +53,9 @@ public class Konoha {
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		CTX ctx = new CTX();
-//		k.eval(ctx, "(1+2) * (3-4)");
-		k.eval(ctx, "if (1<2) System.p(10); else System.p(20);");
-//		k.eval(ctx, "System.p(12);");
+		k.eval(ctx, "(1+2) * (3-4)");
+//		k.eval(ctx, "if (1<2) System.p(10); else System.p(20);");
+		k.eval(ctx, "System.p(12);");
 //		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
 //		k.eval(ctx, "fibo(10);");
 //		k.load("file.k");

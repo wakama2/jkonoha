@@ -8,7 +8,7 @@ import jkonoha.compiler.JavaMethod;
 
 import org.objectweb.asm.*;
 
-public abstract class KMethod {
+public abstract class KMethod extends KObject {
 	private Type methodType = null;
 	
 	public abstract KClass getParent();
