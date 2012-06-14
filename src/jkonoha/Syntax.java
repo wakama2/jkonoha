@@ -2,6 +2,9 @@ package jkonoha;
 
 import java.util.*;
 
+import jkonoha.compiler.KonohaClass;
+import jkonoha.compiler.KonohaMethod;
+
 
 public abstract class Syntax {
 	public String kw;   // id
@@ -595,6 +598,34 @@ class VOIDSyntax extends Syntax {
 		super("void");
 		this.ty = TY.VOID;
 		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
+	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		KonohaClass c = KClass.scriptClass;
+		
+		KonohaMethod m = new KonohaMethod();
+		c.addMethod(m);
+		
+		
+		boolean r = false;
+		KonohaSpace ks = gamma.genv.ks;
+		int flag =  stmt.flag(ctx, MethodDeclFlag, 0);
+		Param pa = stmt.newMethodParamNULL(ctx, gamma);
+		if(TY_isSingleton(cid)) flag |= kMethod_Static;
+		if(pa != NULL) {
+			INIT_GCSTACK();
+			kMethod *mtd = new_kMethod(flag, cid, mn, NULL);
+			PUSH_GCSTACK(mtd);
+			kMethod_setParam(mtd, pa->rtype, pa->psize, (kparam_t*)pa->p);
+			if(kKonohaSpace_defineMethod(ks, mtd, stmt->uline)) {
+				r = 1;
+				Stmt_setMethodFunc(_ctx, stmt, ks, mtd);
+				kStmt_done(stmt);
+			}
+			RESET_GCSTACK();
+		}
+		RETURNb_(r);
 	}
 }
 
