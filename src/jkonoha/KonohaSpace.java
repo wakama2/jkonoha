@@ -213,7 +213,9 @@ public class KonohaSpace extends KObject {
 	private void parseSyntaxRule(CTX ctx, String rule, long uline, List<Token> a) {
 		List<Token> tls = ctx.ctxsugar.tokens;
 		int pos = tls.size();
+		Token.dumpTokenArray(System.out,tls);
 		tokenize(ctx, rule, uline, tls);
+		Token.dumpTokenArray(System.out,tls);
 		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
 		KArray.clear(tls, pos);
 	}
