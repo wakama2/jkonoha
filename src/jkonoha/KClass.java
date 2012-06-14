@@ -6,7 +6,7 @@ import jkonoha.compiler.JavaClass;
 
 import org.objectweb.asm.Type;
 
-public abstract class KClass {
+public abstract class KClass extends KObject {
 	
 	// constant
 	public static final KClass voidClass = new JavaClass(void.class);

@@ -36,15 +36,17 @@ public class Expr extends KObject {
 		if(texpr.ty == TY.var) {
 			texpr = texpr.syn.exprTyCheck(ctx, this, gamma, reqty);
 		}
-		if(texpr.ty == TY.VOID) {
-			if((pol & TPOL.ALLOWVOID) != 0) {
+		if(texpr != null) {
+			if(texpr.ty == TY.VOID) {
+				if((pol & TPOL.ALLOWVOID) != 0) {
+					return texpr;
+				}
+				System.err.println("void is not acceptable");
+				return null;
+			}
+			if(texpr.ty == TY.var && reqty.equals(KClass.varClass) && ((pol & TPOL.NOCHECK)) != 0) {
 				return texpr;
 			}
-			System.err.println("void is not acceptable");
-			return null;
-		}
-		if(texpr.ty == TY.var && reqty.equals(KClass.varClass) && ((pol & TPOL.NOCHECK)) != 0) {
-			return texpr;
 		}
 		return texpr;
 	}

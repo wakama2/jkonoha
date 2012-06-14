@@ -38,7 +38,7 @@ public class Block extends KObject {
 		if (tkERR != null) {
 			stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Err);
 			stmt.build = TSTMT.ERR;
-			stmt.setObject(KW.Err, tkERR);
+			stmt.setObject(KW.Err, tkERR.text);
 		}
 		else {
 			int estart = ctx.ctxsugar.errors.size();

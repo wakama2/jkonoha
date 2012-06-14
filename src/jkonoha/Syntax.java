@@ -314,8 +314,19 @@ class ParamsSyntax extends Syntax {
 	private Expr lookupMethod(CTX ctx, Expr expr, int this_cid, Gamma gma, KClass reqty) {
 		//TODO
 		Token tk = (Token)expr.cons.get(0);
+		if(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
+			tk.mn = tk.text;
+		}
 		KClass k = TY.toClass[this_cid];
-		System.out.println(tk.mn);
+		//System.out.println(tk.mn);
+		//FIXME
+		if(tk.mn.equals("p")) {
+			KMethod mtd = KClass.systemClass.getMethod(tk.mn, reqty);
+			expr.cons.set(0, mtd);
+			expr = tyCheckCallParams(ctx, expr, mtd, gma, reqty);
+			expr.cons.remove(1);
+			return expr;
+		}
 		KMethod mtd = k.getMethod(tk.mn, reqty);
 		if(mtd == null) {
 			throw new RuntimeException("method not found: " + k.getName() + "." + tk.mn);

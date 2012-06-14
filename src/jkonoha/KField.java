@@ -3,7 +3,7 @@ package jkonoha;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Type;
 
-public class KField {
+public class KField extends KObject {
 	
 	private final int access;
 	private final String name;

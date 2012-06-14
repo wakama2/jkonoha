@@ -412,9 +412,8 @@ public class Tokenizer {
 			int ch, prev = '"', pos = tok_start + 1;
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if((ch = tenv.source.charAt(pos++)) == 0) break;
 				if(ch == '\n') {
 					break;
 				}
@@ -422,7 +421,7 @@ public class Tokenizer {
 					Token rtk = tk;
 					if(rtk != null /* CTX.IS_NOTNULL(tk) */) {
 //						tk.text = new KString(tenv.source.substring(tok_start + 1, pos - 1));
-						rtk.text = tenv.source.substring(tok_start + 1, pos);
+						rtk.text = tenv.source.substring(tok_start + 1, pos-1);
 						rtk.tt = TK.TEXT;
 					}
 					return pos;

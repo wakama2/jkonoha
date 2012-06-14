@@ -83,7 +83,7 @@ public class Compiler implements Opcodes {
 	
 	private void loadConst(Object o) {
 		mv.visitLdcInsn(o);
-		typeStack.push(Type.getType(o.getClass()));
+		//typeStack.push(Type.getType(o.getClass()));
 	}
 	
 	private void box() {
@@ -126,7 +126,10 @@ public class Compiler implements Opcodes {
 		String type = method.getMethodType().getDescriptor();
 		int inst = method.isStatic() ? INVOKESTATIC : INVOKEVIRTUAL;
 		mv.visitMethodInsn(inst, klassName, method.getName(), type);
-		typeStack.push(method.getReturnType());
+		Type ret = method.getReturnType();
+		if(ret != Type.VOID_TYPE) {
+			typeStack.push(method.getReturnType());
+		}
 	}
 	
 	private void asmJump(Label lb) {
@@ -223,12 +226,17 @@ public class Compiler implements Opcodes {
 	private void asmCall(int a, Expr expr, int shift, int espidx) {
 		List<Object> l = expr.cons;
 		KMethod mtd = (KMethod)l.get(0);
+		Type[] argTypes = mtd.getArgTypes();
 		//int s = mtd.isStatic() ? 2 : 1;//TODO
 		int s = 1;
 		int thisidx = espidx + K.CALLDELTA;
 		for(int i=s; i<l.size(); i++) {
 			Expr e = (Expr)l.get(i);
 			asmExpr(thisidx + i - 1, e, shift, thisidx + i - 1);
+			//Type ty = typeStack.pop();
+			if(argTypes[i-s].equals(KClass.objectClass.getAsmType())) {
+				box();
+			}
 			typeStack.pop();
 		}
 		call(mtd);
@@ -358,7 +366,11 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void close() {
-		box();
+		if(!typeStack.isEmpty()) {
+			box();
+		} else {
+			mv.visitInsn(Opcodes.ACONST_NULL);
+		}
 		mv.visitInsn(mtd.getReturnType().getOpcode(IRETURN));
 		mv.visitEnd();
 	}
