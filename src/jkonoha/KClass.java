@@ -19,6 +19,7 @@ public abstract class KClass extends KObject {
 	public static final KClass methodClass = new JavaClass(KMethod.class);
 	public static final KClass classClass = new JavaClass(KClass.class);
 	public static final KClass systemClass = new JavaClass(KSystem.class);
+	public static final KClass konohaSpaceClass = new JavaClass(KonohaSpace.class);
 	
 	public abstract String getName();
 	public abstract Type getAsmType();
@@ -27,17 +28,19 @@ public abstract class KClass extends KObject {
 	public int getID() {
 		return 0;
 	}
+	
 	public List<KMethod> getMethods() {
-		return null;//TODO
+		throw new RuntimeException("not impl");
 	}
 	
 	public abstract KMethod getMethod(String name, KClass reqty);
 	
 	public KClass getBaseClass() {
-		return null;
+		throw new RuntimeException("not impl");
 	}
+	
 	public KClass getP0() {
-		return null;
+		throw new RuntimeException("not impl");
 	}
 	
 	public boolean isa(KClass k) {

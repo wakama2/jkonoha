@@ -77,7 +77,7 @@ public class Parser {
 		assert(e <= tls.size());
 		for(; i < e - 1; i++) {
 			Token tk = tls.get(i);
-			Token tk1 = tls.get(i+1);
+			Token tk1 = i+1 < tls.size() ? tls.get(i+1) : null;
 			if(!tk.kw.equals(KW.Err)) break;  // already parsed
 			if(tk.topch == '@' && (tk1.tt == TK.SYMBOL || tk1.tt == TK.USYMBOL)) {
 				tk1.tt = TK.METANAME;
