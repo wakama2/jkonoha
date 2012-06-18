@@ -600,7 +600,7 @@ class VOIDSyntax extends Syntax {
 		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
 	}
 
-	@Override
+/*	@Override
 	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		KonohaClass c = KClass.scriptClass;
 		
@@ -626,7 +626,7 @@ class VOIDSyntax extends Syntax {
 			RESET_GCSTACK();
 		}
 		RETURNb_(r);
-	}
+	}*/
 }
 
 class BOOLEANSyntax extends Syntax {
