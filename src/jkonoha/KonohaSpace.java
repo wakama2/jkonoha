@@ -44,9 +44,9 @@ public class KonohaSpace extends KObject {
 		Token tk = tls.get(s);
 		if (tk.kw.equals(KW.Type)) {
 			tk = lookAhead(ctx, tls, s+1, e);
-			if (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
+			if (tk != null && (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL)) {
 				tk = lookAhead(ctx, tls, s+2, e);
-				if(tk.tt == TK.AST_PARENTHESIS || tk.kw.equals(KW.DOT)) {
+				if(tk != null && (tk.tt == TK.AST_PARENTHESIS || tk.kw.equals(KW.DOT))) {
 					return syntax(ctx, KW.StmtMethodDecl); //
 				}
 				return syntax(ctx, KW.StmtTypeDecl);  //
@@ -316,12 +316,14 @@ public class KonohaSpace extends KObject {
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
+		KArray.clear(tls, pos);
 		return evalBlock(ctx, bk);
 	}
 
 	private KObject evalBlock(CTX ctx, Block bk) {
-		bk.tyCheckAll(ctx, ctx.modsugar.gamma);
 		CompilerContext cc = new CompilerContext(ctx);
+		ctx.modsugar.gamma.cc = cc;
+		if(!bk.tyCheckAll(ctx, ctx.modsugar.gamma)) return null;
 		cc.evalBlock(bk);
 		try {
 			// exec

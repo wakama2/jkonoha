@@ -8,9 +8,12 @@ public class Konoha {
 	public ArrayList<String> fileidList;
 	public Map<String, Long> fileidMap;
 	
-	public Konoha() {
+	KonohaSpace ks = new KonohaSpace();
+	
+	public Konoha(CTX ctx) {
 		this.fileidList = new ArrayList<String>();
 		this.fileidMap  = new HashMap<String, Long>(83);
+		ks.defineDefaultSyntax(ctx);
 	}
 	
 	long kfileid(String name, long def) {
@@ -34,8 +37,6 @@ public class Konoha {
 	}
 	
 	public void eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
-		KonohaSpace ks = new KonohaSpace();
-		ks.defineDefaultSyntax(ctx);
 		Object o = ks.eval(ctx, source, 0);
 		if(o != null) {
 			System.out.println(o);
@@ -51,10 +52,12 @@ public class Konoha {
 //	}
 		
 	public static void main(String[] args) {
-		Konoha k = new Konoha();
 		CTX ctx = new CTX();
-		k.eval(ctx, "(1+2) * (3-4)");
-//		k.eval(ctx, "if (1<2) System.p(10); else System.p(30)");
+		Konoha k = new Konoha(ctx);
+		k.eval(ctx, "int func(int x) { System.p(100); }");
+		k.eval(ctx, "func(100);");
+//		k.eval(ctx, "(1+2) * (3-4)");
+//		k.eval(ctx, "if (1<10) System.p(10); else System.p(20);");
 //		k.eval(ctx, "System.p(12);");
 //		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
 //		k.eval(ctx, "fibo(10);");

@@ -26,6 +26,19 @@ public class CompilerContext {
 	
 	public CompilerContext(CTX ctx) {
 		this.ctx = ctx;
+		KonohaClass klass = ctx.scriptClass;
+		classMap.put(klass.getName(), klass);
+	}
+	
+	public Type getType(String cname) {
+		if(cname.equals("int")) {
+			return Type.INT_TYPE;
+		} else if(cname.equals("boolean")) {
+			return Type.BOOLEAN_TYPE;
+		} else if(cname.equals("void")) {
+			return Type.VOID_TYPE;
+		}
+		return null;//TODO
 	}
 	
 	private byte[] genBytecode(KonohaClass klass) {
@@ -35,8 +48,7 @@ public class CompilerContext {
 	}
 	
 	public void evalBlock(Block b) {
-		KonohaClass klass = new KonohaClass("Script");
-		classMap.put(klass.getName(), klass);
+		KonohaClass klass = ctx.scriptClass;
 		KonohaMethod mtd = new KonohaMethod(klass, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, 
 				"main", KClass.objectClass.getAsmType(), new String[0], new Type[0]);
 		klass.addMethod(mtd);

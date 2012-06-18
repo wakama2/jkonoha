@@ -348,9 +348,10 @@ public class Compiler implements Opcodes {
 	}
 	
 	public void asmBlock(Block bk, int shift) {
-		if (bk == null) return;
+		if(bk == null) return;
 		int espidx = 0; //TODO
 		for(Stmt stmt : bk.blocks) {
+			if(stmt.syntax.kw.equals(KW._void)) continue;
 			//if(stmt.syntax == null) continue;
 			this.uline = stmt.uline;
 			switch(stmt.build) {
@@ -370,7 +371,11 @@ public class Compiler implements Opcodes {
 		if(!typeStack.isEmpty()) {
 			box();
 		} else {
-			mv.visitInsn(Opcodes.ACONST_NULL);
+			if(mtd.getReturnType() == Type.INT_TYPE) {
+				mv.visitInsn(Opcodes.ICONST_0);
+			} else {
+				mv.visitInsn(Opcodes.ACONST_NULL);
+			}
 		}
 		mv.visitInsn(mtd.getReturnType().getOpcode(IRETURN));
 		mv.visitEnd();
