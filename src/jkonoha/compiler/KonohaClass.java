@@ -29,6 +29,13 @@ public class KonohaClass extends KClass {
 	}
 	
 	public void addMethod(KonohaMethod m) {
+		for(int i=0; i<methods.size(); i++) {
+			KonohaMethod m1 = methods.get(i);
+			if(m1.getName().equals(m.getName())) {
+				methods.set(i, m);
+				return;
+			}
+		}
 		methods.add(m);
 	}
 	

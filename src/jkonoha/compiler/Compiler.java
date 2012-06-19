@@ -40,8 +40,7 @@ public class Compiler implements Opcodes {
 		Type[] argTypes = mtd.getArgTypes();
 		//addLocal("this", Type.VOID_TYPE); // TODO this
 		for(int i=0; i<argNames.length; i++) {
-			//addLocal(argNames[i], argTypes[i]);
-			addLocal("local_" + i, argTypes[i]);
+			addLocal(argNames[i], argTypes[i]);
 		}
 	}
 	
@@ -312,7 +311,7 @@ public class Compiler implements Opcodes {
 			typeStack.push(Type.getType(Object.class));//TODO
 			break;
 		case TEXPR.LOCAL:
-			loadLocal("local_" + expr.index);
+			loadLocal((String)expr.ndata);
 			break;
 		case TEXPR.BLOCK:
 			asmBlock((Block)expr.data, espidx);

@@ -54,14 +54,13 @@ public class Konoha {
 	public static void main(String[] args) {
 		CTX ctx = new CTX();
 		Konoha k = new Konoha(ctx);
-		k.eval(ctx, "int func(int x) { System.p(100); }");
-		k.eval(ctx, "func(100);");
-//		k.eval(ctx, "(1+2) * (3-4)");
-//		k.eval(ctx, "if (1<10) System.p(10); else System.p(20);");
-//		k.eval(ctx, "System.p(12);");
-//		k.eval(ctx, "int fibo(int n) { if(n<3) return 1; else return fib(n-1) + fib(n-2); }");
-//		k.eval(ctx, "fibo(10);");
-//		k.load("file.k");
+		Scanner s = new Scanner(System.in);
+		while(true) {
+			System.out.print(">>>");
+			String l = s.nextLine();
+			if(l == null) break;
+			k.eval(ctx, l);
+		}
 	}
 	
 }
