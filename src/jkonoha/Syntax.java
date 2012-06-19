@@ -2,6 +2,13 @@ package jkonoha;
 
 import java.util.*;
 
+import jkonoha.compiler.JavaClass;
+import jkonoha.compiler.KonohaClass;
+import jkonoha.compiler.KonohaMethod;
+
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
 
 public abstract class Syntax {
 	public String kw;   // id
@@ -105,6 +112,9 @@ class SYMBOLSyntax extends TermSyntax {
 		return r;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		Token tk = expr.tk;
+		String ukey = tk.text;
+		System.out.println("SYMBOL " + ukey);
 		return expr.tyCheckVariable2(ctx, gamma, ty);
 	}
 }
@@ -124,25 +134,44 @@ class USYMBOLSyntax extends TermSyntax {
 		return r;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
-		ctx.DBG_P("USYMBOL...");
+		//ctx.DBG_P("USYMBOL...");
 		Token tk = expr.tk;
 		String ukey = tk.text;
-		//if(ukey != FN_NONAME){
-			KObject val = gamma.ks.getConst(ctx, ukey);
-			if(val != null) {
-				// expr.ty = ?//TODO
-				expr.data = val;
-				return expr;
-			}
-		//}
-		KObject v = gamma.ks.getSymbolValue(ctx, tk.text);
-		if(v == null) {
-			ctx.Token_p(tk, System.err, "undefined name: %s", tk.toString());
-			return null;
-		} else {
-			expr.data = v;
+		System.out.println("USYMBOL " + ukey);
+		
+		if(ukey.equals("K") || ukey.equals("Konoha")) {
+			expr.data = KClass.konohaSpaceClass;
 			return expr;
 		}
+		if(ukey.equals("System")) {
+			expr.data = KClass.systemClass;
+			return expr;
+		}
+		try {
+			Class<?> c = Class.forName(ukey);
+			expr.data = new JavaClass(c);
+			return expr;
+		} catch(ClassNotFoundException e) {
+			
+		}
+		return null;
+		
+//		//if(ukey != FN_NONAME){
+//			KObject val = gamma.ks.getConst(ctx, ukey);
+//			if(val != null) {
+//				// expr.ty = ?//TODO
+//				expr.data = val;
+//				return expr;
+//			}
+//		//}
+//		KObject v = gamma.ks.getSymbolValue(ctx, tk.text);
+//		if(v == null) {
+//			ctx.Token_p(tk, System.err, "undefined name: %s", tk.toString());
+//			return null;
+//		} else {
+//			expr.data = v;
+//			return expr;
+//		}
 	}
 }
 
@@ -236,6 +265,24 @@ class AST_ParenthesisSyntax extends Syntax {
 			return lexpr;
 		}
 	}
+	
+	@Override
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		Expr e = (Expr)expr.cons.get(0);
+		if(e.isTerm()) {
+			KClass k = ctx.scriptClass;
+			KMethod m = k.getMethod(e.tk.text, ty);
+			expr.cons.set(0, m);
+			for(int i=2; i<expr.cons.size(); i++) {
+				expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
+				//Expr e = expr.tyCheckAt(ctx, i, gma, KClass.varClass, 0);
+			}
+			expr.cons.remove(1);
+			expr.build = TEXPR.CALL;
+			return expr;
+		}
+		return null;
+	}
 }
 
 class AST_BracketSyntax extends Syntax {
@@ -318,12 +365,19 @@ class ParamsSyntax extends Syntax {
 			tk.mn = tk.text;
 		}
 		KClass k = TY.toClass[this_cid];
-		//System.out.println(tk.mn);
+		
 		//FIXME
-		if(tk.mn.equals("p")) {
-			KMethod mtd = KClass.systemClass.getMethod(tk.mn, reqty);
+		KMethod m = ctx.scriptClass.getMethod(tk.mn, reqty);
+		if(m != null) {
+			KMethod mtd = m;
 			expr.cons.set(0, mtd);
 			expr = tyCheckCallParams(ctx, expr, mtd, gma, reqty);
+			expr.cons.remove(1);
+			return expr;
+		} else if(tk.mn.equals("p")) {
+			KMethod mtd = KClass.systemClass.getMethod(tk.mn, reqty);
+			expr.cons.set(0, mtd);
+			/*expr = */tyCheckCallParams(ctx, expr, mtd, gma, reqty);
 			expr.cons.remove(1);
 			return expr;
 		}
@@ -578,7 +632,7 @@ class DOLLARSyntax extends Syntax {
 			}
 			if (tk.tt == TK.AST_BRACE) {
 				Expr expr = new Expr(this);
-				//expr.setTerm(expr, 1);//TODO
+				expr.setTerm(true);
 				expr.tk = tk;
 				expr.block = Parser.newBlock(ctx, stmt.parentNULL.ks, stmt, tk.sub, 0, tk.sub.size(), ';');
 				return expr;
@@ -594,6 +648,34 @@ class VOIDSyntax extends Syntax {
 		super("void");
 		this.ty = TY.VOID;
 		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
+	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		Block param = (Block)stmt.getObject(KW.Params);
+		List<String> argNames = new ArrayList<String>();
+		List<Type> argTypes = new ArrayList<Type>();
+		for(Stmt s : param.blocks) {
+			Expr e = (Expr)s.getObject(KW.Expr);
+			Token t = (Token)s.getObject(KW.Type);
+			argNames.add(e.tk.text);
+			argTypes.add(gamma.cc.getType(t.text));
+		}
+		String name = ((Token)stmt.getObject(KW.Symbol)).text;
+		Type retty = gamma.cc.getType(((Token)stmt.getObject(KW.Type)).text);
+		KonohaClass klass = ctx.scriptClass;
+		KonohaMethod mtd = new KonohaMethod(klass, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new Type[0]));
+		klass.addMethod(mtd);
+		
+		Token bkt = (Token)stmt.getObject(KW.Block);
+		List<Token> tls = new ArrayList<Token>();
+		int pos = tls.size();
+		gamma.ks.tokenize(ctx, bkt.text, 0, tls);
+		Block bk = Parser.newBlock(ctx, gamma.ks, stmt, tls, pos, tls.size(), ';');
+		bk.tyCheckAll(ctx, gamma);
+		gamma.cc.evalBlock(mtd, bk);
+		return false;
 	}
 }
 
@@ -646,7 +728,7 @@ class IFSyntax extends Syntax {
 			Block bkThen = stmt.block(ctx, KW.Block, null);
 			Block bkElse = stmt.block(ctx, KW._else, null);
 			r = bkThen.tyCheckAll(ctx, gamma);
-			r = r & bkElse.tyCheckAll(ctx, gamma);
+			if(bkElse != null) r = r & bkElse.tyCheckAll(ctx, gamma);
 			stmt.typed(TSTMT.IF);
 		}
 		return r;

@@ -44,10 +44,10 @@ public interface KW {
 	String COMMA   = ",";
 	String DOLLAR  = "$";
 
-	String _void      = "_void";
+	String _void      = "void";
 	String StmtMethodDecl = _void;
-	String _boolean   = "_boolean";
-	String _String       = "_String";
+	String _boolean   = "boolean";
+	String _String    = "String";
 //	String _null     = (3+_void);
 	String _true      = "true";
 	String _false     = "false";
