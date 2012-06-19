@@ -114,7 +114,7 @@ class SYMBOLSyntax extends TermSyntax {
 				if(s.equals(ukey)) {
 					expr.build = TEXPR.LOCAL;
 					expr.ndata = ukey;
-					expr.ty = TY.INT;
+					expr.ty = KClass.intClass;
 					return expr;
 				}
 			}
@@ -185,8 +185,9 @@ class TextSyntax extends TermSyntax {
 		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
-		//return expr.serConstValue(ctx, gamma, ty);
-		return null;
+		Token tk = expr.tk;
+		String s = tk.text;
+		return new ConstExpr(this, KClass.stringClass, KString.box(s));
 	}
 }
 
@@ -198,7 +199,7 @@ class IntSyntax extends TermSyntax {
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		Token tk = expr.tk;
 		long l = Long.parseLong(tk.text);
-		return new ConstExpr(this, TY.INT, KInt.box(l));
+		return new ConstExpr(this, KClass.intClass, KInt.box(l));
 	}
 }
 
@@ -206,6 +207,11 @@ class FloatSyntax extends TermSyntax {
 	public FloatSyntax() {
 		super("$FLOAT");
 		this.flag = SYNFLAG.ExprTerm;
+	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		Token tk = expr.tk;
+		double d = Double.parseDouble(tk.text);
+		return new ConstExpr(this, KClass.floatClass, KFloat.box(d));
 	}
 }
 
@@ -358,17 +364,17 @@ class ParamsSyntax extends Syntax {
 		}
 		//TODO param check
 		expr.build = TEXPR.CALL;
-		expr.ty = TY.INT;
+		expr.ty = KClass.intClass;
 		return expr;
 	}
 	
-	private Expr lookupMethod(CTX ctx, Expr expr, int this_cid, Gamma gma, KClass reqty) {
+	private Expr lookupMethod(CTX ctx, Expr expr, KClass this_cid, Gamma gma, KClass reqty) {
 		//TODO
 		Token tk = (Token)expr.cons.get(0);
 		if(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 			tk.mn = tk.text;
 		}
-		KClass k = TY.toClass[this_cid];
+		KClass k = this_cid;
 		
 		//FIXME
 		KMethod m = ctx.scriptClass.getMethod(tk.mn, reqty);
@@ -396,7 +402,7 @@ class ParamsSyntax extends Syntax {
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		Expr texpr = expr.tyCheckAt(ctx, 1, gamma, KClass.varClass, 0);
 		if(texpr != null) {
-			int this_cid = texpr.ty;
+			KClass this_cid = texpr.ty;
 			return lookupMethod(ctx, expr, this_cid, gamma, ty);
 		}
 		return null;
@@ -736,7 +742,7 @@ class TRUESyntax extends TermSyntax {
 
 	@Override
 	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
-		return new ConstExpr(this, TY.BOOLEAN, KBoolean.box(true));
+		return new ConstExpr(this, KClass.booleanClass, KBoolean.box(true));
 	}
 }
 
@@ -746,7 +752,7 @@ class FALSESyntax extends TermSyntax {
 	}
 	@Override
 	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
-		return new ConstExpr(this, TY.BOOLEAN, KBoolean.box(false));
+		return new ConstExpr(this, KClass.booleanClass, KBoolean.box(false));
 	}
 }
 
