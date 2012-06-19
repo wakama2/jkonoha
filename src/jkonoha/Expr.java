@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 public class Expr extends KObject {
-	public int ty    = TY.var;
+	public KClass ty = KClass.varClass;
 	public int build = TEXPR.UNTYPED;
 	public Token tk;
 	private boolean flagTerm = false;
@@ -33,18 +33,18 @@ public class Expr extends KObject {
 	
 	public Expr tyCheck(CTX ctx, Gamma gamma, KClass reqty, int pol) {
 		Expr texpr = this;
-		if(texpr.ty == TY.var) {
+		if(texpr.ty == KClass.varClass) {
 			texpr = texpr.syn.exprTyCheck(ctx, this, gamma, reqty);
 		}
 		if(texpr != null) {
-			if(texpr.ty == TY.VOID) {
+			if(texpr.ty == KClass.voidClass) {
 				if((pol & TPOL.ALLOWVOID) != 0) {
 					return texpr;
 				}
 				System.err.println("void is not acceptable");
 				return null;
 			}
-			if(texpr.ty == TY.var && reqty.equals(KClass.varClass) && ((pol & TPOL.NOCHECK)) != 0) {
+			if(texpr.ty.equals(KClass.voidClass) && reqty.equals(KClass.varClass) && ((pol & TPOL.NOCHECK)) != 0) {
 				return texpr;
 			}
 		}
@@ -98,9 +98,6 @@ public class Expr extends KObject {
 			out.println ("[" + n + "] ExprTerm: null");
 		} else if (this.isTerm()) {
 			out.println ("[" + n + "] ExprTerm: kw = " + tk.kw + ", " + this.tk);
-			if(this.ty != TY.VAR) {
-				
-			}
 		} else {
 			int i = 0;
 			int size = cons != null ? cons.size() : 0;
@@ -108,9 +105,6 @@ public class Expr extends KObject {
 				out.println ("[" + n + "] Cons: kw = null, size =" + size);
 			} else { 
 				out.println ("[" + n + "] Cons: kw='" + syn.kw + "', size = " + size);
-			}
-			if (this.ty != TY.var) {
-				
 			}
 			for (; i < size; i++) {
 				Object o = this.cons.get(i);
@@ -133,7 +127,7 @@ public class Expr extends KObject {
 	}
 }
 class ConstExpr extends Expr {  // as if NConstExpr 
-	public ConstExpr(Syntax syn, int ty, KObject data) {
+	public ConstExpr(Syntax syn, KClass ty, KObject data) {
 		super(syn);
 		this.build = TEXPR.NCONST;
 		this.ty = ty;

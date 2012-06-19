@@ -37,7 +37,7 @@ public class Konoha {
 	}
 	
 	public void eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
-		Object o = ks.eval(ctx, source, 0);
+		KObject o = ks.eval(ctx, source, 0);
 		if(o != null) {
 			System.out.println(o);
 		}
