@@ -326,6 +326,7 @@ public class KonohaSpace extends KObject {
 		if(!bk.tyCheckAll(ctx, ctx.modsugar.gamma)) return null;
 		cc.evalBlock(bk);
 		try {
+			cc.writeClassFile(".");
 			// exec
 			ClassLoader cl = cc.createClassLoader();
 			Class<?> c = cl.loadClass("Script");

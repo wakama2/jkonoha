@@ -108,7 +108,18 @@ class SYMBOLSyntax extends TermSyntax {
 		Token tk = expr.tk;
 		String ukey = tk.text;
 		System.out.println("SYMBOL " + ukey);
-		return expr.tyCheckVariable2(ctx, gamma, ty);
+		// argument
+		if(gamma.argNames != null) {
+			for(String s : gamma.argNames) {
+				if(s.equals(ukey)) {
+					expr.build = TEXPR.LOCAL;
+					expr.ndata = ukey;
+					expr.ty = TY.INT;
+					return expr;
+				}
+			}
+		}
+		return null;
 	}
 }
 
@@ -662,6 +673,7 @@ class VOIDSyntax extends Syntax {
 				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new Type[0]));
 		klass.addMethod(mtd);
 		
+		gamma.argNames = argNames;
 		Token bkt = (Token)stmt.getObject(KW.Block);
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
@@ -669,6 +681,7 @@ class VOIDSyntax extends Syntax {
 		Block bk = Parser.newBlock(ctx, gamma.ks, stmt, tls, pos, tls.size(), ';');
 		bk.tyCheckAll(ctx, gamma);
 		gamma.cc.evalBlock(mtd, bk);
+		gamma.argNames = null;
 		return false;
 	}
 
@@ -785,5 +798,15 @@ class RETURNSyntax extends Syntax {
 		super("return");
 		this.rule = "\"return\" [$expr]";
 		this.flag = SYNFLAG.StmtBreakExec;
+	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		stmt.typed(TSTMT.RETURN);
+		Object o = stmt.getObject(KW.Expr);
+		if(o != null && o instanceof Expr) {
+			stmt.tyCheckExpr(ctx, KW.Expr, gamma, KClass.varClass, 0);
+		}
+		return true;
 	}
 }
