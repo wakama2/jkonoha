@@ -51,16 +51,13 @@ public class Konoha {
 			br = new BufferedReader(new FileReader(inputFile));
 			String msg;
 			String script = "";
-			boolean check = false;
 			while ((msg = br.readLine()) != null) {
 				script = script + msg;
-				check = checkStmt(script);
-				if (check){
+				if (checkStmt(script) == 0){
 					this.eval(ctx, script);
 					script = "";
 				}
 			}
-			if (!check) System.out.println("(Cancelled)...");
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -74,7 +71,7 @@ public class Konoha {
 		}
 	}
 	
-	private boolean checkStmt(String path) {
+	private int checkStmt(String path) {
 		int i = 0, ch, nest = 0, quote = 0;
 		while (true){
 			int flag = 0;
@@ -90,7 +87,7 @@ public class Konoha {
 					}
 				}
 			}
-			if (flag == 0) return nest == 0;
+			if (flag == 0) return nest;
 			assert(i > 0);
 			flag = 0;
 			for(; i < path.length(); i++) {
@@ -103,7 +100,7 @@ public class Konoha {
 					}
 				}
 			}
-			if (flag == 0) return false;
+			if (flag == 0) return 1;
 		}
 	}
 	
@@ -124,17 +121,24 @@ public class Konoha {
 				System.out.print(">>>");
 				String script = "";
 				String l;
-				int flag;
 				while ((l = s.nextLine()) != null) {
-					flag = 0;
 					script = script + l;
-					if (k.checkStmt(script)){
+					int check = k.checkStmt(script);
+					if (check == 0) {
 						k.eval(ctx, script);
 						script = "";
-						flag = 1;
+						System.out.print(">>>");
+						continue;
 					}
-					if (flag == 0) System.out.print("   ");
-					else System.out.print(">>>");
+					else if (check < 0) {
+						script = "";
+						System.out.println("(Cancelled)...");
+						System.out.print(">>>");
+						continue;
+					}
+					else{
+						System.out.print("   ");
+					}
 				}
 			}
 		}
