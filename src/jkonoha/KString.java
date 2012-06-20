@@ -17,12 +17,24 @@ public class KString extends KObject {
 		return self + s;
 	}
 	
+	public static boolean opEQ(String self, String s) {
+		return self.equals(s);
+	}
+	
+	public static boolean opNEQ(String self, String s) {
+		return !opEQ(self, s);
+	}
+	
 	public static KString box(String s) {
 		return new KString(s);
 	}
 	
 	public String unbox() {
 		return this.text;
+	}
+	
+	@Override public String toString() {
+		return text;
 	}
 	
 }

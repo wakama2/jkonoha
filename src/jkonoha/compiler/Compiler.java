@@ -18,7 +18,6 @@ public class Compiler implements Opcodes {
 	
 	// ctxcode
 	private long uline;
-	//private final List<Object> constPools = null;
 	private Label curBB = null;
 	
 	private static class Local {
@@ -40,8 +39,7 @@ public class Compiler implements Opcodes {
 		Type[] argTypes = mtd.getArgTypes();
 		//addLocal("this", Type.VOID_TYPE); // TODO this
 		for(int i=0; i<argNames.length; i++) {
-			//addLocal(argNames[i], argTypes[i]);
-			addLocal("local_" + i, argTypes[i]);
+			addLocal(argNames[i], argTypes[i]);
 		}
 	}
 	
@@ -97,6 +95,9 @@ public class Compiler implements Opcodes {
 		} else if(type == Type.BOOLEAN_TYPE) {
 			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KBoolean", "box", "(Z)Ljkonoha/KBoolean;");
 			typeStack.push(Type.getType("jkonoha/KBoolean"));
+		} else if(type.equals(Type.getType(String.class))) {
+			mv.visitMethodInsn(INVOKESTATIC, "jkonoha/KString", "box", "(Ljava/lang/String;)Ljkonoha/KString;");
+			typeStack.push(Type.getType("jkonoha/KString"));
 		} else {
 			typeStack.push(type);
 		}
@@ -160,7 +161,7 @@ public class Compiler implements Opcodes {
 		Object o = stmt.getObject(KW.Expr);
 		if(o != null && o instanceof Expr) {
 			Expr expr = (Expr)o;
-			if(expr.ty != TY.VOID) {
+			if(expr.ty != KClass.voidClass) {
 				asmExpr(K.RTNIDX, expr, shift, espidx);
 			}
 		}
@@ -300,6 +301,10 @@ public class Compiler implements Opcodes {
 				KBoolean i = (KBoolean)expr.data;
 				loadConst(i.unbox());
 				typeStack.push(Type.BOOLEAN_TYPE);
+			} else if(expr.data instanceof KString) {
+				KString s = (KString)expr.data;
+				loadConst(s.unbox());
+				typeStack.push(Type.getType(String.class));
 			} else {
 				throw new CodeGenException("err const");
 			}
@@ -312,7 +317,7 @@ public class Compiler implements Opcodes {
 			typeStack.push(Type.getType(Object.class));//TODO
 			break;
 		case TEXPR.LOCAL:
-			loadLocal("local_" + expr.index);
+			loadLocal((String)expr.ndata);
 			break;
 		case TEXPR.BLOCK:
 			asmBlock((Block)expr.data, espidx);
