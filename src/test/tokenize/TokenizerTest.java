@@ -14,12 +14,14 @@ public class TokenizerTest {
 		List<Token> tls = tenv.list;
 		assertEquals(tls.size(), tk.length);
 		for(int i=0; i<tk.length; i++) {
+			//System.out.println(tls.get(i).text);
 			assertEquals(tls.get(i).text, tk[i]);
 		}
 	}
 
 	@Test
 	public void testTokenize() {
+		testTokenize("\"if\" \"(\" $expr \")\" $block", null ,"if", "(", "$", "expr", ")", "$", "block");
 		testTokenize("123 + 456", null, "123", "+", "456");
 		testTokenize("\t\t  123", null, "123");
 		testTokenize("\"hello world\"", null, "hello world");
