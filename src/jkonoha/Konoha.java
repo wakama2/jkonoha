@@ -37,11 +37,8 @@ public class Konoha {
 		return this.fileidList.get((int)uline);
 	}
 	
-	public void eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
-		KObject o = ks.eval(ctx, source, 0);
-		if(o != null) {
-			System.out.println(o);
-		}
+	public KObject eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
+		return ks.eval(ctx, source, 0);
 	}
 	
 	private void loadScript(CTX ctx, String path) {
@@ -58,10 +55,10 @@ public class Konoha {
 					script = "";
 				}
 			}
-		} catch(Exception e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (br != null){
+			if (br != null) {
 				try {
 					br.close();
 				} catch (IOException e) {
@@ -71,16 +68,16 @@ public class Konoha {
 		}
 	}
 	
-	private int checkStmt(String path) {
+	private int checkStmt(String src) {
 		int i = 0, ch, nest = 0, quote = 0;
 		while (true){
 			int flag = 0;
-			for (; i < path.length(); i++){
-				ch = path.charAt(i);
+			for (; i < src.length(); i++){
+				ch = src.charAt(i);
 				if(ch == '{' || ch == '[' || ch == '(') nest++;
 				if(ch == '}' || ch == ']' || ch == ')') nest--;
 				if(ch == '\'' || ch == '"' || ch == '`') {
-					if(path.charAt(i+1) == ch && path.charAt(i+2) == ch) {
+					if(i+2 < src.length() && src.charAt(i+1) == ch && src.charAt(i+2) == ch) {
 						quote = ch; i+=2;
 						flag = 1;
 						break;
@@ -90,10 +87,10 @@ public class Konoha {
 			if (flag == 0) return nest;
 			assert(i > 0);
 			flag = 0;
-			for(; i < path.length(); i++) {
-				ch = path.charAt(i);
-				if(path.charAt(i-1) != '\\' && ch == quote) {
-					if(path.charAt(i+1) == ch && path.charAt(i+2) == ch) {
+			for(; i < src.length(); i++) {
+				ch = src.charAt(i);
+				if(src.charAt(i-1) != '\\' && ch == quote) {
+					if(i+2 < src.length() && src.charAt(i+1) == ch && src.charAt(i+2) == ch) {
 						i+=2;
 						flag = 1;
 						break;
@@ -125,7 +122,10 @@ public class Konoha {
 					script = script + l;
 					int check = k.checkStmt(script);
 					if (check == 0) {
-						k.eval(ctx, script);
+						KObject o = k.eval(ctx, script);
+						if(o != null) {
+							System.out.println(o);
+						}
 						script = "";
 						System.out.print(">>>");
 						continue;

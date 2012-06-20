@@ -162,7 +162,7 @@ public class Compiler implements Opcodes {
 		if(o != null && o instanceof Expr) {
 			Expr expr = (Expr)o;
 			if(expr.ty != KClass.voidClass) {
-				asmExpr(K.RTNIDX, expr, shift, espidx);
+				asmExpr(0, expr, shift, espidx);
 			}
 		}
 		//asmJump(lbEND);
@@ -230,7 +230,7 @@ public class Compiler implements Opcodes {
 		Type[] argTypes = mtd.getArgTypes();
 		//int s = mtd.isStatic() ? 2 : 1;//TODO
 		int s = 1;
-		int thisidx = espidx + K.CALLDELTA;
+		int thisidx = 0;
 		for(int i=s; i<l.size(); i++) {
 			Expr e = (Expr)l.get(i);
 			asmExpr(thisidx + i - 1, e, shift, thisidx + i - 1);

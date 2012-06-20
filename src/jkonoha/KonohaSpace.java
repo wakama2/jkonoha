@@ -213,9 +213,7 @@ public class KonohaSpace extends KObject {
 	private void parseSyntaxRule(CTX ctx, String rule, long uline, List<Token> a) {
 		List<Token> tls = ctx.ctxsugar.tokens;
 		int pos = tls.size();
-		Token.dumpTokenArray(System.out,tls);
 		tokenize(ctx, rule, uline, tls);
-		Token.dumpTokenArray(System.out,tls);
 		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
 		KArray.clear(tls, pos);
 	}
@@ -264,51 +262,6 @@ public class KonohaSpace extends KObject {
 		return false;
 	}
 
-/*	public void loadMethodData(CTX ctx, KonohaSpace ks, int data[]) {
-		int d[] = data;
-		while(d[0] != -1) {
-			int flag = d[0];
-			int f = d[1];
-			int rtype = d[2];
-			int cid  = d[3];
-			int mn = d[4];
-			int i, psize = d[5];
-		    Param p[];
-//			d = d + 6;
-			int j = 6;
-			for(i = 0; i < psize; i++) {
-				p[i].ty = d[j];
-				p[i].fn = d[j+1];
-				j += 2;
-			}
-			KMethod mtd = new KMethod(ctx, flag, cid, mn, f);
-			mtd.setParam(ctx, rtype, psize, p);
-			if(ks == null || ((mtd.flag & KMethod.Public) == KMethod.Public)) {
-				CT_addMethod(ctx, CT_(cid), mtd); //TODO CT_addMethod, CT_
-			} else {
-				addMethod(ctx, mtd);
-			}
-		}
-	}*/
-	
-	public KClass getCT(CTX ctx, KClass thisct, String name, int len, int def) {//TODO
-		//int PN_konoha = 1;//TODO PN_konoha is Macro.
-		KClass ct = null;
-		/*int un = kuname (name, len, 0, FN_NONAME);//Don't know FN_NONAME
-		if (un != FN_NONAME) {
-			int hcode = longid (PN_konoha, un);
-			ct = map_getu (ctx, ctx.share.lcnameMapNN, hcode, 0);
-			if (ct == null) {
-				Kvs kvs = getConstNULL (ctx, un);
-				//DBG_P ("kvs = %s, %p", name, kvs);
-				if (kvs != null && kvs.ty == TY.TYPE) {
-					return kvs.uval;
-				}
-			}
-		}*/
-		return ct;
-	}
-	
 	public KObject eval(CTX ctx, String script, long uline) {
 		ctx.modsugar.setup();
 		ctx.modsugar.gamma.ks = this;

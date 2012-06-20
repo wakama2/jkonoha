@@ -2,6 +2,10 @@ package jkonoha;
 
 import java.util.*;
 
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+import jkonoha.compiler.*;
 
 public abstract class Syntax {
 	public String kw;   // id
