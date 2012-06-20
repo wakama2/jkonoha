@@ -276,5 +276,37 @@ public class Stmt extends KObject {
 		}
 		return def;
 	}
+
+	public Stmt lookupIfStmtNULL(CTX ctx) {
+		int i;
+		List<Stmt> bka = this.parentNULL.blocks;
+		Stmt prevIfStmt = null;
+		for(i = 0; bka.size() != 0; i++) {
+			Stmt s = bka.get(i);
+			if(s == this) {
+				if(prevIfStmt != null) {
+					return prevIfStmt.lookupIfStmtWithoutElse(ctx);
+				}
+				return null;
+			}
+			if(s.syntax == null) continue;  // this is done
+			prevIfStmt = (s.syntax.kw.equals(KW._if)) ? s : null;
+		}
+		return null;
+	}
+
+	private Stmt lookupIfStmtWithoutElse(CTX ctx) {
+		Block bkElse = block(ctx, KW._else, null);
+		if(bkElse != null) {
+			if(bkElse.blocks.size() == 1) {
+				Stmt stmtIf = bkElse.blocks.get(0);
+				if(stmtIf.syntax.kw == KW._if) {
+					return stmtIf.lookupIfStmtWithoutElse(ctx);
+				}
+			}
+			return null;
+		}
+		return this;
+	}
 }
 

@@ -2,13 +2,10 @@ package jkonoha;
 
 import java.util.*;
 
-import jkonoha.compiler.JavaClass;
-import jkonoha.compiler.KonohaClass;
-import jkonoha.compiler.KonohaMethod;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import jkonoha.compiler.*;
 
 public abstract class Syntax {
 	public String kw;   // id
@@ -696,6 +693,34 @@ class VOIDSyntax extends Syntax {
 		gamma.argNames = null;
 		return false;
 	}
+
+/*	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		KonohaClass c = KClass.scriptClass;
+		
+		KonohaMethod m = new KonohaMethod();
+		c.addMethod(m);
+		
+		
+		boolean r = false;
+		KonohaSpace ks = gamma.genv.ks;
+		int flag =  stmt.flag(ctx, MethodDeclFlag, 0);
+		Param pa = stmt.newMethodParamNULL(ctx, gamma);
+		if(TY_isSingleton(cid)) flag |= kMethod_Static;
+		if(pa != NULL) {
+			INIT_GCSTACK();
+			kMethod *mtd = new_kMethod(flag, cid, mn, NULL);
+			PUSH_GCSTACK(mtd);
+			kMethod_setParam(mtd, pa->rtype, pa->psize, (kparam_t*)pa->p);
+			if(kKonohaSpace_defineMethod(ks, mtd, stmt->uline)) {
+				r = 1;
+				Stmt_setMethodFunc(_ctx, stmt, ks, mtd);
+				kStmt_done(stmt);
+			}
+			RESET_GCSTACK();
+		}
+		RETURNb_(r);
+	}*/
 }
 
 class BOOLEANSyntax extends Syntax {
@@ -759,7 +784,24 @@ class ELSESyntax extends Syntax {
 		super("else");
 		this.rule = "\"else\" $block";
 	}
+
+	@Override
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		boolean r = true;
+		Stmt stmtIf = stmt.lookupIfStmtNULL(ctx);
+		if(stmtIf != null) {
+			Block bkElse = stmt.block(ctx, KW.Block, null);
+			stmtIf.setObject(KW._else, bkElse);
+			r = bkElse.tyCheckAll(ctx, gamma);
+		}
+		else {
+			ctx.SUGAR_P(System.err, stmt.uline, -1, "else is not statement");
+			r = false;
+		}
+		return r;
+	}
 }
+
 class RETURNSyntax extends Syntax {
 	public RETURNSyntax() {
 		super("return");
