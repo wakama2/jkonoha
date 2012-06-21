@@ -194,7 +194,7 @@ public class Stmt extends KObject {
 					idx = i;
 					synRef[0] = syn;
 				}
-				if(! ((syn.flag & SYNFLAG.ExprPostfixOp2) == SYNFLAG.ExprLeftJoinOp2)) {  /* check if real binary operator to parse f() + 1 */
+				if(! ((syn.flag & SYNFLAG.ExprPostfixOp2) != 0)) {  /* check if real binary operator to parse f() + 1 */
 					i = skipUnaryOp(ctx, tls, i+1, e) - 1;
 				}
 			}
