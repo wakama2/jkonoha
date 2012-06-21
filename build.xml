@@ -1,0 +1,37 @@
+<project name="JavaKonoha" default="jar">
+	<!-- directory / file definition -->
+	<property name="basedir"    value="." />
+	<property name="sourcedir"  value="${basedir}/src" />
+	<property name="builddir"   value="${basedir}/bin" />
+	<property name="libdir"     value="${basedir}/third-party" />
+	<property name="jarfile"    value="${basedir}/jkonoha.jar" />
+	<property name="main-class" value="jkonoha.Konoha" />
+
+	<!-- builddir -->
+	<target name="build">
+		<mkdir dir="${builddir}" />
+		<javac srcdir="${sourcedir}" destdir="${builddir}" debug="on"
+			target="1.6" source="1.6" includeantruntime="false">
+			<classpath path="${libdir}/asm-all-4.0.jar" />
+			<include name="jkonoha/**/*.java" />
+		</javac>
+	</target>
+
+	<!-- jar -->
+	<target name="jar" depends="build">
+		<jar jarfile="${jarfile}">
+			<fileset dir="${builddir}" includes="**/*.class" />
+			<zipfileset src="${libdir}/asm-all-4.0.jar" />
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+			</manifest>
+		</jar>
+	</target>
+
+	<!-- jar -->
+	<target name="clean">
+		<delete dir="${builddir}" />
+		<delete file="${jarfile}" />
+	</target>
+</project>
+

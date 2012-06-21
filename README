@@ -1,0 +1,5 @@
+make
+	$ ant
+run
+	$ java -jar jkonoha.jar [file]
+
