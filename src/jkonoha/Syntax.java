@@ -575,8 +575,6 @@ class OPLEFTSyntax extends Syntax {
 class COMMASyntax extends Syntax {
 	public COMMASyntax () {
 		super(",");
-		//this.flag = SYNFLAG.ExprOp;
-		//this.op1 = "opNOT";
 		this.op2 = "*";
 		this.priority = 8192;
 	}
