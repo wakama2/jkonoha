@@ -101,46 +101,45 @@ public class Konoha {
 		}
 	}
 	
-//	public Object eval(String script, long uline) {
-//		
-//	}
+	public void shell(CTX ctx) {
+		Scanner s = new Scanner(System.in);
+		String script = "";
+		while(true) {
+			if(script.length() == 0) {
+				System.out.print(">>>");
+			}
+			if(!s.hasNextLine()) {
+				break;
+			}
+			String l = s.nextLine();
+			script = script + l;
+			int check = checkStmt(script);
+			if (check == 0) {
+				KObject o = eval(ctx, script);
+				if(o != null) {
+					System.out.println(o);
+				}
+				script = "";
+			}
+			else if (check < 0) {
+				System.out.println("(Cancelled)...");
+				script = "";
+			}
+			else {
+				System.out.print("   ");
+			}
+		}
+	}
 		
 	public static void main(String[] args) {
 		CTX ctx = new CTX();
 		Konoha k = new Konoha(ctx);
-		Scanner s = new Scanner(System.in);
 		if (args.length == 1) {
 			String path = args[0];
 			k.loadScript(ctx, path);
 		}
 		else if (args.length == 0){
-			while(true) {
-				System.out.print(">>>");
-				String script = "";
-				String l;
-				while ((l = s.nextLine()) != null) {
-					script = script + l;
-					int check = k.checkStmt(script);
-					if (check == 0) {
-						KObject o = k.eval(ctx, script);
-						if(o != null) {
-							System.out.println(o);
-						}
-						script = "";
-						System.out.print(">>>");
-						continue;
-					}
-					else if (check < 0) {
-						script = "";
-						System.out.println("(Cancelled)...");
-						System.out.print(">>>");
-						continue;
-					}
-					else{
-						System.out.print("   ");
-					}
-				}
-			}
+			k.shell(ctx);
 		}
 		else {}// TODO option
 	}
