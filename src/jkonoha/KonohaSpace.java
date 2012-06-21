@@ -3,15 +3,21 @@ package jkonoha;
 import java.util.*;
 
 import jkonoha.compiler.CompilerContext;
+import jkonoha.compiler.JavaClass;
+import jkonoha.compiler.PrimitiveClass;
 
 public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
 	public FTokenizer[] fmat;
 	private final Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
-	private final Map<String, KObject> cl = new HashMap<String, KObject>();
+	private final Map<String, KClass> cl = new HashMap<String, KClass>();
 	
 	public KonohaSpace() {
+		// konoha<->java class map
+		cl.put("int", new PrimitiveClass(int.class, KClass.intClass));
+		cl.put("boolean", new PrimitiveClass(boolean.class, KClass.booleanClass));
+		cl.put("void", new PrimitiveClass(void.class, KClass.voidClass));
 		cl.put("System", KClass.systemClass);
 	}
 
@@ -235,7 +241,7 @@ public class KonohaSpace extends KObject {
 		return null;
 	}
 	
-	public KObject getConst(CTX ctx, String key) {
+	public KClass getClass(CTX ctx, String key) {
 		return cl.get(key);
 	}
 

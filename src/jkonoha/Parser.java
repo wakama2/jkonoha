@@ -18,7 +18,7 @@ public class Parser {
 			int asize = tls.size();
 			if (asize > atop) {
 				bk.addStmtLine(ctx, tls, atop, asize, tkERR);
-				KArray.clear(tls, atop);
+				KArray.clear(tls, atop + 1);
 			}
 		}
 		return bk;

@@ -10,12 +10,32 @@ import org.objectweb.asm.*;
 
 public abstract class KMethod extends KObject {
 	private Type methodType = null;
+	private Type[] argTypes = null;
+	private Type retType = null;
 	
 	public abstract KClass getParent();
 	public abstract String getName();
-	public abstract Type[] getArgTypes();
-	public abstract Type getReturnType();
+	public abstract KClass[] getArgClasses();
+	public abstract KClass getReturnClass();
 	public abstract boolean isStatic();
+	
+	public Type[] getArgTypes() {
+		if(argTypes == null) {
+			KClass[] args = getArgClasses();
+			argTypes = new Type[args.length];
+			for(int i=0; i < args.length; i++) {
+				argTypes[i] = args[i].getAsmType();
+			}
+		}
+		return argTypes;
+	}
+	
+	public Type getReturnType() {
+		if(retType == null) {
+			retType = getReturnClass().getAsmType();
+		}
+		return retType;
+	}
 	
 	public Type getMethodType() {
 		if(methodType == null) {

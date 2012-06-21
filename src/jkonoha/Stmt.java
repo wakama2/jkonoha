@@ -243,17 +243,17 @@ public class Stmt extends KObject {
 		}
 		out.flush();
 	}
-	public Expr addExprParams(CTX ctx, Expr expr, List<Token> tls, int s, int e, int allowEmpty) {
+	public Expr addExprParams(CTX ctx, Expr expr, List<Token> tls, int s, int e, boolean allowEmpty) {
 		int i, start = s;
 		for(i = s; i < e; i++) {
 			Token tk = tls.get(i);
 			if(tk.kw.equals(KW.COMMA)) {
-				if(expr != null) expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
+				expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
 				start = i + 1;
 			}
 		}
-		if(allowEmpty == 0 || start < i) {
-			if(expr != null) expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
+		if(!allowEmpty || start < i) {
+			expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
 		}
 		KArray.clear(tls, s);
 		return expr;
