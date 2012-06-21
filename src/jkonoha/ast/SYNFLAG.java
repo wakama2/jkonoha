@@ -1,4 +1,4 @@
-package jkonoha;
+package jkonoha.ast;
 
 interface SYNFLAG {
 	int ExprTerm = 1;

@@ -1,7 +1,9 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.io.PrintStream;
 import java.util.*;
+
+import jkonoha.*;
 
 public class Expr extends KObject {
 	public KClass ty = KClass.varClass;

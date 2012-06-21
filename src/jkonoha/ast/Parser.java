@@ -1,6 +1,11 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.util.*;
+
+import jkonoha.CTX;
+import jkonoha.KArray;
+import jkonoha.KClass;
+import jkonoha.KonohaSpace;
 
 public class Parser {
 	
@@ -167,7 +172,8 @@ public class Parser {
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
 				if (tkN.topch != '[' ) break;
-				List<Token> abuf = /*CtxSugar.tokens;*/ctx.ctxsugar.tokens;//TODO CtxSugar.tokens should be static?
+//				List<Token> abuf = /*CtxSugar.tokens;*/ctx.ctxsugar.tokens;//TODO CtxSugar.tokens should be static?
+				List<Token> abuf = new ArrayList<Token>();
 				int atop = abuf.size();
 				next = makeTree(ctx, ks, TK.AST_BRANCET, tls, next+1, e, ']', abuf, tkERR);
 				if(!(abuf.size() > atop)) return next;

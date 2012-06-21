@@ -1,4 +1,4 @@
-package jkonoha;
+package jkonoha.ast;
 
 public interface TEXPR {
 	int LOCAL_   = -4;   /*THIS IS NEVER PASSED*/

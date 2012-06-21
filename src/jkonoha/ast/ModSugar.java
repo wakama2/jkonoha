@@ -1,6 +1,8 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.util.*;
+
+import jkonoha.KonohaSpace;
 
 public class ModSugar {
 	

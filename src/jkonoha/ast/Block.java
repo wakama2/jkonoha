@@ -1,6 +1,8 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.util.*;
+
+import jkonoha.*;
 
 public class Block extends KObject {
 	public final KonohaSpace ks;
@@ -41,10 +43,10 @@ public class Block extends KObject {
 			stmt.setObject(KW.Err, tkERR.text);
 		}
 		else {
-			int estart = ctx.ctxsugar.errors.size();
+//			int estart = ctx.ctxsugar.errors.size();
 			s = stmt.addAnnotation(ctx, tls, s, e);
 			if (!stmt.parseSyntaxRule(ctx, tls, s, e)) {
-				stmt.toERR(estart);
+//				stmt.toERR(estart);
 			}
 		}
 		assert (stmt.syntax != null);

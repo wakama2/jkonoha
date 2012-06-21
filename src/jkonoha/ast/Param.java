@@ -1,4 +1,6 @@
-package jkonoha;
+package jkonoha.ast;
+
+import jkonoha.CTX;
 
 class Param {
 	int ty;

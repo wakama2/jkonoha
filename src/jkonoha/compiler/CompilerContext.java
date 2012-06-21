@@ -4,8 +4,10 @@ import java.io.*;
 import java.util.*;
 
 import jkonoha.CTX;
-import jkonoha.Block;
 import jkonoha.KClass;
+import jkonoha.ast.Block;
+import jkonoha.ast.KonohaClass;
+import jkonoha.ast.KonohaMethod;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;

@@ -2,14 +2,13 @@ package jkonoha;
 
 import java.io.PrintStream;
 
-import jkonoha.compiler.KonohaClass;
+import jkonoha.ast.*;
 
 public class CTX extends KObject {
 	
 	private static final boolean debug = true;
 	
 	public Konoha konoha;
-	public CtxSugar ctxsugar = new CtxSugar();
 	public ModSugar modsugar = new ModSugar();
 	public KonohaClass scriptClass = new KonohaClass("Script", KClass.objectClass, new KClass[0]);
 

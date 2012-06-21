@@ -47,9 +47,6 @@ public abstract class KClass extends KObject {
 		return !isAssignableFrom(k);
 	}
 	
-	// A >: B ->
-	//   A.isAssignableFrom(B) == true
-	//   B.isAssignableFrom(A) == false
 	public boolean isAssignableFrom(KClass k) {
 		if(this.equals(k)) {
 			return true;

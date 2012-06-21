@@ -2,14 +2,13 @@ package jkonoha;
 
 import java.util.*;
 
-import jkonoha.compiler.CompilerContext;
-import jkonoha.compiler.JavaClass;
-import jkonoha.compiler.PrimitiveClass;
+import jkonoha.ast.*;
+import jkonoha.compiler.*;
 
 public class KonohaSpace extends KObject {
 
 	public KonohaSpace parentNULL;
-	public FTokenizer[] fmat;
+	public Tokenizer[] fmat;
 	private final Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
 	private final Map<String, KClass> cl = new HashMap<String, KClass>();
 	
@@ -32,12 +31,12 @@ public class KonohaSpace extends KObject {
 		}
 	}	
 	
-	public FTokenizer[] tokenizerMatrix(CTX ctx) {
+	public Tokenizer[] tokenizerMatrix(CTX ctx) {
 		//TODO
 		return null;
 	}	
 
-	public void setTokenizer(int ch, FTokenizer f) {
+	public void setTokenizer(int ch, Tokenizer f) {
 		//TODO
 	}
 
@@ -77,50 +76,7 @@ public class KonohaSpace extends KObject {
 	}
 	
 	public void defineDefaultSyntax(CTX ctx) {
-		Syntax[] s = {
-				new ERRSyntax(),
-				new ExprSyntax(),
-				new SYMBOLSyntax(),
-				new USYMBOLSyntax(),
-				new TextSyntax(),
-				new IntSyntax(),
-				new FloatSyntax(),
-				new TypeSyntax(),
-				new AST_ParenthesisSyntax(),
-				new AST_BracketSyntax(),
-				new AST_BraceSyntax(),
-				new BlockSyntax(),
-				new ParamsSyntax(),
-				new ToksSyntax(),
-				new DotSyntax(),
-				new DivSyntax(),
-				new ModSyntax(),
-				new MulSyntax(),
-				new AddSyntax(),
-				new SubSyntax(),
-				new LTSyntax(),
-				new LTESyntax(),
-				new GTSyntax(),
-				new GTESyntax(),
-				new EQSyntax(),
-				new NEQSyntax(),
-				new ANDSyntax(),
-				new ORSyntax(),
-				new NOTSyntax(),
-				new OPLEFTSyntax(),
-				new COMMASyntax(),
-				new DOLLARSyntax(),
-				new VOIDSyntax(),
-				new BOOLEANSyntax(),
-				new INTTypeSyntax(),
-				new TRUESyntax(),
-				new FALSESyntax(),
-				new IFSyntax(),
-				new ELSESyntax(),
-				new RETURNSyntax()
-				//TODO
-		};
-		defineSyntax(ctx, s);
+		defineSyntax(ctx, Syntax.defaultSyntax);
 	}
 	
 	public Syntax syntax(CTX ctx, String kw) {
@@ -217,11 +173,9 @@ public class KonohaSpace extends KObject {
 	}
 	
 	private void parseSyntaxRule(CTX ctx, String rule, long uline, List<Token> a) {
-		List<Token> tls = ctx.ctxsugar.tokens;
-		int pos = tls.size();
+		List<Token> tls = new ArrayList<Token>();
 		tokenize(ctx, rule, uline, tls);
-		makeSyntaxRule(ctx, tls, pos, tls.size(), a);
-		KArray.clear(tls, pos);
+		makeSyntaxRule(ctx, tls, 0, tls.size(), a);
 	}
 
 	public void defineSyntax(CTX ctx, Syntax[] syndef) {

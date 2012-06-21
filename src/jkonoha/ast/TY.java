@@ -1,4 +1,6 @@
-package jkonoha;
+package jkonoha.ast;
+
+import jkonoha.KClass;
 
 public interface TY {
 	int CLASS_newid = -1;

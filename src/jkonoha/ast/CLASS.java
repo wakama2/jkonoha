@@ -1,4 +1,4 @@
-package jkonoha;
+package jkonoha.ast;
 
 interface CLASS {
 	int Tvoid   = 0;

@@ -1,4 +1,4 @@
-package jkonoha;
+package jkonoha.ast;
 
 public interface TK {
 	int NONE = 0;          // KW_Err
