@@ -793,6 +793,7 @@ class ELSESyntax extends Syntax {
 		if(stmtIf != null) {
 			Block bkElse = stmt.block(ctx, KW.Block, null);
 			stmtIf.setObject(KW._else, bkElse);
+			stmt.syntax = null;
 			r = bkElse.tyCheckAll(ctx, gamma);
 		}
 		else {
