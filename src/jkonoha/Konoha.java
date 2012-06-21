@@ -101,10 +101,6 @@ public class Konoha {
 		}
 	}
 	
-//	public Object eval(String script, long uline) {
-//		
-//	}
-		
 	public static void main(String[] args) {
 		CTX ctx = new CTX();
 		Konoha k = new Konoha(ctx);
@@ -144,5 +140,4 @@ public class Konoha {
 		}
 		else {}// TODO option
 	}
-	
 }

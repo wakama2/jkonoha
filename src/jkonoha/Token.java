@@ -92,7 +92,7 @@ public class Token extends KObject {
 	
 	public static void dumpIndent(PrintStream out, int nest) {
 		for(int i=0; i<nest; i++) {
-			out.print(" ");
+			out.print("- ");
 		}
 	}
 	
