@@ -228,8 +228,8 @@ public class Compiler implements Opcodes {
 		List<Object> l = expr.cons;
 		KMethod mtd = (KMethod)l.get(0);
 		Type[] argTypes = mtd.getArgTypes();
-		//int s = mtd.isStatic() ? 2 : 1;//TODO
-		int s = 1;
+		//int s = mtd.isStatic() ? 2 : 1;
+		int s = ((Expr)l.get(1)).build == -1 ? 2 : 1;//FIXME
 		int thisidx = 0;
 		for(int i=s; i<l.size(); i++) {
 			Expr e = (Expr)l.get(i);

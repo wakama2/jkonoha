@@ -83,7 +83,6 @@ abstract class TermSyntax extends Syntax {
 		this.flag = SYNFLAG.ExprTerm;
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
-		//TODO src/sugar/ast.h:638 ParseExpr_Term
 		assert(s == c);
 		Token tk = tls.get(c);
 		Expr expr = new Expr(this);
@@ -111,8 +110,7 @@ class SYMBOLSyntax extends TermSyntax {
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		Token tk = expr.tk;
 		String ukey = tk.text;
-		System.out.println("SYMBOL " + ukey);
-		// argument
+		ctx.DBG_P("SYMBOL %s", ukey);
 		if(gamma.argNames != null) {
 			for(String s : gamma.argNames) {
 				if(s.equals(ukey)) {
@@ -142,44 +140,19 @@ class USYMBOLSyntax extends TermSyntax {
 		return r;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
-		//ctx.DBG_P("USYMBOL...");
 		Token tk = expr.tk;
 		String ukey = tk.text;
-		System.out.println("USYMBOL " + ukey);
-		
+		ctx.DBG_P("USYMBOL %s", ukey);
 		if(ukey.equals("K") || ukey.equals("Konoha")) {
-			expr.data = KClass.konohaSpaceClass;
+			expr.ty = KClass.konohaSpaceClass;
 			return expr;
 		}
-		if(ukey.equals("System")) {
-			expr.data = KClass.systemClass;
+		KClass c = gamma.ks.getClass(ctx, ukey);
+		if(c != null) {
+			expr.ty = c;
 			return expr;
-		}
-		try {
-			Class<?> c = Class.forName(ukey);
-			expr.data = new JavaClass(c);
-			return expr;
-		} catch(ClassNotFoundException e) {
-			
 		}
 		return null;
-		
-//		//if(ukey != FN_NONAME){
-//			KObject val = gamma.ks.getConst(ctx, ukey);
-//			if(val != null) {
-//				// expr.ty = ?//TODO
-//				expr.data = val;
-//				return expr;
-//			}
-//		//}
-//		KObject v = gamma.ks.getSymbolValue(ctx, tk.text);
-//		if(v == null) {
-//			ctx.Token_p(tk, System.err, "undefined name: %s", tk.toString());
-//			return null;
-//		} else {
-//			expr.data = v;
-//			return expr;
-//		}
 	}
 }
 
@@ -275,7 +248,7 @@ class AST_ParenthesisSyntax extends Syntax {
 				l.setCons(lexpr, null);
 				lexpr = l;
 			}
-			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), 1/*allowEmpty*/);//TODO
+			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), true/*allowEmpty*/);//TODO
 			return lexpr;
 		}
 	}
@@ -289,7 +262,6 @@ class AST_ParenthesisSyntax extends Syntax {
 			expr.cons.set(0, m);
 			for(int i=2; i<expr.cons.size(); i++) {
 				expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
-				//Expr e = expr.tyCheckAt(ctx, i, gma, KClass.varClass, 0);
 			}
 			expr.cons.remove(1);
 			expr.build = TEXPR.CALL;
@@ -303,7 +275,6 @@ class AST_BracketSyntax extends Syntax {
 
 	public AST_BracketSyntax() {
 		super("[]");
-		// TODO Auto-generated constructor stub
 	}
 
 }
@@ -312,7 +283,6 @@ class AST_BraceSyntax extends Syntax {
 
 	public AST_BraceSyntax() {
 		super("{}");
-		// TODO Auto-generated constructor stub
 	}
 
 }
@@ -379,28 +349,13 @@ class ParamsSyntax extends Syntax {
 			tk.mn = tk.text;
 		}
 		KClass k = this_cid;
-		
-		//FIXME
-		KMethod m = ctx.scriptClass.getMethod(tk.mn, reqty);
-		if(m != null) {
-			KMethod mtd = m;
-			expr.cons.set(0, mtd);
-			expr = tyCheckCallParams(ctx, expr, mtd, gma, reqty);
-			expr.cons.remove(1);
-			return expr;
-		} else if(tk.mn.equals("p")) {
-			KMethod mtd = KClass.systemClass.getMethod(tk.mn, reqty);
-			expr.cons.set(0, mtd);
-			/*expr = */tyCheckCallParams(ctx, expr, mtd, gma, reqty);
-			expr.cons.remove(1);
-			return expr;
-		}
 		KMethod mtd = k.getMethod(tk.mn, reqty);
-		if(mtd == null) {
-			throw new RuntimeException("method not found: " + k.getName() + "." + tk.mn);
+		if(mtd != null) {
+			expr.cons.set(0, mtd);
+			tyCheckCallParams(ctx, expr, mtd, gma, reqty);
+			return expr;
 		}
-		expr.cons.set(0, mtd);
-		return tyCheckCallParams(ctx, expr, mtd, gma, reqty);
+		throw new RuntimeException("method not found: " + k.getName() + "." + tk.mn);
 	}
 	
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -456,8 +411,7 @@ class DotSyntax extends Syntax {
 			return expr2;
 		}
 		if(c + 1 < e) c++;
-		//return kToken_p(tls.toks[c], ERR_, "expected field name: not %s", kToken_s(tls.toks[c])));
-		return null;//TODO
+		return null;
 	}
 }
 
@@ -466,7 +420,6 @@ abstract class OpSyntax extends Syntax {
 		super(kw);
 	}
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
-		//TODO src/sugar/ast.h:650 ParseExpr_Op
 		Token tk = tls.get(c);
 		Expr expr, rexpr = stmt.newExpr2(ctx, tls, c+1, e);
 		String mn = (s == c) ? op1 : op2;
@@ -630,7 +583,7 @@ class COMMASyntax extends Syntax {
 	@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		Expr expr = new Expr(this);
 		expr.setCons(tls.get(c));
-		stmt.addExprParams(ctx, expr, tls, s, e, 0);
+		stmt.addExprParams(ctx, expr, tls, s, e, false);
 		return expr;
 	}
 }

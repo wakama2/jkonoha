@@ -9,9 +9,10 @@ public class KonohaSpace extends KObject {
 	public KonohaSpace parentNULL;
 	public FTokenizer[] fmat;
 	private final Map<String, Syntax> syntaxMapNN = new HashMap<String, Syntax>();
-	private final Map<String, KObject> cl = new HashMap<String, KObject>();
+	private final Map<String, KClass> cl = new HashMap<String, KClass>();
 	
 	public KonohaSpace() {
+		// konoha 2 java class map
 		cl.put("System", KClass.systemClass);
 	}
 
@@ -235,7 +236,7 @@ public class KonohaSpace extends KObject {
 		return null;
 	}
 	
-	public KObject getConst(CTX ctx, String key) {
+	public KClass getClass(CTX ctx, String key) {
 		return cl.get(key);
 	}
 
