@@ -5,10 +5,6 @@ import jkonoha.CTX;
 import jkonoha.KInt;
 import jkonoha.Konoha;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class IntOperatorDiv {
