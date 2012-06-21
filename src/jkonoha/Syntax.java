@@ -1,10 +1,6 @@
 package jkonoha;
 
 import java.util.*;
-
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-
 import jkonoha.compiler.*;
 
 public abstract class Syntax {
@@ -620,18 +616,18 @@ class VOIDSyntax extends Syntax {
 	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		Block param = (Block)stmt.getObject(KW.Params);
 		List<String> argNames = new ArrayList<String>();
-		List<Type> argTypes = new ArrayList<Type>();
+		List<KClass> argTypes = new ArrayList<KClass>();
 		for(Stmt s : param.blocks) {
 			Expr e = (Expr)s.getObject(KW.Expr);
 			Token t = (Token)s.getObject(KW.Type);
 			argNames.add(e.tk.text);
-			argTypes.add(gamma.cc.getType(t.text));
+			argTypes.add(gamma.ks.getClass(ctx, t.text));
 		}
 		String name = ((Token)stmt.getObject(KW.Symbol)).text;
-		Type retty = gamma.cc.getType(((Token)stmt.getObject(KW.Type)).text);
+		KClass retty = gamma.ks.getClass(ctx, ((Token)stmt.getObject(KW.Type)).text);
 		KonohaClass klass = ctx.scriptClass;
-		KonohaMethod mtd = new KonohaMethod(klass, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new Type[0]));
+		KonohaMethod mtd = new KonohaMethod(klass, KonohaMethod.ACC_STATIC,
+				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new KClass[0]));
 		klass.addMethod(mtd);
 		
 		gamma.argNames = argNames;

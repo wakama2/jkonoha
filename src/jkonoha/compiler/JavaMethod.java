@@ -6,14 +6,12 @@ import java.lang.reflect.Modifier;
 import jkonoha.KClass;
 import jkonoha.KMethod;
 
-import org.objectweb.asm.Type;
-
 public class JavaMethod extends KMethod {
 	
 	private final Method method;
 	private JavaClass parent = null;
-	private Type[] argTypes = null;
-	private Type retType = null;
+	private KClass[] argTypes = null;
+	private KClass retType = null;
 	
 	public JavaMethod(Method m) {
 		this.method = m;
@@ -30,20 +28,20 @@ public class JavaMethod extends KMethod {
 		return method.getName();
 	}
 	
-	@Override public Type[] getArgTypes() {
+	@Override public KClass[] getArgClasses() {
 		if(argTypes == null) {
 			Class<?>[] args = method.getParameterTypes();
-			argTypes = new Type[args.length];
+			argTypes = new KClass[args.length];
 			for(int i=0; i < args.length; i++) {
-				argTypes[i] = Type.getType(args[i]);
+				argTypes[i] = new JavaClass(args[i]);
 			}
 		}
 		return argTypes;
 	}
 	
-	@Override public Type getReturnType() {
+	@Override public KClass getReturnClass() {
 		if(retType == null) {
-			retType = Type.getType(method.getReturnType());
+			retType = new JavaClass(method.getReturnType());
 		}
 		return retType;
 	}
@@ -51,5 +49,5 @@ public class JavaMethod extends KMethod {
 	@Override public boolean isStatic() {
 		return Modifier.isStatic(method.getModifiers());
 	}
-	
+
 }

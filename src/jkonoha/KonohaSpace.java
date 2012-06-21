@@ -3,6 +3,7 @@ package jkonoha;
 import java.util.*;
 
 import jkonoha.compiler.CompilerContext;
+import jkonoha.compiler.JavaClass;
 
 public class KonohaSpace extends KObject {
 
@@ -12,7 +13,10 @@ public class KonohaSpace extends KObject {
 	private final Map<String, KClass> cl = new HashMap<String, KClass>();
 	
 	public KonohaSpace() {
-		// konoha 2 java class map
+		// konoha<->java class map
+		cl.put("int", new JavaClass(int.class));
+		cl.put("boolean", new JavaClass(boolean.class));
+		cl.put("void", new JavaClass(void.class));
 		cl.put("System", KClass.systemClass);
 	}
 

@@ -8,22 +8,24 @@ import org.objectweb.asm.tree.MethodNode;
 
 public class KonohaMethod extends KMethod {
 	
+	public static final int ACC_STATIC = Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC;
+	
 	private final KClass parent;
 	private final int access;
 	private final String name;
-	private final Type retType;
+	private final KClass retType;
 	private final String[] argNames;
-	private final Type[] argTypes;
+	private final KClass[] argTypes;
 	private final MethodNode node;
 	
-	public KonohaMethod(KClass parent, int access, String name, Type retType, String[] argNames, Type[] argTypes) {
+	public KonohaMethod(KClass parent, int access, String name, KClass retType, String[] argNames, KClass[] argTypes) {
 		this.parent = parent;
 		this.access = access;
 		this.name = name;
 		this.retType = retType;
 		this.argNames = argNames;
 		this.argTypes = argTypes;
-		this.node = new MethodNode(Opcodes.ASM4, access, name, retType.getDescriptor(), null/*generics*/, null/*throws*/);
+		this.node = new MethodNode(Opcodes.ASM4, access, name, retType.getAsmType().getDescriptor(), null/*generics*/, null/*throws*/);
 	}
 	
 	@Override public KClass getParent() {
@@ -42,16 +44,16 @@ public class KonohaMethod extends KMethod {
 		return argNames;
 	}
 	
-	@Override public Type[] getArgTypes() {
+	@Override public KClass[] getArgClasses() {
 		return argTypes;
 	}
 	
-	@Override public Type getReturnType() {
+	@Override public KClass getReturnClass() {
 		return retType;
 	}
 	
 	public void accept(ClassVisitor cv) {
-		String desc = Type.getMethodDescriptor(retType, argTypes);
+		String desc = Type.getMethodDescriptor(getReturnType(), getArgTypes());
 		MethodVisitor mv = cv.visitMethod(access, name, desc, null/*generics*/, null/*throws*/);
 		node.accept(mv);
 	}
@@ -59,5 +61,5 @@ public class KonohaMethod extends KMethod {
 	@Override public boolean isStatic() {
 		return (access & Opcodes.ACC_STATIC) != 0;
 	}
-	
+
 }
