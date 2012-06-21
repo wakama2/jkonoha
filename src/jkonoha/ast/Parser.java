@@ -199,11 +199,11 @@ public class Parser {
 	private static Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
-			Param[] p = new Param[size];
+//			Param[] p = new Param[size];
 			for(i = 0; i < size; i++) {
 				Token tkT = tkP.sub.get(i);
 				if(tkT.kw.equals(KW.Type)) {
-					p[psize].ty = tkT.ty;
+//					p[psize].ty = tkT.ty;
 					psize++;
 					continue;
 				}
