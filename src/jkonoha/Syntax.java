@@ -261,6 +261,7 @@ class AST_ParenthesisSyntax extends Syntax {
 			}
 			expr.cons.remove(1);
 			expr.build = TEXPR.CALL;
+			expr.ty = m.getReturnClass();
 			return expr;
 		}
 		return null;

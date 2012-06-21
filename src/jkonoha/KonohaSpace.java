@@ -4,6 +4,7 @@ import java.util.*;
 
 import jkonoha.compiler.CompilerContext;
 import jkonoha.compiler.JavaClass;
+import jkonoha.compiler.PrimitiveClass;
 
 public class KonohaSpace extends KObject {
 
@@ -14,9 +15,9 @@ public class KonohaSpace extends KObject {
 	
 	public KonohaSpace() {
 		// konoha<->java class map
-		cl.put("int", new JavaClass(int.class));
-		cl.put("boolean", new JavaClass(boolean.class));
-		cl.put("void", new JavaClass(void.class));
+		cl.put("int", new PrimitiveClass(int.class, KClass.intClass));
+		cl.put("boolean", new PrimitiveClass(boolean.class, KClass.booleanClass));
+		cl.put("void", new PrimitiveClass(void.class, KClass.voidClass));
 		cl.put("System", KClass.systemClass);
 	}
 
