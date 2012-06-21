@@ -11,9 +11,10 @@ public class IfElse {
 
 	@Test
 	public void test() {
-	CTX ctx = new CTX();
-	Konoha k = new Konoha(ctx);
-	KInt a = (KInt)k.eval(ctx, "int f(int n) { if (n == 0) { return 0; } else { return n;} } f(0);");
-	assertEquals(a.unbox(), 0);
+		CTX ctx = new CTX();
+		Konoha k = new Konoha(ctx);
+		k.eval(ctx, "int f(int n) { if (n == 0) { return 0; } else { return n;} }");
+		KInt a = (KInt)k.eval(ctx, "f(0);");
+		assertEquals(a.unbox(), 0);
 	}
 }

@@ -9,17 +9,9 @@ public class CTX extends KObject {
 	private static final boolean debug = true;
 	
 	public Konoha konoha;
-	public ModSugar modsugar = new ModSugar();
+	public KonohaSpace ks = new KonohaSpace();
+	public Gamma gamma = new Gamma();
 	public KonohaClass scriptClass = new KonohaClass("Script", KClass.objectClass, new KClass[0]);
-
-	public long kfileid(String name, long def)
-	{
-		return this.konoha.kfileid(name, def);
-	}
-
-	public String S_file(long uline) {
-		return this.konoha.S_file(uline);
-	}
 
 	public void SUGAR_P(PrintStream out, long uline, int pos, String fmt, Object...args) {
 		out.printf(fmt, args);

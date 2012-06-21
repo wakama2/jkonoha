@@ -20,9 +20,6 @@ public interface TY {
 	int T0 = 10;
 	int T = T0;
 	
-	int var = CLASS.Tvar;
-	int Object = CLASS.Object;
-	
 	KClass[] toClass = {
 			KClass.voidClass,
 			KClass.varClass,

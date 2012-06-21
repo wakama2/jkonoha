@@ -211,24 +211,24 @@ public class Parser {
 				return null; // new int[10];  // not generics
 			}
 			KClass ct = null;
-			if(psize > 0) {
-				//ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
-				if(ct.getBaseClass().getID() == CLASS.Func) {
-					//TODO
-//					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
-				}
-				else if(ct.getP0().getID() == TY.VOID) {
-					//ctx.SUGAR_P(System.err, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
-					return tk;
-				}
-				else {
-					//ct = ct.generics(ctx, TY.VOID, psize, p);
-				}
-			}
-			else {
-				//ct = ct.CT_p0(ctx, tk.ty);
-			}
-			tk.ty = ct.getID();
+//			if(psize > 0) {
+//				//ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
+//				if(ct.getBaseClass().getID() == CLASS.Func) {
+//					//TODO
+////					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
+//				}
+//				else if(ct.getP0().getID() == TY.VOID) {
+//					//ctx.SUGAR_P(System.err, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
+//					return tk;
+//				}
+//				else {
+//					//ct = ct.generics(ctx, TY.VOID, psize, p);
+//				}
+//			}
+//			else {
+//				//ct = ct.CT_p0(ctx, tk.ty);
+//			}
+////			tk.ty = ct.getID();
 			return tk;
 		}
 		return null;

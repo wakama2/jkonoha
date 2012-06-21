@@ -11,7 +11,7 @@ public class Block extends KObject {
 	public Expr esp;  // BlockScopeVariable() to record maximun used stack
 	
 	public Block(CTX ctx, KonohaSpace ks) {
-		this.ks = ks != null ? ks : ctx.modsugar.rootks;
+		this.ks = ks != null ? ks : ctx.ks;
 	}
 	
 	public boolean tyCheckAll(CTX ctx, Gamma gamma) {

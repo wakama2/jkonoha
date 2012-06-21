@@ -13,7 +13,8 @@ public class If {
 	public void test() {
 		CTX ctx = new CTX();
 		Konoha k = new Konoha(ctx);
-		KInt a = (KInt)k.eval(ctx, "int f(int n) { if (n == 0) { return n; } } f(0);");
+		k.eval(ctx, "int f(int n) { if (n == 0) { return n; } }");
+		KInt a = (KInt)k.eval(ctx, "f(0);");
 		assertEquals(a.unbox(), 0);
 	}
 

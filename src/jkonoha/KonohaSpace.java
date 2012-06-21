@@ -223,8 +223,7 @@ public class KonohaSpace extends KObject {
 	}
 
 	public KObject eval(CTX ctx, String script, long uline) {
-		ctx.modsugar.setup();
-		ctx.modsugar.gamma.ks = this;
+		ctx.gamma.ks = this;
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
@@ -235,8 +234,8 @@ public class KonohaSpace extends KObject {
 
 	private KObject evalBlock(CTX ctx, Block bk) {
 		CompilerContext cc = new CompilerContext(ctx);
-		ctx.modsugar.gamma.cc = cc;
-		if(!bk.tyCheckAll(ctx, ctx.modsugar.gamma)) return null;
+		ctx.gamma.cc = cc;
+		if(!bk.tyCheckAll(ctx, ctx.gamma)) return null;
 		cc.evalBlock(bk);
 		try {
 			cc.writeClassFile(".");
