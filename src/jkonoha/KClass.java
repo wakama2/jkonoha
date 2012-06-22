@@ -25,9 +25,6 @@ public abstract class KClass extends KObject {
 	public abstract Type getAsmType();
 	public abstract KClass getSuperClass();
 	public abstract KClass[] getInterfaces();
-	public int getID() {
-		return 0;
-	}
 	
 	public List<KMethod> getMethods() {
 		throw new RuntimeException("not impl");

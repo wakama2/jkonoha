@@ -17,6 +17,7 @@ public class KonohaSpace extends KObject {
 		cl.put("int", new PrimitiveClass(int.class, KClass.intClass));
 		cl.put("boolean", new PrimitiveClass(boolean.class, KClass.booleanClass));
 		cl.put("void", new PrimitiveClass(void.class, KClass.voidClass));
+		cl.put("String", KClass.stringClass);
 		cl.put("System", KClass.systemClass);
 	}
 
@@ -239,6 +240,7 @@ public class KonohaSpace extends KObject {
 		cc.evalBlock(bk);
 		try {
 			cc.writeClassFile(".");
+			LocalCtx.set(ctx);
 			// exec
 			ClassLoader cl = cc.createClassLoader();
 			Class<?> c = cl.loadClass("Script");
@@ -254,9 +256,16 @@ public class KonohaSpace extends KObject {
 		}
 	}
 
-	public boolean importPackage(CTX ctx, String name, long pline) {
-		//TODO
-		return false;
+	public static boolean importPackage(String name) {
+		CTX ctx = LocalCtx.get();
+		try {
+			Class<?> c = Class.forName(name);
+			ctx.ks.cl.put(c.getSimpleName(), new JavaClass(c));
+			return true;
+		} catch(ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public boolean loadScript(CTX ctx, String path) {
