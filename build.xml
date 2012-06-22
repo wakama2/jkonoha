@@ -14,6 +14,7 @@
 			target="1.6" source="1.6" includeantruntime="false">
 			<classpath path="${libdir}/asm-all-4.0.jar" />
 			<include name="jkonoha/**/*.java" />
+			<include name="konoha/**/*.java" />
 		</javac>
 	</target>
 

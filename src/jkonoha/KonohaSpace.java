@@ -1,5 +1,6 @@
 package jkonoha;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import jkonoha.ast.*;
@@ -14,9 +15,12 @@ public class KonohaSpace extends KObject {
 	
 	public KonohaSpace() {
 		// konoha<->java class map
-		cl.put("int", new PrimitiveClass(int.class, KClass.intClass));
-		cl.put("boolean", new PrimitiveClass(boolean.class, KClass.booleanClass));
-		cl.put("void", new PrimitiveClass(void.class, KClass.voidClass));
+		cl.put("int", KClass.intClass);
+		cl.put("Int", KClass.intClass);
+		cl.put("boolean", KClass.booleanClass);
+		cl.put("Boolean", KClass.booleanClass);
+		cl.put("void", KClass.voidClass);
+		cl.put("String", KClass.stringClass);
 		cl.put("System", KClass.systemClass);
 	}
 
@@ -188,38 +192,12 @@ public class KonohaSpace extends KObject {
 		}
 	}
 	
-	public KObject getSymbolValue(CTX ctx, String key) {
-		if(key.equals("K") || key.equals("Konoha")) {
-			return this;
-		}
-		return null;
-	}
-	
 	public KClass getClass(CTX ctx, String key) {
 		return cl.get(key);
 	}
 
 	public void setSyntaxMethod(CTX ctx, KMethod f, KMethod[] synp, KMethod p, KMethod[] mp) {
 		//TODO
-	}
-
-	public void addMethod(CTX ctx, KMethod mtd) {
-		//TODO
-	}
-
-	public KMethod getMethodNULL(CTX ctx, int cid, String mn) {
-		//TODO
-		return null;
-	}
-
-	public KMethod getStaticMethodNULL(CTX ctx, String mn) {
-		//TODO
-		return null;
-	}
-
-	public boolean defineMethod(CTX ctx, KMethod mtd, long pline) {
-		//TODO
-		return false;
 	}
 
 	public KObject eval(CTX ctx, String script, long uline) {
@@ -239,6 +217,7 @@ public class KonohaSpace extends KObject {
 		cc.evalBlock(bk);
 		try {
 			cc.writeClassFile(".");
+			LocalCtx.set(ctx);
 			// exec
 			ClassLoader cl = cc.createClassLoader();
 			Class<?> c = cl.loadClass("Script");
@@ -248,15 +227,42 @@ public class KonohaSpace extends KObject {
 			} else {
 				return null;
 			}
+		} catch(InvocationTargetException e) {
+			e.getCause().printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
-
-	public boolean importPackage(CTX ctx, String name, long pline) {
-		//TODO
-		return false;
+	
+	public static boolean _import(String name) {
+		return importPackage(name);
+	}
+	
+	public static boolean importPackage(String name) {
+		CTX ctx = LocalCtx.get();
+		// package ?
+		try {
+			Class<?> c = Class.forName(name + ".package-info");
+			KonohaPackageAnnotation an = c.getAnnotation(KonohaPackageAnnotation.class);
+			if(an != null) {
+				KonohaPackage kp = an.getInitClass().newInstance();
+				kp.init(ctx, ctx.ks);
+				System.out.println("import package: " + name);
+				return true;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		// class ?
+		try {
+			Class<?> c = Class.forName(name);
+			ctx.ks.cl.put(c.getSimpleName(), new JavaClass(c));
+			return true;
+		} catch(ClassNotFoundException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public boolean loadScript(CTX ctx, String path) {

@@ -3,6 +3,7 @@ package jkonoha;
 import java.util.List;
 
 import jkonoha.compiler.JavaClass;
+import jkonoha.compiler.PrimitiveClass;
 
 import org.objectweb.asm.Type;
 
@@ -12,9 +13,9 @@ public abstract class KClass extends KObject {
 	public static final KClass voidClass = new JavaClass(void.class);
 	public static final KClass varClass = new JavaClass(Object.class); //FIXME
 	public static final KClass objectClass = new JavaClass(KObject.class);
-	public static final KClass intClass = new JavaClass(KInt.class);
-	public static final KClass floatClass = new JavaClass(KFloat.class);
-	public static final KClass booleanClass = new JavaClass(KBoolean.class);
+	public static final KClass intClass = new PrimitiveClass(int.class, new JavaClass(KInt.class));
+	public static final KClass floatClass = new PrimitiveClass(float.class, new JavaClass(KFloat.class));
+	public static final KClass booleanClass = new PrimitiveClass(boolean.class, new JavaClass(KBoolean.class));
 	public static final KClass stringClass = new JavaClass(KString.class);
 	public static final KClass methodClass = new JavaClass(KMethod.class);
 	public static final KClass classClass = new JavaClass(KClass.class);
@@ -25,9 +26,6 @@ public abstract class KClass extends KObject {
 	public abstract Type getAsmType();
 	public abstract KClass getSuperClass();
 	public abstract KClass[] getInterfaces();
-	public int getID() {
-		return 0;
-	}
 	
 	public List<KMethod> getMethods() {
 		throw new RuntimeException("not impl");
