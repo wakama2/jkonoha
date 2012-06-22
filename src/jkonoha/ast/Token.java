@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 import jkonoha.CTX;
+import jkonoha.KClass;
 import jkonoha.KObject;
 import jkonoha.KonohaSpace;
 
@@ -15,7 +16,7 @@ public class Token extends KObject {
 	public String text;
 	public int topch;
 	public ArrayList<Token> sub;
-	public int ty;
+	public KClass ty;
 	public int closech;
 	public int mn_type;
 	public String mn;
@@ -31,11 +32,12 @@ public class Token extends KObject {
 	
 	public boolean resolved(CTX ctx, KonohaSpace ks) {//Token_resolved in Parser.java
 		String kw = this.text;
-		if(kw != null) {//"dummy"/*FN_NONAME*/) {
+		if(kw != null) {
 			Syntax syn = ks.syntax(ctx,kw);
 			if(syn != null) {
-				if(syn.ty != TY.unknown) {//#define TY_unknown ((kcid_t)-2)
-					this.kw = KW.Type; this.ty = syn.ty;
+				if(syn.ty != null) {
+					this.kw = KW.Type;
+					this.ty = syn.ty;
 				}
 				else {
 					this.kw = kw;

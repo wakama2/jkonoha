@@ -148,11 +148,11 @@ public class Parser {
 		}
 		else if(tk.tt == TK.USYMBOL) {
 			if(! tk.resolved(ctx, ks)) {
-				KClass ct = null;//ks.getCT(ctx, null, tk.text, tk.text.length(), TY.unknown); // TODO Konohaspace_getCT?
-				if(ct != null) {
-					tk.kw = KW.Type;
-					tk.ty = ct.getID();
-				}
+//				KClass ct = ks.getClass(ctx, tk.text);
+//				if(ct != null) {
+//					tk.kw = KW.Type;
+//					tk.ty = ct;
+//				}
 			}
 		}
 		else if(tk.tt == TK.OPERATOR) {

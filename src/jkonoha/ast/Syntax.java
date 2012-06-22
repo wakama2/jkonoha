@@ -9,7 +9,7 @@ public abstract class Syntax {
 	public String rule;
 	public List<Token> syntaxRuleNULL;
 
-	public int ty = TY.unknown;        // "void" ==> TY_void
+	public KClass ty = null;//TY.unknown;        // "void" ==> TY_void
 	public int priority;  // op2   
 	public String op2;
 	public String op1;
@@ -101,10 +101,14 @@ class ExprSyntax extends Syntax {
 	}
 	@Override public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		int r = -1;
-		Token.dumpTokenArray (System.out, 0, tls, s, e);
+		if(ctx.debug) {
+			Token.dumpTokenArray (System.out, 0, tls, s, e);
+		}
 		Expr expr = stmt.newExpr2(ctx, tls, s, e);
 		if (expr != null) {
-			expr.dump(System.out, 0, 0);
+			if(ctx.debug) {
+				expr.dump(ctx, 0, 0);
+			}
 			stmt.setObject(name, expr);
 			r = e;
 		}
@@ -246,16 +250,25 @@ class TypeSyntax extends TermSyntax {
 		}
 		return r;
 	}
-//	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Object gamma) {
-//		Token tk  = stmt.token(KW.Type, null);
-//		Expr expr = stmt.expr(KW.Expr, null);
-//		if(tk == null || !tk.kw.equals(KW.Type) || expr == null) {
-//			ERR_SyntaxError(stmt.uline);
-//			return false;
-//		}
-//		stmt.done(); //kStmt_done(stmt)
-//		return expr.declType(ctx, gamma, tk.ty, stmt);
-//	}
+	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+		Token tk  = (Token)stmt.getObject(KW.Type);
+		Expr expr = (Expr)stmt.getObject(KW.Expr);
+		System.out.println(tk + ": " + expr);
+		if(tk == null || !tk.kw.equals(KW.Type) || expr == null) {
+			//ERR_SyntaxError(stmt.uline);
+			return false;
+		}
+		Expr e = new Expr(null);
+		e.build = TEXPR.LET;
+		e.ty = KClass.voidClass;
+		e.setCons(null, expr);
+		
+		Stmt s = new Stmt(stmt.uline);
+		s.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Expr);
+		s.setObject(KW.Expr, e);
+		
+		return true;//expr.declType(ctx, gamma, tk.ty, stmt);
+	}
 //	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
 //		assert(expr.tk.kw.equals(KW.Type));
 //		return expr.setVariable(null, expr.tk.ty, 0, gamma);
@@ -379,8 +392,18 @@ class ParamsSyntax extends Syntax {
 		}
 		//TODO param check
 		expr.build = TEXPR.CALL;
-		expr.ty = KClass.intClass;
+		expr.ty = mtd.getReturnClass();
 		return expr;
+	}
+	
+	private String checkMN(String mn) {
+		if(mn.equals("import")) {
+			return "_import";
+		}
+		if(mn.equals("assert")) {
+			return "_assert";
+		}
+		return mn;
 	}
 	
 	private Expr lookupMethod(CTX ctx, Expr expr, KClass this_cid, Gamma gma, KClass reqty) {
@@ -389,14 +412,15 @@ class ParamsSyntax extends Syntax {
 		if(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 			tk.mn = tk.text;
 		}
+		String mn = checkMN(tk.mn);
 		KClass k = this_cid;
-		KMethod mtd = k.getMethod(tk.mn, reqty);
+		KMethod mtd = k.getMethod(mn, reqty);
 		if(mtd != null) {
 			expr.cons.set(0, mtd);
 			tyCheckCallParams(ctx, expr, mtd, gma, reqty);
 			return expr;
 		}
-		throw new RuntimeException("method not found: " + k.getName() + "." + tk.mn);
+		throw new RuntimeException("method not found: " + k.getName() + "." + mn);
 	}
 	
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -605,7 +629,7 @@ class NOTSyntax extends OpSyntax {
 	}
 }
 
-class OPLEFTSyntax extends Syntax {
+class OPLEFTSyntax extends OpSyntax {
 	public OPLEFTSyntax () {
 		super("=");
 		this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
@@ -653,7 +677,7 @@ class DOLLARSyntax extends Syntax {
 class VOIDSyntax extends Syntax {
 	public VOIDSyntax () {
 		super("void");
-		this.ty = TY.VOID;
+		this.ty = KClass.voidClass;
 		this.rule = "$type [$USYMBOL \".\"] $SYMBOL $params [$block]";
 	}
 
@@ -719,7 +743,7 @@ class VOIDSyntax extends Syntax {
 class BOOLEANSyntax extends Syntax {
 	public BOOLEANSyntax () {
 		super("boolean");
-		this.ty = TY.BOOLEAN;
+		this.ty = KClass.booleanClass;
 	}
 }
 
@@ -727,7 +751,7 @@ class BOOLEANSyntax extends Syntax {
 class INTTypeSyntax extends Syntax {
 	public INTTypeSyntax () {
 		super("int");
-		this.ty = TY.INT;
+		this.ty = KClass.intClass;
 	}
 }
 

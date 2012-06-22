@@ -19,7 +19,9 @@ public class Block extends KObject {
 		for(int i=0; i<blocks.size(); i++) {
 			Stmt stmt = blocks.get(i);
 			Syntax syn = stmt.syntax;
-			stmt.dump(System.out);
+			if(ctx.debug) {
+				stmt.dump(ctx);
+			}
 			if(syn == null) continue;
 			if(syn.kw.equals(KW.Err)) {
 				result = false;
