@@ -192,38 +192,12 @@ public class KonohaSpace extends KObject {
 		}
 	}
 	
-	public KObject getSymbolValue(CTX ctx, String key) {
-		if(key.equals("K") || key.equals("Konoha")) {
-			return this;
-		}
-		return null;
-	}
-	
 	public KClass getClass(CTX ctx, String key) {
 		return cl.get(key);
 	}
 
 	public void setSyntaxMethod(CTX ctx, KMethod f, KMethod[] synp, KMethod p, KMethod[] mp) {
 		//TODO
-	}
-
-	public void addMethod(CTX ctx, KMethod mtd) {
-		//TODO
-	}
-
-	public KMethod getMethodNULL(CTX ctx, int cid, String mn) {
-		//TODO
-		return null;
-	}
-
-	public KMethod getStaticMethodNULL(CTX ctx, String mn) {
-		//TODO
-		return null;
-	}
-
-	public boolean defineMethod(CTX ctx, KMethod mtd, long pline) {
-		//TODO
-		return false;
 	}
 
 	public KObject eval(CTX ctx, String script, long uline) {
@@ -267,6 +241,20 @@ public class KonohaSpace extends KObject {
 	
 	public static boolean importPackage(String name) {
 		CTX ctx = LocalCtx.get();
+		// package ?
+		try {
+			Class<?> c = Class.forName(name + ".package-info");
+			KonohaPackageAnnotation an = c.getAnnotation(KonohaPackageAnnotation.class);
+			if(an != null) {
+				KonohaPackage kp = an.getInitClass().newInstance();
+				kp.init(ctx, ctx.ks);
+				System.out.println("import package: " + name);
+				return true;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		// class ?
 		try {
 			Class<?> c = Class.forName(name);
 			ctx.ks.cl.put(c.getSimpleName(), new JavaClass(c));
