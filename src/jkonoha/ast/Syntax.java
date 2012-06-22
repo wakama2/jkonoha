@@ -396,20 +396,31 @@ class ParamsSyntax extends Syntax {
 		return expr;
 	}
 	
+	private String checkMN(String mn) {
+		if(mn.equals("import")) {
+			return "_import";
+		}
+		if(mn.equals("assert")) {
+			return "_assert";
+		}
+		return mn;
+	}
+	
 	private Expr lookupMethod(CTX ctx, Expr expr, KClass this_cid, Gamma gma, KClass reqty) {
 		//TODO
 		Token tk = (Token)expr.cons.get(0);
 		if(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 			tk.mn = tk.text;
 		}
+		String mn = checkMN(tk.mn);
 		KClass k = this_cid;
-		KMethod mtd = k.getMethod(tk.mn, reqty);
+		KMethod mtd = k.getMethod(mn, reqty);
 		if(mtd != null) {
 			expr.cons.set(0, mtd);
 			tyCheckCallParams(ctx, expr, mtd, gma, reqty);
 			return expr;
 		}
-		throw new RuntimeException("method not found: " + k.getName() + "." + tk.mn);
+		throw new RuntimeException("method not found: " + k.getName() + "." + mn);
 	}
 	
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {

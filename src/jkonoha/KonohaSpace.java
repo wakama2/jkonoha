@@ -1,5 +1,6 @@
 package jkonoha;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import jkonoha.ast.*;
@@ -14,9 +15,11 @@ public class KonohaSpace extends KObject {
 	
 	public KonohaSpace() {
 		// konoha<->java class map
-		cl.put("int", new PrimitiveClass(int.class, KClass.intClass));
-		cl.put("boolean", new PrimitiveClass(boolean.class, KClass.booleanClass));
-		cl.put("void", new PrimitiveClass(void.class, KClass.voidClass));
+		cl.put("int", KClass.intClass);
+		cl.put("Int", KClass.intClass);
+		cl.put("boolean", KClass.booleanClass);
+		cl.put("Boolean", KClass.booleanClass);
+		cl.put("void", KClass.voidClass);
 		cl.put("String", KClass.stringClass);
 		cl.put("System", KClass.systemClass);
 	}
@@ -250,12 +253,18 @@ public class KonohaSpace extends KObject {
 			} else {
 				return null;
 			}
+		} catch(InvocationTargetException e) {
+			e.getCause().printStackTrace();
 		} catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
-
+	
+	public static boolean _import(String name) {
+		return importPackage(name);
+	}
+	
 	public static boolean importPackage(String name) {
 		CTX ctx = LocalCtx.get();
 		try {
