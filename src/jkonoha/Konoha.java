@@ -128,13 +128,27 @@ public class Konoha {
 			}
 		}
 	}
-		
+		public void loadTestCode (CTX ctx, String path) {
+				File dir = new File (path);
+				File[] files = dir.listFiles();
+				for (int i = 0; i < files.length; i ++) {
+					String filepath = path + files[i].getName();
+					if (filepath.endsWith(".k")) {
+						System.out.println(filepath);
+						loadScript(ctx, filepath);
+					}
+				}
+		}
 	public static void main(String[] args) {
 		CTX ctx = new CTX();
 		Konoha k = new Konoha(ctx);
 		if (args.length == 1) {
 			String path = args[0];
-			k.loadScript(ctx, path);
+			if (path.endsWith("/")) {
+				k.loadTestCode(ctx, args[0]);
+			} else if (path.endsWith(".k")) {
+				k.loadScript(ctx, path);
+			}
 		}
 		else if (args.length == 0){
 			k.shell(ctx);
