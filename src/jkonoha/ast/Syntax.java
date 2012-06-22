@@ -1,7 +1,7 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.util.*;
-import jkonoha.compiler.*;
+import jkonoha.*;
 
 public abstract class Syntax {
 	public String kw;   // id
@@ -41,6 +41,50 @@ public abstract class Syntax {
 	public final/*FIXME*/ boolean topStmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		return stmtTyCheck(ctx, stmt, gamma);
 	}
+	
+	public static final Syntax[] defaultSyntax = {
+		new ERRSyntax(),
+		new ExprSyntax(),
+		new SYMBOLSyntax(),
+		new USYMBOLSyntax(),
+		new TextSyntax(),
+		new IntSyntax(),
+		new FloatSyntax(),
+		new TypeSyntax(),
+		new AST_ParenthesisSyntax(),
+		new AST_BracketSyntax(),
+		new AST_BraceSyntax(),
+		new BlockSyntax(),
+		new ParamsSyntax(),
+		new ToksSyntax(),
+		new DotSyntax(),
+		new DivSyntax(),
+		new ModSyntax(),
+		new MulSyntax(),
+		new AddSyntax(),
+		new SubSyntax(),
+		new LTSyntax(),
+		new LTESyntax(),
+		new GTSyntax(),
+		new GTESyntax(),
+		new EQSyntax(),
+		new NEQSyntax(),
+		new ANDSyntax(),
+		new ORSyntax(),
+		new NOTSyntax(),
+		new OPLEFTSyntax(),
+		new COMMASyntax(),
+		new DOLLARSyntax(),
+		new VOIDSyntax(),
+		new BOOLEANSyntax(),
+		new INTTypeSyntax(),
+		new TRUESyntax(),
+		new FALSESyntax(),
+		new IFSyntax(),
+		new ELSESyntax(),
+		new RETURNSyntax()
+	};
+		
 }
 
 class ERRSyntax extends Syntax {
@@ -241,7 +285,7 @@ class AST_ParenthesisSyntax extends Syntax {
 			else if(!lexpr.syn.kw.equals(KW.ExprMethodCall)) {
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.Parenthesis);    // (f null ())
 				Expr l = new Expr(syn);
-				l.setCons(lexpr);//Joseph
+				l.setCons(lexpr, null);
 				lexpr = l;
 			}
 			lexpr = stmt.addExprParams(ctx, lexpr, tk.sub, 0, tk.sub.size(), true/*allowEmpty*/);//TODO

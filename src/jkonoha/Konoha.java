@@ -9,12 +9,10 @@ public class Konoha {
 	public ArrayList<String> fileidList;
 	public Map<String, Long> fileidMap;
 	
-	KonohaSpace ks = new KonohaSpace();
-	
 	public Konoha(CTX ctx) {
 		this.fileidList = new ArrayList<String>();
 		this.fileidMap  = new HashMap<String, Long>(83);
-		ks.defineDefaultSyntax(ctx);
+		ctx.ks.defineDefaultSyntax(ctx);
 	}
 	
 	long kfileid(String name, long def) {
@@ -38,7 +36,7 @@ public class Konoha {
 	}
 	
 	public KObject eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
-		return ks.eval(ctx, source, 0);
+		return ctx.ks.eval(ctx, source, 0);
 	}
 	
 	private void loadScript(CTX ctx, String path) {
@@ -143,4 +141,5 @@ public class Konoha {
 		}
 		else {}// TODO option
 	}
+	
 }

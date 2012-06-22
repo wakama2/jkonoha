@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import java.util.*;
 import jkonoha.*;
+import jkonoha.ast.Token;
+import jkonoha.ast.Tokenizer;
 
 public class TokenizerTest {
 	

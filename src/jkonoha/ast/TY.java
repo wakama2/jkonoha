@@ -1,4 +1,6 @@
-package jkonoha;
+package jkonoha.ast;
+
+import jkonoha.KClass;
 
 public interface TY {
 	int CLASS_newid = -1;
@@ -17,9 +19,6 @@ public interface TY {
 	int SYSTEM = 9;
 	int T0 = 10;
 	int T = T0;
-	
-	int var = CLASS.Tvar;
-	int Object = CLASS.Object;
 	
 	KClass[] toClass = {
 			KClass.voidClass,

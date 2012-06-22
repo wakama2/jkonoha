@@ -1,10 +1,11 @@
-package jkonoha.compiler;
+package jkonoha.ast;
 
 import java.util.*;
 
 import jkonoha.KClass;
 import jkonoha.KField;
 import jkonoha.KMethod;
+import jkonoha.compiler.JavaClass;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;

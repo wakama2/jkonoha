@@ -1,7 +1,11 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.io.PrintStream;
 import java.util.*;
+
+import jkonoha.CTX;
+import jkonoha.KObject;
+import jkonoha.KonohaSpace;
 
 public class Token extends KObject {
 	public int tt;
@@ -92,7 +96,7 @@ public class Token extends KObject {
 	
 	public static void dumpIndent(PrintStream out, int nest) {
 		for(int i=0; i<nest; i++) {
-			out.print("- ");
+			out.print(" ");
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package jkonoha;
+package jkonoha.ast;
 
 public interface MNTYPE {
 	int method = 1;

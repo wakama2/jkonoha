@@ -1,7 +1,13 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.io.PrintStream;
 import java.util.*;
+
+import jkonoha.CTX;
+import jkonoha.KArray;
+import jkonoha.KBoolean;
+import jkonoha.KClass;
+import jkonoha.KObject;
 
 
 public class Stmt extends KObject {
@@ -103,13 +109,13 @@ public class Stmt extends KObject {
 					}
 					ri++;
 				}
-				int errCount = ctx.ctxsugar.errCount;
+//				int errCount = ctx.ctxsugar.errCount;
 				int next = syn.parseStmt(ctx, this, rule.nameid, tls, ti, c);
 				if (next == -1) {
 					if (optional) return s;
-					if (errCount == ctx.ctxsugar.errCount) {
+//					if (errCount == ctx.ctxsugar.errCount) {
 						ctx.Token_p(tk, System.err, "%s needs syntax pattern %s, not %s ..", syntax.kw, rule.kw, tk);
-					}
+//					}
 					return -1;
 				}
 				ti = (c == e) ? next : c + 1;
