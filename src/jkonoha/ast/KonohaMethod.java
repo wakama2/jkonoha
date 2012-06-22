@@ -1,4 +1,4 @@
-package jkonoha.compiler;
+package jkonoha.ast;
 
 import jkonoha.KClass;
 import jkonoha.KMethod;

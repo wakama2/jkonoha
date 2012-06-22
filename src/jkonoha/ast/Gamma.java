@@ -1,7 +1,10 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.util.List;
 
+import jkonoha.KClass;
+import jkonoha.KMethod;
+import jkonoha.KonohaSpace;
 import jkonoha.compiler.CompilerContext;
 
 public class Gamma {

@@ -1,15 +1,20 @@
-package jkonoha;
+package jkonoha.ast;
 
-public class Tokenizer {
+import jkonoha.CTX;
+import jkonoha.TEnv;
+
+public abstract class Tokenizer {
+	
+	public abstract int parse(CTX ctx, Token tk, TEnv tenv, int pos);
 
 	public static void tokenize(CTX ctx, TEnv tenv) {
 		int ch, pos = 0;
-		FTokenizer fmat[] = tenv.fmat;
+		Tokenizer fmat[] = tenv.fmat;
 		Token tk = new Token(tenv.uline);
 		assert(tk.tt == TK.NONE);
 		tk.uline = tenv.uline;
 //		tk.lpos = tenv.lpos(0);
-		pos = parseINDENT.parse(ctx, tk, tenv, pos, null);
+		pos = parseINDENT.parse(ctx, tk, tenv, pos);
 		while(pos < tenv.source.length() && (ch = kchar(tenv.source, pos)) != 0) {
 			if(tk.tt != TK.NONE) {
 				tenv.list.add(tk);
@@ -17,7 +22,7 @@ public class Tokenizer {
 				tk.uline = tenv.uline;
 				//tk.lpos = tenv.lpos(pos);
 			}
-			int pos2 = fmat[ch].parse(ctx, tk, tenv, pos, null);
+			int pos2 = fmat[ch].parse(ctx, tk, tenv, pos);
 			assert pos2 > pos;
 			pos = pos2;
 		}
@@ -44,8 +49,8 @@ public class Tokenizer {
 	 * @return matrix of parser about each character code
 	 */
 	
-	public static FTokenizer[] MiniKonohaTokenMatrix() {
-		FTokenizer[] fmat = new FTokenizer[KCHAR_MAX];
+	public static Tokenizer[] MiniKonohaTokenMatrix() {
+		Tokenizer[] fmat = new Tokenizer[KCHAR_MAX];
 		fmat[_NULL] = parseSKIP;
 		fmat[_UNDEF] = parseSKIP;
 		fmat[_DIGIT] = parseNUM;
@@ -167,19 +172,17 @@ public class Tokenizer {
 	_LALPHA, _LALPHA, _LALPHA, _LBR, _VAR, _RBR, _CHILDER, 1,
 	};	
 	
-	public static final FTokenizer parseINDENT = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos, KMethod thunk) {
-			int ch, c = 0;
-//			while((ch = tenv.source.charAt(pos++)) != 0) {
+	public static final Tokenizer parseINDENT = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos) {
 			while(true) {
 				pos++;
 				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
-				if(ch == '\t') { c += tenv.indent_tab; }
-				else if(ch == ' ') { c += 1; }
+				/*int ch = */tenv.source.charAt(pos);
+//				if(ch == '\t') { c += tenv.indent_tab; }
+//				else if(ch == ' ') { c += 1; }
 				break;
 			}
-			if(tk != null/* TODO IS_NOTNULL(tk) */) {
+			if(tk != null) {
 				tk.tt = TK.INDENT;
 //				tk.lpos = 0;		
 			}
@@ -187,19 +190,18 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseNL = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos, KMethod thunk) {
+	public static final Tokenizer parseNL = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos) {
 			tenv.uline += 1;
 			tenv.bol = pos + 1;
-			return parseINDENT.parse(ctx, tk, tenv, pos + 1, thunk);
+			return parseINDENT.parse(ctx, tk, tenv, pos + 1);
 		}
 	};
 
-	public static final FTokenizer parseNUM = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseNUM = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start, dot = 0;
 			String ts = tenv.source;
-//			while((ch = ts.charAt(pos++)) != 0) {
 			while(true) {
 				pos++;
 				if(pos >= ts.length()) break;
@@ -228,8 +230,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseSYMBOL = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseSYMBOL = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 			String ts = tenv.source;
 //			while((ch = ts.charAt(pos++)) != 0) {
@@ -251,8 +253,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseUSYMBOL = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseUSYMBOL = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 			String ts = tenv.source;
 //			while((ch = ts.charAt(pos++)) != 0) {
@@ -274,8 +276,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseMSYMBOL = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseMSYMBOL = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 			String ts = tenv.source;
 //			while((ch = ts.charAt(pos++)) != 0) {
@@ -296,8 +298,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseOP1 = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseOP1 = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			Token rtk = tk;
 			if(rtk != null /* IS_NOTNULL(tk) */) {
 				String s = tenv.source.substring(tok_start);
@@ -309,8 +311,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseOP = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseOP = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
@@ -342,8 +344,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseLINE = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseLINE = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
@@ -357,8 +359,8 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseCOMMENT = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseCOMMENT = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, prev = 0, level = 1, pos = tok_start + 2;
 			/*@#nnnn is line number */
 			if(tenv.source.charAt(pos) == '@' && tenv.source.charAt(pos + 1) == '#' && Character.isDigit(tenv.source.charAt(pos + 2))) {
@@ -393,22 +395,22 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseSLASH = new FTokenizer() {
-		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseSLASH = new Tokenizer() {
+		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			String ts = tenv.source.substring(tok_start);
-			if(ts.length() < 2) return parseOP.parse(ctx, tk, tenv, tok_start, thunk);
+			if(ts.length() < 2) return parseOP.parse(ctx, tk, tenv, tok_start);
 			if(ts.charAt(1) == '/') {
-				return parseLINE.parse(ctx, tk, tenv, tok_start, thunk);
+				return parseLINE.parse(ctx, tk, tenv, tok_start);
 			}
 			if(ts.charAt(1) == '*') {
-				return parseCOMMENT.parse(ctx, tk, tenv, tok_start, thunk);
+				return parseCOMMENT.parse(ctx, tk, tenv, tok_start);
 			}
-			return parseOP.parse(ctx, tk, tenv, tok_start, thunk);
+			return parseOP.parse(ctx, tk, tenv, tok_start);
 		}	
 	};
 
-	public static final FTokenizer parseDQUOTE = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseDQUOTE = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, prev = '"', pos = tok_start + 1;
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
@@ -438,14 +440,14 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseSKIP = new FTokenizer() {
-		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseSKIP = new Tokenizer() {
+		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			return tok_start + 1;
 		}
 	};
 
-	public static final FTokenizer parseUNDEF = new FTokenizer() {
-		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseUNDEF = new Tokenizer() {
+		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			if(tk != null /* IS_NOTNULL(tk) */) {
 				// TODO
 				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "undefined token character: %c", tenv->source[tok_start]);
@@ -461,13 +463,13 @@ public class Tokenizer {
 		}
 	};
 
-	public static final FTokenizer parseBLOCK = new FTokenizer() {
-		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start, KMethod thunk) {
+	public static final Tokenizer parseBLOCK = new Tokenizer() {
+		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, level = 1, pos = tok_start + 1;
-			FTokenizer[] fmat = tenv.fmat;
+			Tokenizer[] fmat = tenv.fmat;
 //			tk.lpos += 1;
-			while((ch = Tokenizer.kchar(tenv.source, pos)) != 0) {
-				if(ch == Tokenizer._RBR/*}*/) {
+			while((ch = kchar(tenv.source, pos)) != 0) {
+				if(ch == _RBR/*}*/) {
 					level--;
 					if(level == 0) {
 						Token rtk = tk;
@@ -479,11 +481,11 @@ public class Tokenizer {
 					}
 					pos++;
 				}
-				else if(ch == Tokenizer._LBR/*'{'*/) {
+				else if(ch == _LBR/*'{'*/) {
 					level++; pos++;
 				}
 				else {
-					pos = fmat[ch].parse(ctx, /* TODO K_NULLTOKEN*/null, tenv, pos, null);
+					pos = fmat[ch].parse(ctx, /* TODO K_NULLTOKEN*/null, tenv, pos);
 				}
 			}
 			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
@@ -495,4 +497,3 @@ public class Tokenizer {
 		}	
 	};
 }
-

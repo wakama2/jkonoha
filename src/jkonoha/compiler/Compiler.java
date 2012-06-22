@@ -5,6 +5,14 @@ import java.util.*;
 import org.objectweb.asm.*;
 
 import jkonoha.*;
+import jkonoha.ast.Block;
+import jkonoha.ast.Expr;
+import jkonoha.ast.KW;
+import jkonoha.ast.KonohaMethod;
+import jkonoha.ast.Stmt;
+import jkonoha.ast.Syntax;
+import jkonoha.ast.TEXPR;
+import jkonoha.ast.TSTMT;
 
 public class Compiler implements Opcodes {
 	

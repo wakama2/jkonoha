@@ -1,6 +1,11 @@
-package jkonoha;
+package jkonoha.ast;
 
 import java.util.*;
+
+import jkonoha.CTX;
+import jkonoha.KArray;
+import jkonoha.KClass;
+import jkonoha.KonohaSpace;
 
 public class Parser {
 	
@@ -167,7 +172,8 @@ public class Parser {
 			while (next + 1 < e) {
 				Token tkN = tls.get(next+1);
 				if (tkN.topch != '[' ) break;
-				List<Token> abuf = /*CtxSugar.tokens;*/ctx.ctxsugar.tokens;//TODO CtxSugar.tokens should be static?
+//				List<Token> abuf = /*CtxSugar.tokens;*/ctx.ctxsugar.tokens;//TODO CtxSugar.tokens should be static?
+				List<Token> abuf = new ArrayList<Token>();
 				int atop = abuf.size();
 				next = makeTree(ctx, ks, TK.AST_BRANCET, tls, next+1, e, ']', abuf, tkERR);
 				if(!(abuf.size() > atop)) return next;
@@ -193,11 +199,11 @@ public class Parser {
 	private static Token TokenType_resolveGenerics(CTX ctx, KonohaSpace ks, Token tk, Token tkP) {
 		if(tkP.tt == TK.AST_BRANCET) {
 			int i, psize= 0, size = tkP.sub.size();
-			Param[] p = new Param[size];
+//			Param[] p = new Param[size];
 			for(i = 0; i < size; i++) {
 				Token tkT = tkP.sub.get(i);
 				if(tkT.kw.equals(KW.Type)) {
-					p[psize].ty = tkT.ty;
+//					p[psize].ty = tkT.ty;
 					psize++;
 					continue;
 				}
@@ -205,24 +211,24 @@ public class Parser {
 				return null; // new int[10];  // not generics
 			}
 			KClass ct = null;
-			if(psize > 0) {
-				//ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
-				if(ct.getBaseClass().getID() == CLASS.Func) {
-					//TODO
-//					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
-				}
-				else if(ct.getP0().getID() == TY.VOID) {
-					//ctx.SUGAR_P(System.err, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
-					return tk;
-				}
-				else {
-					//ct = ct.generics(ctx, TY.VOID, psize, p);
-				}
-			}
-			else {
-				//ct = ct.CT_p0(ctx, tk.ty);
-			}
-			tk.ty = ct.getID();
+//			if(psize > 0) {
+//				//ct = ctx.ct(tk.ty); // TODO CT_? (ctx.share.ca.cts[t])
+//				if(ct.getBaseClass().getID() == CLASS.Func) {
+//					//TODO
+////					ct = kClassTable_Generics(ct, p[0].ty, psize-1, p+1); // TODO kClassTable_Generics? src/konoha/datatype.h/CT_Generics
+//				}
+//				else if(ct.getP0().getID() == TY.VOID) {
+//					//ctx.SUGAR_P(System.err, tk.uline, tk.lpos, "not generic type: %s", T_ty(tk.ty)); //TODO T_ty?
+//					return tk;
+//				}
+//				else {
+//					//ct = ct.generics(ctx, TY.VOID, psize, p);
+//				}
+//			}
+//			else {
+//				//ct = ct.CT_p0(ctx, tk.ty);
+//			}
+////			tk.ty = ct.getID();
 			return tk;
 		}
 		return null;

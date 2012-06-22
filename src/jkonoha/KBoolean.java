@@ -1,6 +1,5 @@
 package jkonoha;
 
-
 public class KBoolean extends KObject {
 	
 	private final boolean value;
