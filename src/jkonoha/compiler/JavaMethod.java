@@ -3,6 +3,8 @@ package jkonoha.compiler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.objectweb.asm.Opcodes;
+
 import jkonoha.KClass;
 import jkonoha.KMethod;
 
@@ -48,6 +50,12 @@ public class JavaMethod extends KMethod {
 	
 	@Override public boolean isStatic() {
 		return Modifier.isStatic(method.getModifiers());
+	}
+	
+	@Override public int getCallIns() {
+		if(isStatic()) return Opcodes.INVOKESTATIC;
+		if(Modifier.isInterface(method.getDeclaringClass().getModifiers())) return Opcodes.INVOKEINTERFACE;
+		return Opcodes.INVOKEVIRTUAL;
 	}
 
 }

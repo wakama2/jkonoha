@@ -5,14 +5,7 @@ import java.util.*;
 import org.objectweb.asm.*;
 
 import jkonoha.*;
-import jkonoha.ast.Block;
-import jkonoha.ast.Expr;
-import jkonoha.ast.KW;
-import jkonoha.ast.KonohaMethod;
-import jkonoha.ast.Stmt;
-import jkonoha.ast.Syntax;
-import jkonoha.ast.TEXPR;
-import jkonoha.ast.TSTMT;
+import jkonoha.ast.*;
 
 public class Compiler implements Opcodes {
 	
@@ -133,7 +126,7 @@ public class Compiler implements Opcodes {
 	private void call(KMethod method) {
 		String klassName = method.getParent().getName().replace(".", "/");
 		String type = method.getMethodType().getDescriptor();
-		int inst = method.isStatic() ? INVOKESTATIC : INVOKEVIRTUAL;
+		int inst = method.getCallIns();
 		mv.visitMethodInsn(inst, klassName, method.getName(), type);
 		Type ret = method.getReturnType();
 		if(ret != Type.VOID_TYPE) {
@@ -236,14 +229,15 @@ public class Compiler implements Opcodes {
 		List<Object> l = expr.cons;
 		KMethod mtd = (KMethod)l.get(0);
 		Type[] argTypes = mtd.getArgTypes();
-		//int s = mtd.isStatic() ? 2 : 1;
-		int s = (l.size() >= 2 && ((Expr)l.get(1)).build == -1) ? 2 : 1;//FIXME
 		int thisidx = 0;
-		for(int i=s; i<l.size(); i++) {
+		if(!mtd.isStatic() || !(l.size() >= 2 && ((Expr)l.get(1)).build == -1)) {
+			asmExpr(0, (Expr)l.get(1), shift, 0);
+			typeStack.pop();
+		}
+		for(int i=2; i<l.size(); i++) {
 			Expr e = (Expr)l.get(i);
 			asmExpr(thisidx + i - 1, e, shift, thisidx + i - 1);
-			//Type ty = typeStack.pop();
-			if(argTypes[i-s].equals(KClass.objectClass.getAsmType())) {
+			if(argTypes[i-2].equals(KClass.objectClass.getAsmType())) {
 				box();
 			}
 			typeStack.pop();
@@ -256,12 +250,10 @@ public class Compiler implements Opcodes {
 		Expr exprR = expr.at(2);
 		if(exprL.build == TEXPR.LOCAL) {
 			asmExpr(exprL.index, exprR, shift, espidx);
-			if(a != espidx) {
-				Type type = typeStack.peek();
-				String name = "local_" + exprL.index;
-				addLocal(name, type);
-				storeLocal(name);
-			}
+			Type type = typeStack.peek();
+			String name = exprL.tk.text;
+			addLocal(name, type);
+			storeLocal(name);
 		} else if(exprL.build == TEXPR.STACKTOP) {
 			//TODO
 		} else {

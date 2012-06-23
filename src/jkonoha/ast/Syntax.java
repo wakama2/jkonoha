@@ -164,6 +164,12 @@ class SYMBOLSyntax extends TermSyntax {
 					return expr;
 				}
 			}
+			if(gamma.locals.keySet().contains(ukey)) {
+				expr.build = TEXPR.LOCAL;
+				expr.ndata = ukey;
+				expr.ty = gamma.locals.get(ukey);
+				return expr;
+			}
 		}
 		return null;
 	}
@@ -252,27 +258,35 @@ class TypeSyntax extends TermSyntax {
 	}
 	@Override public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		Token tk  = (Token)stmt.getObject(KW.Type);
-		Expr expr = (Expr)stmt.getObject(KW.Expr);
-		System.out.println(tk + ": " + expr);
+		Expr expr_l = (Expr)stmt.getObject(KW.Expr);
+		Expr lname = (Expr)expr_l.at(1);
+		Expr expr = (Expr)expr_l.at(2);
 		if(tk == null || !tk.kw.equals(KW.Type) || expr == null) {
 			//ERR_SyntaxError(stmt.uline);
 			return false;
 		}
+		gamma.locals.put(lname.tk.text, stmt.parentNULL.ks.getClass(ctx, tk.text));
+		expr = expr.tyCheck(ctx, gamma, KClass.varClass, 0);
+		
+		Expr v = new Expr(null);
+		v.tk = lname.tk;
+		v.build = TEXPR.LOCAL;
+		
 		Expr e = new Expr(null);
 		e.build = TEXPR.LET;
 		e.ty = KClass.voidClass;
-		e.setCons(null, expr);
+		e.setCons(null, v, expr);
 		
-		Stmt s = new Stmt(stmt.uline);
-		s.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Expr);
-		s.setObject(KW.Expr, e);
-		
+		stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Expr);
+		stmt.setObject(KW.Expr, e);
+		stmt.build = TSTMT.EXPR;
 		return true;//expr.declType(ctx, gamma, tk.ty, stmt);
 	}
-//	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Object gamma, int ty) {
-//		assert(expr.tk.kw.equals(KW.Type));
-//		return expr.setVariable(null, expr.tk.ty, 0, gamma);
-//	}
+	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+		//assert(expr.tk.kw.equals(KW.Type));
+		//return expr.setVariable(null, expr.tk.ty, 0, gamma);
+		return expr;
+	}
 }
 
 class AST_ParenthesisSyntax extends Syntax {

@@ -248,11 +248,9 @@ public class KonohaSpace extends KObject {
 			if(an != null) {
 				KonohaPackage kp = an.getInitClass().newInstance();
 				kp.init(ctx, ctx.ks);
-				System.out.println("import package: " + name);
 				return true;
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
 		}
 		// class ?
 		try {

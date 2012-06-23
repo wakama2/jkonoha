@@ -1,6 +1,6 @@
 package jkonoha.ast;
 
-import java.util.List;
+import java.util.*;
 
 import jkonoha.KClass;
 import jkonoha.KMethod;
@@ -13,4 +13,5 @@ public class Gamma {
 	public CompilerContext cc;
 	public KMethod method;
 	public List<String> argNames;
+	public Map<String, KClass> locals = new HashMap<String, KClass>();
 }
