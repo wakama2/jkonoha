@@ -230,7 +230,7 @@ public class Compiler implements Opcodes {
 		KMethod mtd = (KMethod)l.get(0);
 		Type[] argTypes = mtd.getArgTypes();
 		int thisidx = 0;
-		if(!mtd.isStatic() || !(l.size() >= 2 && ((Expr)l.get(1)).build == -1)) {
+		if(!mtd.isStatic() || (l.size() >= 2 && !(((Expr)l.get(1)).build == -1))) {
 			asmExpr(0, (Expr)l.get(1), shift, 0);
 			typeStack.pop();
 		}

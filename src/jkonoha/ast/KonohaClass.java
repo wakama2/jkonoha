@@ -20,7 +20,7 @@ public class KonohaClass extends KClass {
 	private final List<KonohaMethod> methods = new ArrayList<KonohaMethod>();
 	
 	public KonohaClass(String name) {
-		this(name, new JavaClass(Object.class), new KClass[0]);
+		this(name, KClass.objectClass, new KClass[0]);
 	}
 	
 	public KonohaClass(String name, KClass superClass, KClass[] interfaceClass) {

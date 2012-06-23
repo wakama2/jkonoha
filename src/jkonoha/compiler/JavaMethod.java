@@ -11,7 +11,7 @@ import jkonoha.KMethod;
 public class JavaMethod extends KMethod {
 	
 	private final Method method;
-	private JavaClass parent = null;
+	private KClass parent = null;
 	private KClass[] argTypes = null;
 	private KClass retType = null;
 	
@@ -21,7 +21,7 @@ public class JavaMethod extends KMethod {
 	
 	@Override public KClass getParent() {
 		if(parent == null) {
-			parent = new JavaClass(method.getDeclaringClass());
+			parent = JavaClass.create(method.getDeclaringClass());
 		}
 		return parent;
 	}
@@ -35,7 +35,7 @@ public class JavaMethod extends KMethod {
 			Class<?>[] args = method.getParameterTypes();
 			argTypes = new KClass[args.length];
 			for(int i=0; i < args.length; i++) {
-				argTypes[i] = new JavaClass(args[i]);
+				argTypes[i] = JavaClass.create(args[i]);
 			}
 		}
 		return argTypes;
@@ -43,7 +43,7 @@ public class JavaMethod extends KMethod {
 	
 	@Override public KClass getReturnClass() {
 		if(retType == null) {
-			retType = new JavaClass(method.getReturnType());
+			retType = JavaClass.create(method.getReturnType());
 		}
 		return retType;
 	}
