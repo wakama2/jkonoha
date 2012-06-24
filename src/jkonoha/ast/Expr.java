@@ -63,13 +63,13 @@ public class Expr extends KObject {
 		return null;
 	}
 	
-	public Expr tyCheckVariable2(CTX ctx, Gamma gma, KClass reqty) {
-		String fn = tk.text;
-		KClass ct = gma.this_cid;
-		//TODO global
-		KMethod mtd = ct.getMethod(fn, reqty);
-		return null;
-	}
+//	public Expr tyCheckVariable2(CTX ctx, Gamma gma, KClass reqty) {
+//		String fn = tk.text;
+//		KClass ct = gma.this_cid;
+//		//TODO global
+//		KMethod mtd = ct.getMethod(fn, reqty);
+//		return null;
+//	}
 	
 	public void setCons(Object... exprs) {
 		if(cons == null) {
@@ -93,7 +93,8 @@ public class Expr extends KObject {
 		return flagTerm;
 	}
 	
-	public void dump(PrintStream out, int n, int nest) {
+	public void dump(CTX ctx, int n, int nest) {
+		PrintStream out = System.out;
 		if (nest == 0) out.println();
 		Token.dumpIndent(out, nest);
 		if (this == null) {
@@ -111,7 +112,7 @@ public class Expr extends KObject {
 			for (; i < size; i++) {
 				Object o = this.cons.get(i);
 				if(o instanceof Expr) {
-					((Expr)o).dump(out, i, nest+1);
+					((Expr)o).dump(ctx, i, nest+1);
 				} else {
 					Token.dumpIndent(out, nest+1);
 					if (o instanceof Token) {

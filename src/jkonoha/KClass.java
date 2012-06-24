@@ -3,31 +3,29 @@ package jkonoha;
 import java.util.List;
 
 import jkonoha.compiler.JavaClass;
+import jkonoha.compiler.PrimitiveClass;
 
 import org.objectweb.asm.Type;
 
 public abstract class KClass extends KObject {
 	
 	// constant
-	public static final KClass voidClass = new JavaClass(void.class);
-	public static final KClass varClass = new JavaClass(Object.class); //FIXME
-	public static final KClass objectClass = new JavaClass(KObject.class);
-	public static final KClass intClass = new JavaClass(KInt.class);
-	public static final KClass floatClass = new JavaClass(KFloat.class);
-	public static final KClass booleanClass = new JavaClass(KBoolean.class);
-	public static final KClass stringClass = new JavaClass(KString.class);
-	public static final KClass methodClass = new JavaClass(KMethod.class);
-	public static final KClass classClass = new JavaClass(KClass.class);
-	public static final KClass systemClass = new JavaClass(KSystem.class);
-	public static final KClass konohaSpaceClass = new JavaClass(KonohaSpace.class);
+	public static final KClass voidClass = JavaClass.create(void.class);
+	public static final KClass varClass = JavaClass.create(Object.class); //FIXME
+	public static final KClass objectClass = JavaClass.create(KObject.class);
+	public static final KClass intClass = new PrimitiveClass(int.class, JavaClass.create(KInt.class));
+	public static final KClass floatClass = new PrimitiveClass(float.class, JavaClass.create(KFloat.class));
+	public static final KClass booleanClass = new PrimitiveClass(boolean.class, JavaClass.create(KBoolean.class));
+	public static final KClass stringClass = JavaClass.create(KString.class);
+	public static final KClass methodClass = JavaClass.create(KMethod.class);
+	public static final KClass classClass = JavaClass.create(KClass.class);
+	public static final KClass systemClass = JavaClass.create(KSystem.class);
+	public static final KClass konohaSpaceClass = JavaClass.create(KonohaSpace.class);
 	
 	public abstract String getName();
 	public abstract Type getAsmType();
 	public abstract KClass getSuperClass();
 	public abstract KClass[] getInterfaces();
-	public int getID() {
-		return 0;
-	}
 	
 	public List<KMethod> getMethods() {
 		throw new RuntimeException("not impl");

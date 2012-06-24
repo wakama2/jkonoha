@@ -12,8 +12,20 @@ public class JavaClass extends KClass {
 	private JavaClass superClass = null;
 	private JavaClass[] interfaces = null;
 	
-	public JavaClass(Class<?> klass) {
+	private JavaClass(Class<?> klass) {
 		this.klass = klass;
+	}
+	
+	public static KClass create(Class<?> c) {
+		if(c == int.class) {
+			return KClass.intClass;
+		} else if(c == double.class) {
+			return KClass.floatClass;
+		} else if(c == boolean.class) {
+			return KClass.booleanClass;
+		} else {
+			return new JavaClass(c);
+		}
 	}
 	
 	@Override public String getName() {
