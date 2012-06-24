@@ -61,5 +61,10 @@ public class KonohaMethod extends KMethod {
 	@Override public boolean isStatic() {
 		return (access & Opcodes.ACC_STATIC) != 0;
 	}
+	
+	@Override public int getCallIns() {
+		if(isStatic()) return Opcodes.INVOKESTATIC;
+		else return Opcodes.INVOKEVIRTUAL;
+	}
 
 }

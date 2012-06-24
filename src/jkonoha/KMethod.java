@@ -18,6 +18,7 @@ public abstract class KMethod extends KObject {
 	public abstract KClass[] getArgClasses();
 	public abstract KClass getReturnClass();
 	public abstract boolean isStatic();
+	public abstract int getCallIns();
 	
 	public Type[] getArgTypes() {
 		if(argTypes == null) {
