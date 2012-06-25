@@ -15,6 +15,7 @@ public class IntOperatorCmpMoreThan {
 		int i1 = 1;
 		int i2 = 2;
 		assertEquals(1 > 2, ((KBoolean) k.eval(ctx, "1 > 2")).unbox());
+		System.out.println(((KBoolean) k.eval(ctx, "1 > 2")).unbox());
 		k.eval(ctx, "boolean f(){int i1 = 1; return 1 > i1;}");
 		assertEquals(1 > i1, ((KBoolean) k.eval(ctx, "f()")).unbox());
 		k.eval(ctx, "boolean f(){int i1 = 1; retrun i1 > 1;}");
