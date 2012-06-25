@@ -6,7 +6,7 @@ import jkonoha.ast.*;
 
 public class CTX extends KObject {
 	
-	private static final boolean debug = true;
+	public final boolean debug = true;
 	
 	public Konoha konoha;
 	public KonohaSpace ks = new KonohaSpace();

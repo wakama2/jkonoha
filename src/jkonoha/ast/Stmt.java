@@ -225,24 +225,26 @@ public class Stmt extends KObject {
 		this.build = build;
 	}
 	
-	private void dumpToken(PrintStream out, String key, Object value) {
+	private void dumpToken(CTX ctx, String key, Object value) {
+		PrintStream out = System.out;
 		out.printf("key='%s': ", key);
 		if(value instanceof Token) {
 			((Token)value).dump(out);
 		} else if(value instanceof Expr){
-			((Expr)value).dump(out, 0, 0);
+			((Expr)value).dump(ctx, 0, 0);
 		} else {
 			out.println(value);
 		}
 	}
 	
-	public void dump(PrintStream out) {
+	public void dump(CTX ctx) {
+		PrintStream out = System.out;
 		if (this.syntax == null) {
 			out.println("STMT (DONE)");
 		} else {
 			out.println("STMT " + this.syntax.kw + " {");
 			for(Map.Entry<String, Object> e : this.entrySet()) {
-				dumpToken(out, e.getKey(), e.getValue());
+				dumpToken(ctx, e.getKey(), e.getValue());
 			}
 			out.println();
 			out.println("}");
