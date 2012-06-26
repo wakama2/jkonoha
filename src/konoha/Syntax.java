@@ -28,7 +28,6 @@ class ExtendsSyntax extends Syntax {//Joseph
 class DotSyntax extends Syntax {//Joseph
 	public DotSyntax() {
 		super(".");
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -48,7 +47,7 @@ class DotSyntax extends Syntax {//Joseph
 				}
 				if (mtd != null) {
 					expr.cons.set(0, mtd);
-					return expr.tyCheckCallParams(ctx, stmt, mtd, gamma, reqty);
+					return expr.tyCheckCallParams(ctx, stmt, mtd, gamma, reqty);//TODO
 				}
 			}
 			System.out.println("undefined field: " + tkN.text);
