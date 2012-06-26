@@ -356,7 +356,7 @@ public class Compiler implements Opcodes {
 		if(bk == null) return;
 		int espidx = 0; //TODO
 		for(Stmt stmt : bk.blocks) {
-			if(stmt.syntax.kw.equals(KW._void)) continue;
+			//if(stmt.syntax.kw.equals(KW._void)) continue;
 			//if(stmt.syntax == null) continue;
 			this.uline = stmt.uline;
 			switch(stmt.build) {

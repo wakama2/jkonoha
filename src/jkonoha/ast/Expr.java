@@ -29,6 +29,15 @@ public class Expr extends KObject {
 		this.syn = syn;
 	}
 
+	public Expr(CTX ctx, Syntax syn, Token tk, KClass ty, Object val){
+		this.syn = syn;
+		this.tk = tk;
+		setTerm(true);
+		this.build = TEXPR.NEW;
+		this.ty = ty;
+		this.ndata = val;
+	}
+	
 	public Expr at(int n) {
 		return (Expr)cons.get(n);
 	}
@@ -92,7 +101,7 @@ public class Expr extends KObject {
 	public boolean isTerm() {
 		return flagTerm;
 	}
-
+	
 	//Joseph
 //	public Expr tyCheckCallParams (CTX ctx, Stmt stmt, KMethod mtd, Gamma gma, int reqty) {
 //		// srg/sugar/tycheck.h: 536
@@ -140,7 +149,7 @@ public class Expr extends KObject {
 //		}
 //		return expr;
 //	}
-
+	
 	public void dump(CTX ctx, int n, int nest) {
 		PrintStream out = System.out;
 		if (nest == 0) out.println();

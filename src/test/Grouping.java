@@ -17,6 +17,7 @@ public class Grouping {
 		assertEquals(a.unbox(), true);
 		KBoolean b = (KBoolean)k.eval(ctx, "(1+2)*3 == 9");
 		assertEquals(b.unbox(), true);
+		
 	}
 
 }
