@@ -316,5 +316,56 @@ public class Stmt extends KObject {
 		}
 		return this;
 	}
+
+	public Token token(CTX ctx, String kw, Token def) {
+		Object tk = getObject(kw);
+		if(tk != null && tk instanceof Token) {
+			return (Token)tk;
+		}
+		return def;
+	}
+	
+	//FIXME package/konoha/class_glue.h
+	public void parseClassBlock(CTX ctx, Token tkC) {
+		Token tkP = (Token)getObject(KW.Block);
+		if(tkP != null && tkP.tt == TK.CODE) {
+			List<Token> a = new ArrayList<Token>();//ctx.ctxsugar.tokens;
+			int atop = a.size(), s, i;
+			parentNULL.ks.tokenize(ctx, tkP.text, tkP.uline, a);
+			s = a.size();
+			String cname = tkC.text;
+			for(i = atop; i < s; i++) {
+				Token tk = a.get(i);
+				ctx.DBG_P("cname='%s'", cname);
+				if(tk.topch == '(' && tkP.tt == TK.USYMBOL && cname.equals(tkP.text)) {
+					Token tkNEW = new Token();
+					tkNEW.tt = TK.SYMBOL;
+					tkNEW.text = KW.Expr;//SYM_s(ctx, 1);//TODO
+					tkNEW.uline = tkP.uline;
+					a.add(tkNEW);
+				}
+				a.add(tk);
+				tkP = tk;
+			}
+			Block bk = Parser.newBlock(ctx, parentNULL.ks, this, a, s, a.size(), ';');
+			for (i = 0; i < bk.blocks.size(); i++) {
+				Stmt methodDecl = bk.blocks.get(i);
+				if(methodDecl.syntax.kw == KW.StmtMethodDecl) {
+					methodDecl.setObject(KW.Usymbol, tkC);
+				}
+			}
+			setObject(KW.Block, bk);
+			KArray.clear(a, atop);
+		}
+	}
+	
+//	public Expr expr(CTX ctx, String kw, Expr def)
+//	{
+//		Expr expr = (Expr)getObject(kw);
+//		if(expr != null && expr.equals(h.ct) == CT_Expr) {
+//			return expr;
+//		}
+//		return def;
+//	}
 }
 

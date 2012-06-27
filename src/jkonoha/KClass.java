@@ -20,12 +20,23 @@ public abstract class KClass extends KObject {
 	public static final KClass methodClass = JavaClass.create(KMethod.class);
 	public static final KClass classClass = JavaClass.create(KClass.class);
 	public static final KClass systemClass = JavaClass.create(KSystem.class);
+	public static final KClass arrayClass = JavaClass.create(KArray.class);
 	public static final KClass konohaSpaceClass = JavaClass.create(KonohaSpace.class);
 	
 	public abstract String getName();
 	public abstract Type getAsmType();
 	public abstract KClass getSuperClass();
 	public abstract KClass[] getInterfaces();
+	
+	public static int Ref = (1<<0);
+	public static int Prototype = (1<<1);
+	public static int Immutable = (1<<2);
+	public static int Private = (1<<4);
+	public static int Final = (1<<5);
+	public static int Singleton = (1<<6);
+	public static int Unboxtype = (1<<7);
+	public static int Interface = (1<<8);
+	public static int TypeVar = (1<<9);
 	
 	public List<KMethod> getMethods() {
 		throw new RuntimeException("not impl");

@@ -29,6 +29,15 @@ public class Expr extends KObject {
 		this.syn = syn;
 	}
 
+	public Expr(CTX ctx, Syntax syn, Token tk, KClass ty, Object val){
+		this.syn = syn;
+		this.tk = tk;
+		setTerm(true);
+		this.build = TEXPR.NEW;
+		this.ty = ty;
+		this.ndata = val;
+	}
+	
 	public Expr at(int n) {
 		return (Expr)cons.get(n);
 	}

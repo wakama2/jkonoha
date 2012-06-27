@@ -135,6 +135,12 @@ public class Token extends KObject {
 		}
 		return false;
 	}
+	
+	public void setmn(String mn, int mn_type) {
+		this.tt = TK.MN;
+		this.mn = mn;
+		this.mn_type = mn_type;
+	}
 }
 
 //import java.util.*;
