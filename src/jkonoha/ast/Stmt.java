@@ -325,10 +325,11 @@ public class Stmt extends KObject {
 		return def;
 	}
 	
+	//FIXME package/konoha/class_glue.h
 	public void parseClassBlock(CTX ctx, Token tkC) {
 		Token tkP = (Token)getObject(KW.Block);
 		if(tkP != null && tkP.tt == TK.CODE) {
-			List<Token> a = ctx.ctxsugar.tokens;
+			List<Token> a = new ArrayList<Token>();//ctx.ctxsugar.tokens;
 			int atop = a.size(), s, i;
 			parentNULL.ks.tokenize(ctx, tkP.text, tkP.uline, a);
 			s = a.size();
@@ -339,7 +340,7 @@ public class Stmt extends KObject {
 				if(tk.topch == '(' && tkP.tt == TK.USYMBOL && cname.equals(tkP.text)) {
 					Token tkNEW = new Token();
 					tkNEW.tt = TK.SYMBOL;
-					tkNEW.text = SYM_s(ctx, 1);
+					tkNEW.text = KW.Expr;//SYM_s(ctx, 1);//TODO
 					tkNEW.uline = tkP.uline;
 					a.add(tkNEW);
 				}
@@ -358,13 +359,13 @@ public class Stmt extends KObject {
 		}
 	}
 	
-	public Expr expr(CTX ctx, String kw, Expr def)
-	{
-		Expr expr = (Expr)getObject(kw);
-		if(expr != null && expr.equals(h.ct) == CT_Expr) {
-			return expr;
-		}
-		return def;
-	}
+//	public Expr expr(CTX ctx, String kw, Expr def)
+//	{
+//		Expr expr = (Expr)getObject(kw);
+//		if(expr != null && expr.equals(h.ct) == CT_Expr) {
+//			return expr;
+//		}
+//		return def;
+//	}
 }
 

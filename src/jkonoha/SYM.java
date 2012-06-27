@@ -11,12 +11,12 @@ public class SYM {
 		return (sym & (~(KFLAG.H0|KFLAG.H1|KFLAG.H2)));
 	}
 	
-	/*kinline*/ public static String SYM_s(CTX ctx, int sym)
-	{
-		int index = (sym & (~(KFLAG.H0|KFLAG.H1|KFLAG.H2)));
-		assert(index < ctx.share.unameList.size());
-		return ctx.share.unameList.get(index);
-	}
+//	/*kinline*/ public static String SYM_s(CTX ctx, int sym)
+//	{
+//		int index = (sym & (~(KFLAG.H0|KFLAG.H1|KFLAG.H2)));
+//		assert(index < ctx.share.unameList.size());
+//		return ctx.share.unameList.get(index);
+//	}
 	public static int NONAME = -1;
 	public static int NEWID = -2;
 }
