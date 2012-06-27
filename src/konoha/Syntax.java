@@ -17,26 +17,28 @@ class NewSyntax extends Syntax {
 	public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		assert(s == c);
 		Token tkNEW = tls.get(s);
+		Expr expr = null;
 		if(s + 2 < tls.size()) {
 			Token tk1 = tls.get(s+1);
 			Token tk2 = tls.get(s+2);
 			if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_PARENTHESIS) {  // new C (...)
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall);
 				Expr nexpr = new Expr(ctx, syn, tk1, tk1.ty, 0);
-				Expr expr = new Expr(syn);
+				expr = new Expr(syn);
 				expr.setCons(tkNEW, nexpr);
 				return expr;
 			}
 			if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_BRANCET) {     // new C [...]
 				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW._new);
-				KClass ct = CT_p0(ctx, CT_Array, tk1.ty);
-				tkNEW.setmn(ctx.Ksymbol2(ctx, "newArray", "newArray".length(), SPOL.TEXT|SPOL.ASCII, SYM.NEWID), MNTYPE.method);
-				Expr nexpr = new Expr(ctx, syn, tk1, ct.cid, 0); //TODO cid : unsigned int
-				Expr expr = new Expr(syn);
-				expr.setCons(tkNEW, nexpr);
+				//KClass ct = CT_p0(ctx, CT_Array, tk1.ty);//TODO
+				tkNEW.setmn("newArray"/*TODO ctx.Ksymbol2(ctx, "newArray", "newArray".length(), SPOL.TEXT|SPOL.ASCII, SYM.NEWID)*/, MNTYPE.method);
+				//Expr nexpr = new Expr(ctx, syn, tk1, ct.cid, 0); //TODO cid : unsigned int
+				expr = new Expr(syn);
+				//expr.setCons(tkNEW, nexpr);
 				return expr;
 			}
 		}
+		return expr;//TODO Syntax Error. by Joseph
 	}
 }
 
@@ -148,25 +150,25 @@ class DotSyntax extends Syntax {//Joseph
 		Token tkN;
 		if (o instanceof Token) {
 			tkN = (Token)o;
-			int fn = tosymbolUM(ctx, tkN);//TODO
+			//int fn = tosymbolUM(ctx, tkN);//TODO
 			Expr self = expr.tyCheckAt(ctx, 1, gamma, ty.varClass, 0);
 			if (self != null) {
-				KonohaClass klass = ctx.scriptClass;
-				KonohaMethod mtd = (KonohaMethod)klass.getMethod(MN_toGETTER(fn), self.ty);//TODO
-				if (mtd == null) {
-					mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty);//TODO
-				}
-				if (mtd != null) {
-					expr.cons.set(0, mtd);
-					return expr.tyCheckCallParams(ctx, stmt, mtd, gamma, reqty);//TODO
-				}
+//				KonohaClass klass = ctx.scriptClass;
+//				KonohaMethod mtd = (KonohaMethod)klass.getMethod(MN_toGETTER(fn), self.ty);//TODO
+//				if (mtd == null) {
+//					mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty);//TODO
+//				}
+//				if (mtd != null) {
+//					expr.cons.set(0, mtd);
+//					return expr.tyCheckCallParams(ctx, stmt, mtd, gamma, reqty);//TODO
+//				}
 			}
 			System.out.println("undefined field: " + tkN.text);
 		}
 		return null;
 	}
-	private int tosymbolUM (CTX ctx, Token tk) {
+	private void tosymbolUM (CTX ctx, Token tk) {//TODO
 		assert(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
-		return ctx.Ksymbol2(tk.text);//TODO in src/konoha/klibexec.h: 339
+		//return ctx.Ksymbol2(tk.text);//TODO in src/konoha/klibexec.h: 339
 	}
 }
