@@ -205,6 +205,7 @@ public class KonohaSpace extends KObject {
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
 		tokenize(ctx, script, uline, tls);
+		Token.dumpTokenArray(System.out, tls);
 		Block bk = Parser.newBlock(ctx, this, null, tls, pos, tls.size(), ';');
 		KArray.clear(tls, pos);
 		return evalBlock(ctx, bk);
