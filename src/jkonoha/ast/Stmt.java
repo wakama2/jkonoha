@@ -328,7 +328,7 @@ public class Stmt extends KObject {
 	public void parseClassBlock(CTX ctx, Token tkC) {
 		Token tkP = (Token)getObject(KW.Block);
 		if(tkP != null && tkP.tt == TK.CODE) {
-			List<Token> a = new ArrayList<Token>;//TODO ctx.ctxsugar.tokens;
+			List<Token> a = new ArrayList<Token>();//TODO ctx.ctxsugar.tokens;
 			int atop = a.size(), s, i;
 			parentNULL.ks.tokenize(ctx, tkP.text, tkP.uline, a);
 			s = a.size();

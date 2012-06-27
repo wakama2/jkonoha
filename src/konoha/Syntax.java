@@ -17,7 +17,7 @@ class NewSyntax extends Syntax {
 	}
 
 	@Override
-	public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+	public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {//kanemura
 		assert(s == c);
 		Token tkNEW = tls.get(s);
 		if(s + 2 < tls.size()) {
@@ -51,7 +51,7 @@ class ClassSyntax extends Syntax {
 	}
 
 	@Override
-	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
+	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {//Joseph
 		Token tkC = stmt.token(ctx, KW.Usymbol, null);
 		Token tkE= stmt.token(ctx, "extends"/*TODO*/, null);
 		int cflag = 0;
@@ -79,8 +79,7 @@ class ClassSyntax extends Syntax {
 		tkC.kw = KW.Type;
 //		tkC.ty = ct.cid;
 		stmt.parseClassBlock(ctx, tkC);
-		Block dummy; // this is dummy
-//		Block bk = stmt.block(ctx, KW.Block, dummy/*K.NULLBLOCK*/);
+		Block bk = stmt.block(ctx, KW.Block, null/*K.NULLBLOCK*/);
 //		CT_setField(ctx, ct, supct, checkFieldSize(ctx, bk));
 //		if(!CT_addClassFields(ctx, ct, gamma, bk, stmt.uline)) {
 //			return false;
@@ -90,27 +89,47 @@ class ClassSyntax extends Syntax {
 		return true;
 	}
 
-
-//	private int checkFieldSize(CTX ctx, Block bk)
-//	{
-//		int i, c = 0;
-//		for(i = 0; i < bk.blocks.size(); i++) {
-//			Stmt stmt = bk.blocks.get(i);
-//			DBG_P("stmt.kw=%s", KW_t(stmt.syntax.kw));
-//			if(stmt.syntax.kw.equals(KW.StmtTypeDecl)) {
-//				Expr expr = stmt.expr(ctx, KW.Expr, null);
-//				if(expr.syn.kw.equals(KW.COMMA)) {
-//					c += (expr.cons.size() - 1);
-//				}
-//				else if(expr.syn.kw == KW.LET || Expr_isTerm(expr)) {
-//					c++;
-//				}
+	private void CT_setField(CTX ctx, KClass ct, KClass supct, int fctsize) {//TODO Joseph
+//		int fsize = supct.fsize + fctsize;
+		System.out.println("DEBUG(CT_setField:src/konoha/Syntax.java)");
+//		if (fsize > 0) {
+//			ct->fnull(_ctx, ct);
+//			ct->init = ObjectField_init;
+//			ct->reftrace = ObjectField_reftrace;
+//			ct->fields = (kfield_t*)KCALLOC(fsize, sizeof(kfield_t));
+//			ct->fsize = supct->fsize;
+//			ct->fallocsize = fsize;
+//			if(supct->fsize > 0) {
+//				memcpy(ct->fields, supct->fields, sizeof(kfield_t)*supct->fsize);
+//				memcpy(ct->WnulvalNUL, supct->WnulvalNUL, sizeof(kObject*) * supct->fsize);
 //			}
 //		}
-//		return c;
-//	}
+	}
+	
+	private boolean CT_addClassFields() {//TODO Joseph
+		return true;
+	}
 
-//	private KClass defineClassName(CTX ctx, Gamma gamma, KonohaSpace ks, int cflag, String name, int supcid, long pline)
+	private int checkFieldSize(CTX ctx, Block bk)//kanemura
+	{
+		int i, c = 0;
+		for(i = 0; i < bk.blocks.size(); i++) {
+			Stmt stmt = bk.blocks.get(i);
+//			DBG_P("stmt.kw=%s", KW_t(stmt.syntax.kw));
+			if(stmt.syntax.kw.equals(KW.StmtTypeDecl)) {
+				Expr expr = stmt.expr(ctx, KW.Expr, null);
+				if(expr.syn.kw.equals(KW.COMMA)) {
+					c += (expr.cons.size() - 1);
+				}
+				else if(expr.syn.kw == KW.LET || expr.isTerm()) {
+					c++;
+				}
+			}
+		}
+		return c;
+	}
+
+//	private KClass defineClassName(CTX ctx, Gamma gamma, KonohaSpace ks, int cflag, String name, int supcid, long pline)//kanemura
 //	{
 //		KonohaClass KDEFINE_CLASS = new KonohaClass("KDEFINE_CLASS");
 //		gamma.cc.addClass(KDEFINE_CLASS);
@@ -146,7 +165,7 @@ class DotSyntax extends Syntax {//Joseph
 	}
 
 	@Override
-	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
+	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {//Joseph
 		//in /package/konoha/class_glue.h:271
 		Object o = expr.cons.get(0);
 		Token tkN;
