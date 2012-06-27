@@ -35,6 +35,23 @@ public class Konoha {
 		return this.fileidList.get((int)uline);
 	}
 	
+	KClass addClassDef(CTX ctx, int packid, int packdom, String name, KDEFINE_CLASS cdef, long pline)
+	{
+		 KClass ct = new_CT(_ctx, NULL, cdef, pline);
+		ct.packid  = packid;
+		ct.packdom = packdom;
+		if(name == null) {
+			String n = cdef.structname;
+			assert(n != null); // structname must be set;
+			ct.nameid = ksymbolSPOL(n, strlen(n), SPOL_ASCII|SPOL_POOL|SPOL_TEXT, _NEWID);
+		}
+		else {
+			ct.nameid = ksymbolA(S_text(name), S_size(name), _NEWID);
+		}
+		CT_setName(_ctx, ct, pline);
+		return ct;
+	}
+	
 	public KObject eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
 		return ctx.ks.eval(ctx, source, 0);
 	}
@@ -128,13 +145,27 @@ public class Konoha {
 			}
 		}
 	}
-		
+		public void loadTestCode (CTX ctx, String path) {
+				File dir = new File (path);
+				File[] files = dir.listFiles();
+				for (int i = 0; i < files.length; i ++) {
+					String filepath = path + files[i].getName();
+					if (filepath.endsWith(".k")) {
+						System.out.println(filepath);
+						loadScript(ctx, filepath);
+					}
+				}
+		}
 	public static void main(String[] args) {
 		CTX ctx = new CTX();
 		Konoha k = new Konoha(ctx);
 		if (args.length == 1) {
 			String path = args[0];
-			k.loadScript(ctx, path);
+			if (path.endsWith("/")) {
+				k.loadTestCode(ctx, args[0]);
+			} else if (path.endsWith(".k")) {
+				k.loadScript(ctx, path);
+			}
 		}
 		else if (args.length == 0){
 			k.shell(ctx);
