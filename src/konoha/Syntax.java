@@ -30,16 +30,17 @@ class NewSyntax extends Syntax {
 				expr.setCons(tkNEW, nexpr);
 				return expr;
 			}
-			if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_BRANCET) {     // new C [...]
-				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW._new);
-				KClass ct = CT_p0(ctx, CT_Array, tk1.ty);
-				tkNEW.setmn(ctx.Ksymbol2(ctx, "newArray", "newArray".length(), SPOL.TEXT|SPOL.ASCII, SYM.NEWID), MNTYPE.method);
-				Expr nexpr = new Expr(ctx, syn, tk1, ct.cid, 0); //TODO cid : unsigned int
-				Expr expr = new Expr(syn);
-				expr.setCons(tkNEW, nexpr);
-				return expr;
-			}
+//			if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_BRANCET) {     // new C [...]
+//				Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW._new);
+//				KClass ct = CT_p0(ctx, CT_Array, tk1.ty);
+//				tkNEW.setmn(ctx.Ksymbol2(ctx, "newArray", "newArray".length(), SPOL.TEXT|SPOL.ASCII, SYM.NEWID), MNTYPE.method);
+//				Expr nexpr = new Expr(ctx, syn, tk1, ct.cid, 0); //TODO cid : unsigned int
+//				Expr expr = new Expr(syn);
+//				expr.setCons(tkNEW, nexpr);
+//				return expr;
+//			}
 		}
+		return null; //this is dummy
 	}
 }
 
