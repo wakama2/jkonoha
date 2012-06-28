@@ -28,6 +28,10 @@ public abstract class KClass extends KObject {
 	public abstract KClass getSuperClass();
 	public abstract KClass[] getInterfaces();
 	
+	public boolean isFinal() {
+		return false;//TODO
+	}
+	
 	public static int Ref = (1<<0);
 	public static int Prototype = (1<<1);
 	public static int Immutable = (1<<2);

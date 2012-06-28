@@ -4,58 +4,26 @@ import java.io.*;
 import java.util.*;
 
 public class Konoha {
-	public static final int NEWID = -2;
 	
-	public ArrayList<String> fileidList;
-	public Map<String, Long> fileidMap;
+	private final CTX defaultCtx = new CTX();
 	
-	public Konoha(CTX ctx) {
-		this.fileidList = new ArrayList<String>();
-		this.fileidMap  = new HashMap<String, Long>(83);
-		ctx.ks.defineDefaultSyntax(ctx);
+	//TODO
+	public Konoha(CTX ctx) {}
+	public Konoha() {}
+	
+	public KObject eval(String source) {
+		return eval(defaultCtx, source);
 	}
 	
-	long kfileid(String name, long def) {
-		Long id = this.fileidMap.get(name);
-		if(id == null) {
-			if(def != NEWID) {
-				return def;
-			}
-			long newid = this.fileidList.size();
-			this.fileidList.add(name);
-			this.fileidMap.put(name, newid);
-			id = newid;
-		}
-		long uline = id;
-		return uline << 32;
-	}
-
-	String S_file(long uline) {
-		uline >>= 32;
-		return this.fileidList.get((int)uline);
-	}
-	
-//	KClass addClassDef(CTX ctx, int packid, int packdom, String name, KDEFINE_CLASS cdef, long pline) {
-//		 KClass ct = new_CT(_ctx, NULL, cdef, pline);
-//		ct.packid  = packid;
-//		ct.packdom = packdom;
-//		if(name == null) {
-//			String n = cdef.structname;
-//			assert(n != null); // structname must be set;
-//			ct.nameid = ksymbolSPOL(n, strlen(n), SPOL_ASCII|SPOL_POOL|SPOL_TEXT, _NEWID);
-//		}
-//		else {
-//			ct.nameid = ksymbolA(S_text(name), S_size(name), _NEWID);
-//		}
-//		CT_setName(_ctx, ct, pline);
-//		return ct;
-//	}
-	
-	public KObject eval(CTX ctx, String source) { // FIXME This method is dumping divided token now.
+	public KObject eval(CTX ctx, String source) {
 		return ctx.ks.eval(ctx, source, 0);
 	}
 	
-	private void loadScript(CTX ctx, String path) {
+	public void loadScript(String path) {
+		loadScript(defaultCtx, path);
+	}
+	
+	public void loadScript(CTX ctx, String path) {
 		BufferedReader br = null;
 		try {
 			File inputFile = new File(path);
@@ -115,6 +83,10 @@ public class Konoha {
 		}
 	}
 	
+	public void shell() {
+		shell(defaultCtx);
+	}
+	
 	public void shell(CTX ctx) {
 		Scanner s = new Scanner(System.in);
 		String script = "";
@@ -146,14 +118,13 @@ public class Konoha {
 	}
 		
 	public static void main(String[] args) {
-		CTX ctx = new CTX();
-		Konoha k = new Konoha(ctx);
+		Konoha k = new Konoha();
 		if (args.length == 1) {
 			String path = args[0];
-			k.loadScript(ctx, path);
+			k.loadScript(path);
 		}
 		else if (args.length == 0){
-			k.shell(ctx);
+			k.shell();
 		}
 		else {}// TODO option
 	}

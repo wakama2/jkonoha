@@ -9,7 +9,6 @@ import jkonoha.KBoolean;
 import jkonoha.KClass;
 import jkonoha.KObject;
 
-
 public class Stmt extends KObject {
 	public long uline;
 	public Syntax syntax;
@@ -68,7 +67,7 @@ public class Stmt extends KObject {
 		}
 	}
 	
-	public int lookAheadKeyword (List<Token> tls, int s, int e, Token rule){
+	private int lookAheadKeyword (List<Token> tls, int s, int e, Token rule){
 		int i;
 		for (i = s; i < e; i++) {
 			Token tk = tls.get(i);
@@ -165,7 +164,7 @@ public class Stmt extends KObject {
 		return ret;
 	}
 	
-	public void toERR (int eno) {
+	private void toERR (int eno) {
 //		stmt.syntax = SYN_(stmt, KW.Err);//TODO SYN_ = KonohaSpace_syntax(_ctx, KS, KW, 0)
 //		stmt.build = TSTMT.ERR;
 //		setObject(KW.Err, kstrerror(eno));//TODO
