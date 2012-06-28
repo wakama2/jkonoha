@@ -20,12 +20,17 @@ public abstract class KClass extends KObject {
 	public static final KClass methodClass = JavaClass.create(KMethod.class);
 	public static final KClass classClass = JavaClass.create(KClass.class);
 	public static final KClass systemClass = JavaClass.create(KSystem.class);
+	public static final KClass arrayClass = JavaClass.create(KArray.class);
 	public static final KClass konohaSpaceClass = JavaClass.create(KonohaSpace.class);
 	
 	public abstract String getName();
 	public abstract Type getAsmType();
 	public abstract KClass getSuperClass();
 	public abstract KClass[] getInterfaces();
+	
+	public boolean isFinal() {
+		return false;//TODO
+	}
 	
 	public static int Ref = (1<<0);
 	public static int Prototype = (1<<1);
