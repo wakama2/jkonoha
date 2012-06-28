@@ -4,6 +4,7 @@ import java.util.List;
 
 import jkonoha.CTX;
 import jkonoha.KClass;
+import jkonoha.KField;
 import jkonoha.KMethod;
 import jkonoha.KonohaSpace;
 //import jkonoha.SPOL;
@@ -54,8 +55,8 @@ class ClassSyntax extends Syntax {
 	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {//Joseph
 		Token tkC = stmt.token(ctx, KW.Usymbol, null);
 		Token tkE= stmt.token(ctx, "extends"/*TODO*/, null);
-		int cflag = 0;
-		int supcid = TY.OBJECT;
+//		int cflag = 0;
+//		int supcid = TY.OBJECT;
 		KClass supct = KClass.objectClass;
 		if (tkE != null) { //TODO
 //			assert(KW.TK_KW[tkE.tt].equals(KW.Usymbol));
@@ -76,15 +77,19 @@ class ClassSyntax extends Syntax {
 //			}*/
 		}
 //		KClass ct = defineClassName(ctx, gamma, gamma.ks, cflag, tkC.text, supcid, stmt.uline);//TODO
+		KonohaClass ct = new KonohaClass(tkC.text);
 		tkC.kw = KW.Type;
-//		tkC.ty = ct.cid;
+		tkC.ty = ct;
 		stmt.parseClassBlock(ctx, tkC);
 		Block bk = stmt.block(ctx, KW.Block, null/*K.NULLBLOCK*/);
-//		CT_setField(ctx, ct, supct, checkFieldSize(ctx, bk));
-//		if(!CT_addClassFields(ctx, ct, gamma, bk, stmt.uline)) {
-//			return false;
-//		}
+		CT_setField(ctx, ct, supct, checkFieldSize(ctx, bk));
+		if(!CT_addClassFields(ctx, ct, gamma, bk, stmt.uline)) {
+			return false;
+		}
 		stmt.syntax = null;
+		
+		bk.tyCheckAll(ctx, gamma);
+		
 //		CT_checkMethodDecl(ctx, tkC, bk, stmt);//TODO
 		return true;
 	}
@@ -106,7 +111,15 @@ class ClassSyntax extends Syntax {
 //		}
 	}
 	
-	private boolean CT_addClassFields() {//TODO Joseph
+	private boolean CT_addClassFields(CTX ctx, KonohaClass ct, Gamma gamma, Block bk, long pline) {//TODO Joseph
+		for (int i = 0; i < bk.blocks.size(); i++) {
+			Stmt stmt = bk.blocks.get(i);
+			if (stmt.syntax.kw == KW.Type) {
+				//TODO
+			}
+		}
+		System.out.println("DEBUG(CT_addClassFields) all fields are set");
+//		KLIB2_setGetterSetter(ctx, ct);//TODO
 		return true;
 	}
 
