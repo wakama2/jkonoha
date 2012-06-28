@@ -11,6 +11,14 @@ public class Konoha {
 	public Konoha(CTX ctx) {}
 	public Konoha() {}
 	
+	public KObject eval(String source) {
+		return eval(defaultCtx, source);
+	}
+	
+	public KObject eval(CTX ctx, String source) {
+		return ctx.ks.eval(ctx, source, 0);
+	}
+
 //	KClass addClassDef(CTX ctx, int packid, int packdom, String name, KDEFINE_CLASS cdef, long pline)
 //	{
 //		 KClass ct = new_CT(_ctx, NULL, cdef, pline);
@@ -27,9 +35,6 @@ public class Konoha {
 //		CT_setName(_ctx, ct, pline);
 //		return ct;
 //	}
-	public KObject eval(CTX ctx, String source) {
-		return ctx.ks.eval(ctx, source, 0);
-	}
 	
 	public void loadScript(String path) {
 		loadScript(defaultCtx, path);
