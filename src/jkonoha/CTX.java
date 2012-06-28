@@ -8,10 +8,14 @@ public class CTX extends KObject {
 	
 	public final boolean debug = true;
 	
-	public Konoha konoha;
-	public KonohaSpace ks = new KonohaSpace();
+	public final KonohaSpace ks;
 	public Gamma gamma = new Gamma();
 	public KonohaClass scriptClass = new KonohaClass("Script", KClass.objectClass, new KClass[0]);
+	
+	public CTX() {
+		this.ks = new KonohaSpace();
+		ks.defineDefaultSyntax(this);
+	}
 
 	public void SUGAR_P(PrintStream out, long uline, int pos, String fmt, Object...args) {
 		out.printf(fmt, args);

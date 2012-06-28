@@ -23,6 +23,10 @@ public class KonohaSpace extends KObject {
 		cl.put("String", KClass.stringClass);
 		cl.put("System", KClass.systemClass);
 	}
+	
+	public void addClass(String name, KClass klass) {
+		cl.put(name, klass);
+	}
 
 	public void tokenize(CTX ctx, String source, long uline, List<Token> toks) {
 		int i, pos = toks.size();
@@ -246,12 +250,11 @@ public class KonohaSpace extends KObject {
 			Class<?> c = Class.forName(name + ".package-info");
 			KonohaPackageAnnotation an = c.getAnnotation(KonohaPackageAnnotation.class);
 			if(an != null) {
-				KonohaPackage kp = an.getInitClass().newInstance();
+				KonohaPackageInitializer kp = an.getInitClass().newInstance();
 				kp.init(ctx, ctx.ks);
 				return true;
 			}
-		} catch(Exception e) {
-		}
+		} catch(Exception e) { }
 		// class ?
 		try {
 			Class<?> c = Class.forName(name);

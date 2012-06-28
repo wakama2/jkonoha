@@ -706,9 +706,12 @@ class VOIDSyntax extends Syntax {
 			argNames.add(e.tk.text);
 			argTypes.add(gamma.ks.getClass(ctx, t.text));
 		}
+		//present for joseph
 		String name = ((Token)stmt.getObject(KW.Symbol)).text;
 		KClass retty = gamma.ks.getClass(ctx, ((Token)stmt.getObject(KW.Type)).text);
-		KonohaClass klass = ctx.scriptClass;
+		KonohaClass klass = ctx.scriptClass; // class "A"
+		// "A" : stmt KW.USYMBOL -> Token
+		// gamma.cc.getClass("A")
 		KonohaMethod mtd = new KonohaMethod(klass, KonohaMethod.ACC_STATIC,
 				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new KClass[0]));
 		klass.addMethod(mtd);

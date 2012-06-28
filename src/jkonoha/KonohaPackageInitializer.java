@@ -1,6 +1,6 @@
 package jkonoha;
 
-public interface KonohaPackage {
+public interface KonohaPackageInitializer {
 	
 	public void init(CTX ctx, KonohaSpace ks);
 	

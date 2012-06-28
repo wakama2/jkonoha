@@ -6,6 +6,6 @@ import java.lang.annotation.*;
 @Target(ElementType.PACKAGE)
 public @interface KonohaPackageAnnotation {
 
-	Class<? extends KonohaPackage> getInitClass();
+	Class<? extends KonohaPackageInitializer> getInitClass();
 	
 }

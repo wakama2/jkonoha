@@ -1,4 +1,4 @@
-@KonohaPackageAnnotation(getInitClass = Init.class)
+@KonohaPackageAnnotation(getInitClass = KonohaGlue.class)
 package konoha;
 
 import jkonoha.KonohaPackageAnnotation;
