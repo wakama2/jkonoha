@@ -148,11 +148,11 @@ public class Parser {
 		}
 		else if(tk.tt == TK.USYMBOL) {
 			if(! tk.resolved(ctx, ks)) {
-//				KClass ct = ks.getClass(ctx, tk.text);
-//				if(ct != null) {
-//					tk.kw = KW.Type;
-//					tk.ty = ct;
-//				}
+				KClass ct = ks.getClass(ctx, tk.text);
+				if(ct != null) {
+					tk.kw = KW.Type;
+					tk.ty = ct;
+				}
 			}
 		}
 		else if(tk.tt == TK.OPERATOR) {
