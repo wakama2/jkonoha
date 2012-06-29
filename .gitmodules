@@ -1,0 +1,3 @@
+[submodule "konohatest"]
+	path = konohatest
+	url = git://github.com/wakamori/konohatest.git
