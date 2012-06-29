@@ -6,7 +6,8 @@ import jkonoha.ast.*;
 
 public class CTX extends KObject {
 	
-	public final boolean debug = true;
+	public static final String ENV_DEBUG = "KONOHA_DEBUG";
+	public final boolean debug;
 	
 	public final KonohaSpace ks;
 	public Gamma gamma = new Gamma();
@@ -14,6 +15,7 @@ public class CTX extends KObject {
 	
 	public CTX() {
 		this.ks = new KonohaSpace();
+		this.debug = System.getenv(ENV_DEBUG) != null;
 		ks.defineDefaultSyntax(this);
 	}
 
