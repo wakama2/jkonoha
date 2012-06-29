@@ -24,7 +24,7 @@ public class ClassGlue implements KonohaPackageInitializer {
 				if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_BRANCET) {     // new C [...]
 					Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW._new);
 					KClass ct = KClass.arrayClass;//CT_p0(ctx, CT_Array, tk1.ty);//TODO
-					tkNEW.setmn("newArray", MNTYPE.method);
+					tkNEW.setmn("newArray", jkonoha.MNTYPE.method);
 					Expr nexpr = new Expr(ctx, syn, tk1, ct, 0); //TODO cid : unsigned int
 					Expr expr = new Expr(syn);
 					expr.setCons(tkNEW, nexpr);
@@ -99,13 +99,48 @@ public class ClassGlue implements KonohaPackageInitializer {
 	
 	};
 
-	private final Syntax extendsSyntax = new Syntax("extends") {
-		//TODO
+
+	private final Syntax extendsSyntax = new Syntax("extends") {//Joseph
+		{
+			this.rule = "\"extends\" $USYMBOL";
+		}
 	};
 
-	private final Syntax dotSyntax = new Syntax(".") {
-		// TODO
-	};	
+	private final Syntax dotSyntax = new Syntax(".") {//Joseph
+		{
+			this.priority = 16;
+		}
+	
+		@Override
+		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {//Joseph
+			//in /package/konoha/class_glue.h:271
+			Object o = expr.cons.get(0);
+			Token tkN;
+			if (o instanceof Token) {
+				tkN = (Token)o;
+				//int fn = tosymbolUM(ctx, tkN);//TODO
+				Expr self = expr.tyCheckAt(ctx, 1, gamma, ty.varClass, 0);
+				if (self != null) {
+	//				KonohaClass klass = ctx.scriptClass;
+	//				KonohaMethod mtd = (KonohaMethod)klass.getMethod(MN_toGETTER(fn), self.ty);//TODO
+	//				if (mtd == null) {
+	//					mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty);//TODO
+	//				}
+	//				if (mtd != null) {
+	//					expr.cons.set(0, mtd);
+	//					return expr.tyCheckCallParams(ctx, stmt, mtd, gamma, reqty);//TODO
+	//				}
+				}
+				System.out.println("undefined field: " + tkN.text);
+			}
+			return null;
+		}
+//		private void tosymbolUM (CTX ctx, Token tk) {//TODO
+//			assert(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
+//			return ctx.Ksymbol2(tk.text);//TODO in src/konoha/klibexec.h: 339
+//		}
+	};
+	
 	
 	@Override
 	public void init(CTX ctx, KonohaSpace ks) {
