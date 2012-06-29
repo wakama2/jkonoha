@@ -116,7 +116,17 @@ public class Konoha {
 			}
 		}
 	}
-		
+		public void loadTestCode (CTX ctx, String path) {
+				File dir = new File (path);
+				File[] files = dir.listFiles();
+				for (int i = 0; i < files.length; i ++) {
+					String filepath = path + files[i].getName();
+					if (filepath.endsWith(".k")) {
+						System.out.println(filepath);
+						loadScript(ctx, filepath);
+					}
+				}
+		}
 	public static void main(String[] args) {
 		Konoha k = new Konoha();
 		if (args.length == 1) {
