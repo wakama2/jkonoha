@@ -110,7 +110,28 @@ public class ClassGlue implements KonohaPackageInitializer {
 		{
 			this.priority = 16;
 		}
-	
+
+		private boolean isFileName(List<Token> tls, int c, int e){
+			if(c+1 < e) {
+				Token tk = tls.get(c+1);
+				return (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
+			}
+			return false;
+		}
+		
+		@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
+			//DBG_P("s=%d, c=%d", s, c);
+			assert(s < c);
+			if(isFileName(tls, c, e)) {
+				Expr expr = stmt.newExpr2(ctx, tls, s, c);
+				Expr expr2 = new Expr(this);
+				expr2.setCons(tls.get(c+1), expr);
+				return expr2;
+			}
+			if(c + 1 < e) c++;
+			return null;
+		}
+
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {//Joseph
 			//in /package/konoha/class_glue.h:271
