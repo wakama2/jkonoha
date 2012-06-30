@@ -116,7 +116,6 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 				int c, int e) {
 			// TODO Auto-generated method stub
 			int atop = tls.size();
-			System.out.println("s = "+s+", c = "+c+", e = "+e);
 			s = transformOprAssignment(ctx, tls, s, c, e);//TODO
 			Expr expr = stmt.newExpr2(ctx, tls, s, tls.size());
 			KArray.clear(tls, atop);
