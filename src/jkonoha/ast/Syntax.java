@@ -281,11 +281,10 @@ class TypeSyntax extends TermSyntax {
 		stmt.syntax = stmt.parentNULL.ks.syntax(ctx, KW.Expr);
 		stmt.setObject(KW.Expr, e);
 		stmt.build = TSTMT.EXPR;
-		return true;//expr.declType(ctx, gamma, tk.ty, stmt);
+		return true;
 	}
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
-		//assert(expr.tk.kw.equals(KW.Type));
-		//return expr.setVariable(null, expr.tk.ty, 0, gamma);
+		expr.ty = expr.tk.ty;
 		return expr;
 	}
 }
@@ -331,6 +330,9 @@ class AST_ParenthesisSyntax extends Syntax {
 				argTypes.add(e1.ty);
 			}
 			KClass k = ctx.scriptClass;
+			if(e.tk.text.equals("new")) {
+				throw new RuntimeException("new is TODO in ()");
+			}
 			KMethod m = k.getMethod(e.tk.text, argTypes);
 			expr.cons.set(0, m);
 			expr.cons.remove(1);
@@ -409,6 +411,14 @@ class ParamsSyntax extends Syntax {
 		return mn;
 	}
 	
+	private boolean hasThis(CTX ctx, Expr e, Gamma gma) {//FIXME
+		if(e.ty instanceof PrimitiveClass) return true;
+		if(e.tk != null && gma.ks.getClass(ctx, e.tk.text) != null) {
+			return false; // static
+		}
+		return false;
+	}
+	
 	private Expr lookupMethod(CTX ctx, Expr expr, KClass this_cid, Gamma gma, KClass reqty) {
 		// method name
 		Token tk = (Token)expr.cons.get(0);
@@ -426,13 +436,16 @@ class ParamsSyntax extends Syntax {
 			argTypes.add(e.ty);
 		}
 		Expr e1 = expr.at(1);
-		if(e1.syn.kw.equals(KW.Type) || e1.ty instanceof PrimitiveClass) {
+		if(hasThis(ctx, e1, gma)) {
 			argTypes.add(0, k);
 		}
 		
 		// create expr
 		if(mn.equals("new")) {
+			KMethod mtd = k.getConstructor(argTypes);
 			expr.build = TEXPR.NEW;
+			expr.ty = k;
+			expr.cons.set(0, mtd);
 		} else {
 			KMethod mtd = k.getMethod(mn, argTypes);
 			if(mtd == null) {

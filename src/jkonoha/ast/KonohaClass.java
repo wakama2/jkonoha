@@ -28,6 +28,10 @@ public class KonohaClass extends KClass {
 		this.interfaceClass = interfaceClass;
 	}
 	
+	public KMethod getConstructor(List<KClass> args) {
+		throw new RuntimeException("not impl");
+	}
+	
 	public void addMethod(KonohaMethod m) {
 		for(int i=0; i<methods.size(); i++) {
 			KonohaMethod m1 = methods.get(i);

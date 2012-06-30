@@ -16,6 +16,10 @@ public class PrimitiveClass extends KClass {
 		this.klass = klass;
 		this.boxedClass = boxedClass;
 	}
+	
+	@Override public KMethod getConstructor(List<KClass> args) {
+		throw new RuntimeException("not impl");
+	}
 
 	@Override
 	public String getName() {

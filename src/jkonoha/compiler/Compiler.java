@@ -309,9 +309,19 @@ public class Compiler implements Opcodes {
 				throw new CodeGenException("err const");
 			}
 			break;
-		case TEXPR.NEW:
-			//TODO
+		case TEXPR.NEW: {
+			KClass k = expr.at(1).ty;
+			mv.visitTypeInsn(NEW, k.getName().replace(".", "/"));
+			mv.visitInsn(DUP);
+			typeStack.push(k.getAsmType());
+			int size = expr.cons.size();
+			for(int i=2; i<size; i++) {
+				asmExpr(0, expr.at(i), 0, 0);
+				typeStack.pop();
+			}
+			call((KMethod)expr.cons.get(0));
 			break;
+		}
 		case TEXPR.NULL:
 			mv.visitInsn(ACONST_NULL);
 			typeStack.push(Type.getType(Object.class));//TODO

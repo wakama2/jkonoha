@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import jkonoha.KClass;
+import jkonoha.KMethod;
 
 import org.objectweb.asm.Type;
 
@@ -54,6 +55,17 @@ public class JavaClass extends KClass {
 			}
 		}
 		return interfaces;
+	}
+	
+	@Override public KMethod getConstructor(List<KClass> args) {
+		for(Constructor<?> c : klass.getConstructors()) {
+			Class<?>[] a = c.getParameterTypes();
+			if(a.length == args.size()) {
+				//TODO arg typecheck
+				return new JavaConstructor(c);
+			}
+		}
+		return null;
 	}
 	
 	@Override public JavaMethod getMethod(String name, List<KClass> args) {
