@@ -8,6 +8,7 @@ public class KonohaGlue implements KonohaPackageInitializer {
 	public void init(CTX ctx, KonohaSpace ks) {
 		new ClassGlue().init(ctx, ks);
 		new FloatGlue().init(ctx, ks);
+		new AssignmentGlue().init(ctx, ks);//Joseph
 	}
 
 }

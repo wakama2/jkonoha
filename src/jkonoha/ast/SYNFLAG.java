@@ -1,6 +1,6 @@
 package jkonoha.ast;
 
-interface SYNFLAG {
+public interface SYNFLAG {//Joseph
 	int ExprTerm = 1;
 	int ExprOp   = 1 << 1;
 	int ExprLeftJoinOp2 = 1 << 2;

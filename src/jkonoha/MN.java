@@ -3,13 +3,13 @@ package jkonoha;
 import jkonoha.ast.KFLAG;
 
 public class MN {
-	static int ISBOOL = KFLAG.H0;
-	static int GETTER = KFLAG.H1;
-	static int SETTER = KFLAG.H2;
-	static int Annotation = (KFLAG.H1|KFLAG.H2);
+	public static int ISBOOL = KFLAG.H0;//Joseph
+	public static int GETTER = KFLAG.H1;
+	public static int SETTER = KFLAG.H2;
+	public static int Annotation = (KFLAG.H1|KFLAG.H2);
 
-	static int TOCID = (KFLAG.H0|KFLAG.H1);
-	static int ASCID = (KFLAG.H0|KFLAG.H1|KFLAG.H2);
+	public static int TOCID = (KFLAG.H0|KFLAG.H1);
+	public static int ASCID = (KFLAG.H0|KFLAG.H1|KFLAG.H2);
 
 	static boolean isISBOOL(int mn) {
 		return (SYM.HEAD(mn) == ISBOOL);
