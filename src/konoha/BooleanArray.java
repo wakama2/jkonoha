@@ -27,7 +27,7 @@ public class BooleanArray extends KObject {
 		this.barray[n] = b;
 	}
 	
-	public int getSize(int n) {
+	public int getSize() {
 		return this.capacity;
 	}
 	

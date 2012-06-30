@@ -1,6 +1,8 @@
 package konoha;
 
 import java.util.*;
+import jkonoha.compiler.*;
+
 import jkonoha.*;
 import jkonoha.ast.*;
 
@@ -45,6 +47,10 @@ public class ArrayGlue implements KonohaPackageInitializer {
 				bracketSyntax,
 		};
 		ks.defineSyntax(ctx, syndef);
+		ks.addClass("IntArray", JavaClass.create(IntArray.class));
+		ks.addClass("FloatArray", JavaClass.create(FloatArray.class));
+		ks.addClass("BooleanArray", JavaClass.create(BooleanArray.class));
+		ks.addClass("ObjectArray", JavaClass.create(ObjectArray.class));
 	}
 	
 }

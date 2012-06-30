@@ -20,7 +20,7 @@ public class ObjectArray extends KObject {
 		oarray.set(n, o);
 	}
 	
-	int getSize(int n) {
+	int getSize() {
 		return oarray.size();
 	}
 	
