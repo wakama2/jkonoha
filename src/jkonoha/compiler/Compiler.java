@@ -38,7 +38,9 @@ public class Compiler implements Opcodes {
 		
 		String[] argNames = mtd.getArgNames();
 		Type[] argTypes = mtd.getArgTypes();
-		//addLocal("this", Type.VOID_TYPE); // TODO this
+		if(!mtd.isStatic()) {
+			addLocal("this", mtd.getParent().getAsmType());
+		}
 		for(int i=0; i<argNames.length; i++) {
 			addLocal(argNames[i], argTypes[i]);
 		}

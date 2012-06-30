@@ -727,16 +727,15 @@ class VOIDSyntax extends Syntax {
 			argNames.add(e.tk.text);
 			argTypes.add(gamma.ks.getClass(ctx, t.text));
 		}
-		//present for joseph
 		String name = ((Token)stmt.getObject(KW.Symbol)).text;
 		KClass retty = gamma.ks.getClass(ctx, ((Token)stmt.getObject(KW.Type)).text);
-		int mod = KonohaMethod.ACC_STATIC;//TODO
+		int mod = KonohaMethod.ACC_FUNC;
 		if(name.equals("new")) {
 			name = "<init>";
 			retty = KClass.voidClass;
-			mod = KonohaMethod.ACC_FUNC;
 		}
 		Token defClass = (Token)stmt.getObject(KW.Usymbol);
+		if(defClass == null) mod = KonohaMethod.ACC_STATIC;
 		String defClassName = defClass == null ? "Script" : defClass.text;
 		KonohaClass klass = gamma.cc.getClass(defClassName);
 		KonohaMethod mtd = new KonohaMethod(klass, mod,

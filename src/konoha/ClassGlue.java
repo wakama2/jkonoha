@@ -1,6 +1,9 @@
 package konoha;
 
 import java.util.*;
+
+import org.objectweb.asm.Opcodes;
+
 import jkonoha.*;
 import jkonoha.ast.*;
 
@@ -53,13 +56,14 @@ public class ClassGlue implements KonohaPackageInitializer {
 					ctx.SUGAR_P(System.err, 0, -1,  "%s is final", supct.getName()); //TODO (...,0, -1, ...) is correct?
 					return false;
 				}
-				if(supct.isFinal()) {
-					ctx.SUGAR_P(System.err, 0, -1, "%s has undefined field(s)", supct.getName()); //TODO (...,0, -1, ...) is correct?
-					return false;
-				}
+//				if(supct.isDefined()) {
+//					ctx.SUGAR_P(System.err, 0, -1, "%s has undefined field(s)", supct.getName()); //TODO (...,0, -1, ...) is correct?
+//					return false;
+//				}
 			}
 			//KClass ct = defineClassName(ctx, gamma, gamma.ks, cflag, tkC.text, supcid, stmt.uline);
 			KonohaClass ct = new KonohaClass(tkC.text, supct, ifct.toArray(new KClass[0]));
+			ct.createDefaultConstructor();
 			gamma.cc.addClass(ct);
 			gamma.ks.addClass(tkC.text, ct);
 			tkC.kw = KW.Type;
@@ -72,10 +76,16 @@ public class ClassGlue implements KonohaPackageInitializer {
 	//		}
 			stmt.syntax = null;
 			for(Stmt s : bk.blocks) {
-				stmt.parentNULL.blocks.add(s);
+				if(s.syntax.kw.equals(KW.StmtTypeDecl)) {
+					Token tk = (Token)s.getObject(KW.Type);
+					Expr e = (Expr)s.getObject(KW.Expr);
+					String name = e.tk.text;
+					KClass type = s.parentNULL.ks.getClass(ctx, tk.text);
+					ct.addField(new KField(Opcodes.ACC_PUBLIC, name, type.getAsmType()));
+				} else {
+					stmt.parentNULL.blocks.add(s);
+				}
 			}
-	//		checkMethodDecl(ctx, tkC, bk);
-			
 			return true;
 		}
 		
