@@ -46,6 +46,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 	private final Syntax addasnSyntax = new Syntax("+=") {
 		{
 			this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
+			this.priority = 4096;
 		}
 
 		private int transformOprAssignment(CTX ctx, List<Token> tls, int s, int c, int e) {
