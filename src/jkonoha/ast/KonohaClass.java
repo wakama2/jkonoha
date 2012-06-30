@@ -7,6 +7,7 @@ import jkonoha.KField;
 import jkonoha.KMethod;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
@@ -26,6 +27,28 @@ public class KonohaClass extends KClass {
 		this.name = name;
 		this.superClass = superClass;
 		this.interfaceClass = interfaceClass;
+	}
+	
+	public void createDefaultValue() {
+		fields.add(new KField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "defaultValue", this.getAsmType()));
+		KonohaMethod m = new KonohaMethod(this, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "<clinit>", KClass.voidClass,
+				new String[0], new KClass[0]);
+		methods.add(m);
+		MethodVisitor mv = m.getNode();
+		mv.visitTypeInsn(Opcodes.NEW, name);
+		mv.visitInsn(Opcodes.DUP);
+		mv.visitMethodInsn(Opcodes.INVOKESPECIAL, name, "<init>", "()V");
+		mv.visitFieldInsn(Opcodes.PUTSTATIC, name, "defaultValue", "L"+name+";");
+		mv.visitInsn(Opcodes.RETURN);
+		mv.visitEnd();
+	}
+	
+	public void createDefaultConstructor() {
+		KonohaMethod m = new KonohaMethod(this, Opcodes.ACC_PUBLIC, "<init>", KClass.voidClass, new String[0], new KClass[0]);
+		methods.add(m);
+		MethodVisitor mv = m.getNode();
+		mv.visitInsn(Opcodes.RETURN);
+		mv.visitEnd();
 	}
 	
 	public KMethod getConstructor(List<KClass> args) {

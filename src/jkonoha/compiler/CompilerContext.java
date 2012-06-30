@@ -11,7 +11,6 @@ import jkonoha.ast.KonohaMethod;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 public class CompilerContext {
 	
@@ -21,6 +20,9 @@ public class CompilerContext {
 	private class KClassLoader extends ClassLoader {
 		@Override public Class<?> findClass(String name) {
 			KonohaClass klass = classMap.get(name);
+			if(klass == null) {
+				throw new RuntimeException("class not found: " + name);
+			}
 			byte[] b = genBytecode(klass);
 			return defineClass(name, b, 0, b.length);
 		}
