@@ -5,26 +5,37 @@ import jkonoha.KObject;
 
 public class BooleanArray extends KObject {
 	
-	boolean[] barray;
+	private boolean[] barray;
+	private int capacity;
 	
-	BooleanArray(int size) {
+	public BooleanArray(int size) {
 		this.barray = new boolean[size];
+		this.capacity = this.barray.length;
 	}
 	
-	boolean get(int n) {
-		return barray[n];
+	public static BooleanArray BooleanArray_new(int size) {
+		return new BooleanArray(size);
 	}
 	
-	void set(int n, boolean b) {
-		barray[n] = b;
+	public boolean get(int n) {
+		if(n >= this.capacity) throw new ArrayIndexOutOfBoundsException();
+		return this.barray[n];
 	}
 	
-	int getSize(int n) {
-		return barray.length;
+	public void set(int n, boolean b) {
+		if(n >= this.capacity) throw new ArrayIndexOutOfBoundsException();
+		this.barray[n] = b;
 	}
 	
-	void add(boolean b) {
-		barray = Arrays.copyOf(barray, barray.length + 1);
-		barray[barray.length - 1] = b;
+	public int getSize(int n) {
+		return this.capacity;
+	}
+	
+	public void add(boolean b) {
+		if(this.capacity == this.barray.length) {
+			this.barray = Arrays.copyOf(this.barray, this.barray.length * 2);
+		}
+		this.barray[this.capacity] = b;
+		this.capacity++;
 	}
 }

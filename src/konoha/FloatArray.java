@@ -5,26 +5,37 @@ import jkonoha.KObject;
 
 public class FloatArray extends KObject {
 	
-	float[] farray;
+	private float[] farray;
+	private int capacity;
 	
-	FloatArray(int size) {
+	public FloatArray(int size) {
 		this.farray = new float[size];
+		this.capacity = this.farray.length;
 	}
 	
-	float get(int n) {
-		return farray[n];
+	public static FloatArray FloatArray_new(int size) {
+		return new FloatArray(size);
 	}
 	
-	void set(int n, float f) {
-		farray[n] = f;
+	public float get(int n) {
+		if(n >= this.capacity) throw new ArrayIndexOutOfBoundsException();
+		return this.farray[n];
 	}
 	
-	int getSize(int n) {
-		return farray.length;
+	public void set(int n, float f) {
+		if(n >= this.capacity) throw new ArrayIndexOutOfBoundsException();
+		this.farray[n] = f;
 	}
 	
-	void add(float f) {
-		farray = Arrays.copyOf(farray, farray.length + 1);
-		farray[farray.length - 1] = f;
+	public int getSize(int n) {
+		return this.capacity;
+	}
+	
+	public void add(int f) {
+		if(this.capacity == this.farray.length) {
+			this.farray = Arrays.copyOf(this.farray, this.farray.length * 2);
+		}
+		this.farray[this.capacity] = f;
+		this.capacity++;
 	}
 }

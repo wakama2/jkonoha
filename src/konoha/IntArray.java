@@ -5,26 +5,37 @@ import jkonoha.KObject;
 
 public class IntArray extends KObject {
 	
-	int[] iarray;
+	private int[] iarray;
+	private int capacity;
 	
-	IntArray(int size) {
+	public IntArray(int size) {
 		this.iarray = new int[size];
+		this.capacity = this.iarray.length;
 	}
 	
-	int get(int n) {
-		return iarray[n];
+	public static IntArray IntArray_new(int size) {
+		return new IntArray(size);
 	}
 	
-	void set(int n, int i) {
-		iarray[n] = i;
+	public int get(int n) {
+		if(n >= this.capacity) throw new ArrayIndexOutOfBoundsException();
+		return this.iarray[n];
 	}
 	
-	int getSize(int n) {
-		return iarray.length;
+	public void set(int n, int i) {
+		if(n >= this.capacity) throw new ArrayIndexOutOfBoundsException();
+		this.iarray[n] = i;
 	}
 	
-	void add(int i) {
-		iarray = Arrays.copyOf(iarray, iarray.length + 1);
-		iarray[iarray.length - 1] = i;
+	public int getSize(int n) {
+		return this.capacity;
+	}
+	
+	public void add(int i) {
+		if(this.capacity == this.iarray.length) {
+			this.iarray = Arrays.copyOf(this.iarray, this.iarray.length * 2);
+		}
+		this.iarray[this.capacity] = i;
+		this.capacity++;
 	}
 }
