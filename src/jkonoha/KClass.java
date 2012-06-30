@@ -46,7 +46,7 @@ public abstract class KClass extends KObject {
 		throw new RuntimeException("not impl");
 	}
 	
-	public abstract KMethod getMethod(String name, KClass reqty);
+	public abstract KMethod getMethod(String name, List<KClass> args);
 	
 	public KClass getBaseClass() {
 		throw new RuntimeException("not impl");

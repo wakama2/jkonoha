@@ -307,7 +307,7 @@ public class Stmt extends KObject {
 		if(bkElse != null) {
 			if(bkElse.blocks.size() == 1) {
 				Stmt stmtIf = bkElse.blocks.get(0);
-				if(stmtIf.syntax.kw == KW._if) {
+				if(stmtIf.syntax.kw.equals(KW._if)) {
 					return stmtIf.lookupIfStmtWithoutElse(ctx);
 				}
 			}

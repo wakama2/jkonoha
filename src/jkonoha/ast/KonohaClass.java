@@ -5,7 +5,6 @@ import java.util.*;
 import jkonoha.KClass;
 import jkonoha.KField;
 import jkonoha.KMethod;
-import jkonoha.compiler.JavaClass;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
@@ -61,13 +60,17 @@ public class KonohaClass extends KClass {
 		return Type.getType("L" + name + ";");
 	}
 	
-	@Override public KMethod getMethod(String name, KClass reqty) {
+	@Override public KMethod getMethod(String name, List<KClass> args) {
 		for(KonohaMethod m : methods) {
 			if(m.getName().equals(name)) {
 				return m;
 			}
 		}
-		return superClass.getMethod(name, reqty);
+		return superClass.getMethod(name, args);
+	}
+	
+	@Override public String toString() {
+		return name;
 	}
 	
 	public void accept(ClassVisitor cv) {

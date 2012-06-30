@@ -2,6 +2,7 @@ package jkonoha.ast;
 
 import java.util.*;
 import jkonoha.*;
+import jkonoha.compiler.PrimitiveClass;
 
 public abstract class Syntax {
 	public String kw;   // id
@@ -324,12 +325,14 @@ class AST_ParenthesisSyntax extends Syntax {
 	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		Expr e = (Expr)expr.cons.get(0);
 		if(e.isTerm()) {
-			KClass k = ctx.scriptClass;
-			KMethod m = k.getMethod(e.tk.text, ty);
-			expr.cons.set(0, m);
+			List<KClass> argTypes = new ArrayList<KClass>();
 			for(int i=2; i<expr.cons.size(); i++) {
-				expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
+				Expr e1 = expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
+				argTypes.add(e1.ty);
 			}
+			KClass k = ctx.scriptClass;
+			KMethod m = k.getMethod(e.tk.text, argTypes);
+			expr.cons.set(0, m);
 			expr.cons.remove(1);
 			expr.build = TEXPR.CALL;
 			expr.ty = m.getReturnClass();
@@ -396,20 +399,6 @@ class ParamsSyntax extends Syntax {
 		return r;
 	}
 	
-	private Expr tyCheckCallParams(CTX ctx, Expr expr, KMethod mtd, Gamma gma, KClass reqty) {
-		int size = expr.cons.size();
-		for(int i=2; i<size; i++) {
-			Expr e = expr.tyCheckAt(ctx, i, gma, KClass.varClass, 0);
-			if(e == null) {
-				return null;
-			}
-		}
-		//TODO param check
-		expr.build = TEXPR.CALL;
-		expr.ty = mtd.getReturnClass();
-		return expr;
-	}
-	
 	private String checkMN(String mn) {
 		if(mn.equals("import")) {
 			return "_import";
@@ -421,20 +410,39 @@ class ParamsSyntax extends Syntax {
 	}
 	
 	private Expr lookupMethod(CTX ctx, Expr expr, KClass this_cid, Gamma gma, KClass reqty) {
-		//TODO
+		// method name
 		Token tk = (Token)expr.cons.get(0);
 		if(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL) {
 			tk.mn = tk.text;
 		}
 		String mn = checkMN(tk.mn);
 		KClass k = this_cid;
-		KMethod mtd = k.getMethod(mn, reqty);
-		if(mtd != null) {
-			expr.cons.set(0, mtd);
-			tyCheckCallParams(ctx, expr, mtd, gma, reqty);
-			return expr;
+		
+		// tycheck arguments
+		List<KClass> argTypes = new ArrayList<KClass>();
+		int size = expr.cons.size();
+		for(int i=2; i<size; i++) {
+			Expr e = expr.tyCheckAt(ctx, i, gma, KClass.varClass, 0);
+			argTypes.add(e.ty);
 		}
-		throw new RuntimeException("method not found: " + k.getName() + "." + mn);
+		Expr e1 = expr.at(1);
+		if(e1.syn.kw.equals(KW.Type) || e1.ty instanceof PrimitiveClass) {
+			argTypes.add(0, k);
+		}
+		
+		// create expr
+		if(mn.equals("new")) {
+			expr.build = TEXPR.NEW;
+		} else {
+			KMethod mtd = k.getMethod(mn, argTypes);
+			if(mtd == null) {
+				throw new RuntimeException("method not found: " + k.getName() + "." + mn + " " + argTypes);
+			}
+			expr.build = TEXPR.CALL;
+			expr.ty = mtd.getReturnClass();
+			expr.cons.set(0, mtd);
+		}
+		return expr;
 	}
 	
 	@Override public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -709,11 +717,9 @@ class VOIDSyntax extends Syntax {
 		//present for joseph
 		String name = ((Token)stmt.getObject(KW.Symbol)).text;
 		KClass retty = gamma.ks.getClass(ctx, ((Token)stmt.getObject(KW.Type)).text);
-//		KonohaClass klass = ctx.scriptClass; // class "A"
-		Token DefClass = (Token)stmt.getObject(KW.Usymbol);// "A" : stmt KW.USYMBOL -> Token
-		String DefClassName = DefClass.text;
-		KonohaClass klass = gamma.cc.getClass(DefClassName);//(KonohaClass)DefineClass.ty;//klass = class "A"
-		// gamma.cc.getClass("A")
+		Token defClass = (Token)stmt.getObject(KW.Usymbol);
+		String defClassName = defClass == null ? "Script" : defClass.text;
+		KonohaClass klass = gamma.cc.getClass(defClassName);
 		KonohaMethod mtd = new KonohaMethod(klass, KonohaMethod.ACC_STATIC,
 				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new KClass[0]));
 		klass.addMethod(mtd);

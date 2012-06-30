@@ -1,6 +1,8 @@
 package jkonoha.compiler;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import jkonoha.KClass;
 
@@ -54,16 +56,22 @@ public class JavaClass extends KClass {
 		return interfaces;
 	}
 	
-	@Override public JavaMethod getMethod(String name, KClass reqty) {
+	@Override public JavaMethod getMethod(String name, List<KClass> args) {
 		for(Method m : klass.getMethods()) {
-			if(m.getName().equals(name)) {
+			Class<?>[] a = m.getParameterTypes();
+			if(m.getName().equals(name) && a.length == args.size()) {
+				//TODO arg typecheck
 				return new JavaMethod(m);
 			}
 		}
 		if(superClass != null) {
-			return superClass.getMethod(name, reqty);
+			return superClass.getMethod(name, args);
 		}
 		return null;
+	}
+	
+	@Override public String toString() {
+		return klass.getName();
 	}
 	
 	@Override public boolean equals(Object o) {

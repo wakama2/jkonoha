@@ -1,5 +1,7 @@
 package jkonoha.compiler;
 
+import java.util.List;
+
 import org.objectweb.asm.Type;
 
 import jkonoha.KClass;
@@ -38,8 +40,13 @@ public class PrimitiveClass extends KClass {
 	}
 
 	@Override
-	public KMethod getMethod(String name, KClass reqty) {
-		return boxedClass.getMethod(name, reqty);
+	public KMethod getMethod(String name, List<KClass> args) {
+		return boxedClass.getMethod(name, args);
+	}
+	
+	@Override
+	public String toString() {
+		return klass.toString();
 	}
 
 }
