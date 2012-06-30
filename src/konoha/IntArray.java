@@ -27,7 +27,7 @@ public class IntArray extends KObject {
 		this.iarray[n] = i;
 	}
 	
-	public int getSize(int n) {
+	public int getSize() {
 		return this.capacity;
 	}
 	
