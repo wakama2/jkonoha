@@ -468,7 +468,8 @@ public abstract class Tokenizer {
 			int ch, level = 1, pos = tok_start + 1;
 			Tokenizer[] fmat = tenv.fmat;
 //			tk.lpos += 1;
-			while((ch = kchar(tenv.source, pos)) != 0) {
+			while(pos < tenv.source.length()) {
+				ch = kchar(tenv.source, pos);
 				if(ch == _RBR/*}*/) {
 					level--;
 					if(level == 0) {
