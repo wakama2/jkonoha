@@ -9,11 +9,12 @@ public class BooleanArray extends KObject {
 	private int capacity;
 	
 	public BooleanArray(int size) {
+		this.capacity = size;
+		if(size < 10) size = 10;
 		this.barray = new boolean[size];
-		this.capacity = this.barray.length;
 	}
 	
-	public static BooleanArray BooleanArray_new(int size) {
+	public static BooleanArray newArray(int size) {
 		return new BooleanArray(size);
 	}
 	

@@ -9,11 +9,12 @@ public class IntArray extends KObject {
 	private int capacity;
 	
 	public IntArray(int size) {
+		this.capacity = size;
+		if(size < 10) size = 10;
 		this.iarray = new int[size];
-		this.capacity = this.iarray.length;
 	}
 	
-	public static IntArray IntArray_new(int size) {
+	public static IntArray newArray(int size) {
 		return new IntArray(size);
 	}
 	

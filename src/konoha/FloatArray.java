@@ -9,11 +9,12 @@ public class FloatArray extends KObject {
 	private int capacity;
 	
 	public FloatArray(int size) {
+		this.capacity = size;
+		if(size < 10) size = 10;
 		this.farray = new float[size];
-		this.capacity = this.farray.length;
 	}
 	
-	public static FloatArray FloatArray_new(int size) {
+	public static FloatArray newArray(int size) {
 		return new FloatArray(size);
 	}
 	

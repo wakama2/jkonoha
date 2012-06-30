@@ -6,25 +6,29 @@ import jkonoha.KObject;
 
 public class ObjectArray extends KObject {
 	
-	List<Object> oarray;
+	private List<Object> oarray;
 	
-	ObjectArray(int size) {
+	public ObjectArray(int size) {
 		this.oarray = new ArrayList<Object>(size);
 	}
 	
-	Object get(int n) {
+	public static ObjectArray newArray(int size) {
+		return new ObjectArray(size);
+	}
+	
+	public Object get(int n) {
 		return oarray.get(n);
 	}
 	
-	void set(int n, Object o) {
+	public void set(int n, Object o) {
 		oarray.set(n, o);
 	}
 	
-	int getSize() {
+	public int getSize() {
 		return oarray.size();
 	}
 	
-	void add(Object o) {
+	public void add(Object o) {
 		oarray.add(o);
 	}
 }
