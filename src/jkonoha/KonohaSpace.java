@@ -205,6 +205,7 @@ public class KonohaSpace extends KObject {
 	}
 
 	public KObject eval(CTX ctx, String script, long uline) {
+		ctx.gamma = new Gamma();
 		ctx.gamma.ks = this;
 		List<Token> tls = new ArrayList<Token>();
 		int pos = tls.size();
@@ -215,7 +216,7 @@ public class KonohaSpace extends KObject {
 	}
 
 	private KObject evalBlock(CTX ctx, Block bk) {
-		CompilerContext cc = new CompilerContext(ctx);
+		CompilerContext cc = ctx.cc;
 		ctx.gamma.cc = cc;
 		if(!bk.tyCheckAll(ctx, ctx.gamma)) return null;
 		cc.evalBlock(bk);

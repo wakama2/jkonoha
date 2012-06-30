@@ -29,7 +29,12 @@ public class KonohaClass extends KClass {
 	}
 	
 	public KMethod getConstructor(List<KClass> args) {
-		throw new RuntimeException("not impl");
+		for(KonohaMethod m : methods) {
+			if(m.getName().equals("<init>") && m.getArgClasses().length == args.size()) {
+				return m;
+			}
+		}
+		throw new RuntimeException("constructor not found");
 	}
 	
 	public void addMethod(KonohaMethod m) {

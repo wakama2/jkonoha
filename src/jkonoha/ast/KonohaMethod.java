@@ -9,6 +9,7 @@ import org.objectweb.asm.tree.MethodNode;
 public class KonohaMethod extends KMethod {
 	
 	public static final int ACC_STATIC = Opcodes.ACC_STATIC | Opcodes.ACC_PUBLIC;
+	public static final int ACC_FUNC = Opcodes.ACC_PUBLIC;
 	
 	private final KClass parent;
 	private final int access;
@@ -26,6 +27,11 @@ public class KonohaMethod extends KMethod {
 		this.argNames = argNames;
 		this.argTypes = argTypes;
 		this.node = new MethodNode(Opcodes.ASM4, access, name, retType.getAsmType().getDescriptor(), null/*generics*/, null/*throws*/);
+		
+		if(name.equals("<init>")) {
+			node.visitIntInsn(Opcodes.ALOAD, 0);
+			node.visitMethodInsn(Opcodes.INVOKESPECIAL, parent.getSuperClass().getName().replace(".", "/"), "<init>", "()V");
+		}
 	}
 	
 	@Override public KClass getParent() {
@@ -63,6 +69,7 @@ public class KonohaMethod extends KMethod {
 	}
 	
 	@Override public int getCallIns() {
+		if(name.equals("<init>")) return Opcodes.INVOKESPECIAL;
 		if(isStatic()) return Opcodes.INVOKESTATIC;
 		else return Opcodes.INVOKEVIRTUAL;
 	}

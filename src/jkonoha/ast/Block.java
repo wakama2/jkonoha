@@ -29,7 +29,7 @@ public class Block extends KObject {
 			}
 			if(!syn.stmtTyCheck(ctx, stmt, gamma)) {
 				result = false;
-				break;
+				//break;//FIXME
 			}
 		}
 		return result;

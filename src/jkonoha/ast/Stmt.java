@@ -339,7 +339,7 @@ public class Stmt extends KObject {
 				if(tk.topch == '(' && tkP.tt == TK.USYMBOL && cname.equals(tkP.text)) {
 					Token tkNEW = new Token();
 					tkNEW.tt = TK.SYMBOL;
-					tkNEW.text = KW.Expr;//SYM_s(ctx, 1);//TODO
+					tkNEW.text = KW._new;
 					tkNEW.uline = tkP.uline;
 					a.add(tkNEW);
 				}

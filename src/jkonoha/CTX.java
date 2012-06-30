@@ -3,6 +3,7 @@ package jkonoha;
 import java.io.PrintStream;
 
 import jkonoha.ast.*;
+import jkonoha.compiler.CompilerContext;
 
 public class CTX extends KObject {
 	
@@ -10,12 +11,14 @@ public class CTX extends KObject {
 	public final boolean debug;
 	
 	public final KonohaSpace ks;
-	public Gamma gamma = new Gamma();
+	public Gamma gamma;
+	public CompilerContext cc;
 	public KonohaClass scriptClass = new KonohaClass("Script", KClass.objectClass, new KClass[0]);
 	
 	public CTX() {
 		this.ks = new KonohaSpace();
 		this.debug = System.getenv(ENV_DEBUG) != null;
+		this.cc = new CompilerContext(this);
 		ks.defineDefaultSyntax(this);
 	}
 
