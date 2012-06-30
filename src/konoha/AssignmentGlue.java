@@ -65,9 +65,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			tkNewOp = new Token();
 			tmp = tls.get(c);
 			String opr = tmp.text;
-			int osize = tmp.text.length();
-			int j = 0;
-			String newopr = opr;//TODO
+			String newopr = opr;
 			setToken(tkNewOp, newopr, tmp.tt, tmp.topch, newopr);
 			
 			tkNew = new Token();
@@ -94,6 +92,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			tls.add(tkNewOp);
 			
 			tkNew = new Token();
+			i = c+1;
 			while (i < news) {
 				tkNew = new Token();
 				tmp = tls.get(i);
