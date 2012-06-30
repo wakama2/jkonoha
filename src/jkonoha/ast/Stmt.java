@@ -44,6 +44,7 @@ public class Stmt extends KObject {
 		if (s < e) {
 			Syntax[] syn = new Syntax[]{null};
 			int idx = findBinaryOp(ctx, tls, s, e, syn);
+			System.out.println("idx = "+idx);
 			if (idx != -1) {
 				ctx.DBG_P("** Found BinaryOp: s=%d, idx=%d, e=%d, '%s'**",
 						s, idx, e, tls.get(idx).toString());
