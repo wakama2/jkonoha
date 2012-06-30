@@ -82,18 +82,6 @@ public class WhileGlue implements KonohaPackageInitializer {
 		
 	};
 
-
-	
-	public	Boolean initPackage(CTX ctx, KonohaSpace ks, int argc, String[] args, long pline)
-	{
-		return true;
-	}
-
-	public Boolean setupPackage(CTX ctx, KonohaSpace ks, long pline)
-	{
-		return true;
-	}
-
 	// --------------------------------------------------------------------------
 	
 	@Override
@@ -105,10 +93,5 @@ public class WhileGlue implements KonohaPackageInitializer {
 				forSyntax,
 		};
 		ks.defineSyntax(ctx, syndef);
-	}
-
-	public Boolean setupKonohaSpace(CTX ctx, KonohaSpace ks, long pline)
-	{
-		return true;
 	}
 }
