@@ -21,14 +21,14 @@ public class ArrayGlue implements KonohaPackageInitializer {
 				if(lexpr == null) {
 					return lexpr;
 				}
-				if(lexpr.syn.kw == KW._new) { // new int[100]
+				if(lexpr.syn.kw.equals(KW._new)) { // new int[100]
 					lexpr.syn = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall);
 					lexpr = stmt.addExprParams(ctx, lexpr, tkBRACKET.sub, 0, tkBRACKET.sub.size(), false/* allowEmpty */);
 				}
 				else { // X[1] => get X 1
 					Token tkN = new Token();
 					tkN.tt = TK.MN;
-					//tkN->mn = MN_toGETTER(0);  TODO
+					tkN.mn = "get";
 					tkN.uline = tkBRACKET.uline;
 					Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW.ExprMethodCall);
 					Expr expr = new Expr(ctx, syn, tkN, tkN.ty, 0);

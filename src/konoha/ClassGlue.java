@@ -144,26 +144,29 @@ public class ClassGlue implements KonohaPackageInitializer {
 
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {//Joseph
-			//in /package/konoha/class_glue.h:271
-			Object o = expr.cons.get(0);
-			Token tkN;
-			if (o instanceof Token) {
-				tkN = (Token)o;
-				//int fn = tosymbolUM(ctx, tkN);//TODO
-				Expr self = expr.tyCheckAt(ctx, 1, gamma, ty.varClass, 0);
-				if (self != null) {
-	//				KonohaClass klass = ctx.scriptClass;
-	//				KonohaMethod mtd = (KonohaMethod)klass.getMethod(MN_toGETTER(fn), self.ty);//TODO
-	//				if (mtd == null) {
-	//					mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty);//TODO
-	//				}
-	//				if (mtd != null) {
-	//					expr.cons.set(0, mtd);
-	//					return expr.tyCheckCallParams(ctx, stmt, mtd, gamma, reqty);//TODO
-	//				}
+			Token tkN = (Token)expr.cons.get(0);
+			String fn = tkN.mn; // tkN.text ?
+			Expr self = expr.tyCheckAt(ctx, 1, gamma, KClass.varClass, 0);
+			if (self != null) {
+				List<KClass> args = new ArrayList<KClass>(1);
+				args.set(0, KClass.intClass);
+				KMethod mtd = self.ty.getMethod("get", args);
+				if (mtd == null) {
+					//						mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty); TODO
+					mtd = self.ty.getMethod("get", args);
 				}
-				System.out.println("undefined field: " + tkN.text);
+				if (mtd != null) {
+					expr.cons.set(0, mtd);
+					int size = expr.cons.size();
+					for(int i = 2; i < size; i++) {
+						Expr texpr = expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
+						if(texpr == null) {
+							return texpr;
+						}
+					}
+				}
 			}
+			System.out.println("undefined field: " + tkN.text);
 			return null;
 		}
 //		private void tosymbolUM (CTX ctx, Token tk) {//TODO
