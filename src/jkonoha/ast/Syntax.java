@@ -15,27 +15,41 @@ public abstract class Syntax {
 	public String op2;
 	public String op1;
 	
+	public Syntax parent = null;
+	
 	public Syntax(String kw) {
 		this.kw = kw;
 	}
 	
 	public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 		//TODO undefinedParseExpr ast.h:518
+		if(parent != null) {
+			return parent.parseExpr(ctx, stmt, tls, s, c, e);
+		}
 		throw new RuntimeException("parseExpr");
 	}
 	
 	public int parseStmt(CTX ctx, Stmt stmt, String name, List<Token> tls, int s, int e) {
 		//TODO default parseStmt?
+		if(parent != null) {
+			return parent.parseStmt(ctx, stmt, name, tls, s, e);
+		}
 		throw new RuntimeException("parseStmt");
 	}
 
 	public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 		//TODO tycheck.h:107
+		if(parent != null) {
+			return parent.exprTyCheck(ctx, expr, gamma, ty);
+		}
 		throw new RuntimeException("exprTyCheck");
 	}
 	
 	public boolean stmtTyCheck(CTX ctx, Stmt stmt, Gamma gamma) {
 		//TODO undefinedStmtTyCheck tycheck.h:734
+		if(parent != null) {
+			return parent.stmtTyCheck(ctx, stmt, gamma);
+		}
 		throw new RuntimeException("stmtTyCheck");
 	}
 	
