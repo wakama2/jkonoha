@@ -120,7 +120,6 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			KArray.clear(tls, atop);
 			return expr;
 		}
-
 	};
 
 	private final Syntax subasnSyntax = new OpSyntax("-=") {
