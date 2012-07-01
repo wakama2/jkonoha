@@ -40,7 +40,7 @@ public interface KW {
 	String OR      = "OR";
 	String NOT     = "NOT";
 //	String COLON  = (15+DOT);
-	String LET     = "LET";
+	String LET     = "=";//Joseph
 	String COMMA   = ",";
 	String DOLLAR  = "$";
 
