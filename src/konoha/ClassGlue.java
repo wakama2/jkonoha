@@ -6,6 +6,7 @@ import org.objectweb.asm.Opcodes;
 
 import jkonoha.*;
 import jkonoha.ast.*;
+import jkonoha.compiler.JavaClass;
 
 public class ClassGlue implements KonohaPackageInitializer {
 	
@@ -26,9 +27,11 @@ public class ClassGlue implements KonohaPackageInitializer {
 				}
 				if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_BRANCET) {     // new C [...]
 					Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW._new);
-					KClass ct = KClass.arrayClass;//CT_p0(ctx, CT_Array, tk1.ty);//TODO
+//					KClass ct = KClass.arrayClass;//CT_p0(ctx, CT_Array, tk1.ty);//TODO
+					KClass ct = JavaClass.create(IntArray.class);//CT_p0(ctx, CT_Array, tk1.ty);//TODO
 					tkNEW.setmn("newArray", MNTYPE.method);
 					Expr nexpr = new Expr(ctx, syn, tk1, ct, 0); //TODO cid : unsigned int
+					nexpr.build = TEXPR.CALL;
 					Expr expr = new Expr(syn);
 					expr.setCons(tkNEW, nexpr);
 					return expr;
