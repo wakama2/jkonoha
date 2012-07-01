@@ -18,6 +18,23 @@ public class Konoha {
 	public KObject eval(CTX ctx, String source) {
 		return ctx.ks.eval(ctx, source, 0);
 	}
+
+//	KClass addClassDef(CTX ctx, int packid, int packdom, String name, KDEFINE_CLASS cdef, long pline)
+//	{
+//		 KClass ct = new_CT(_ctx, NULL, cdef, pline);
+//		ct.packid  = packid;
+//		ct.packdom = packdom;
+//		if(name == null) {
+//			String n = cdef.structname;
+//			assert(n != null); // structname must be set;
+//			ct.nameid = ksymbolSPOL(n, strlen(n), SPOL_ASCII|SPOL_POOL|SPOL_TEXT, _NEWID);
+//		}
+//		else {
+//			ct.nameid = ksymbolA(S_text(name), S_size(name), _NEWID);
+//		}
+//		CT_setName(_ctx, ct, pline);
+//		return ct;
+//	}
 	
 	public void loadScript(String path) {
 		loadScript(defaultCtx, path);
