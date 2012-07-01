@@ -192,7 +192,14 @@ public class KonohaSpace extends KObject {
 				syn.syntaxRuleNULL = new ArrayList<Token>();
 				parseSyntaxRule(ctx, syn.rule, 0, syn.syntaxRuleNULL);
 			}
-			syn.parent = syntaxMapNN.get(syn.kw);
+			Syntax old =  syntaxMapNN.get(syn.kw);
+			syn.parent = old;
+			if(old != null) {
+				if(syn.op1 == null) syn.op1 = old.op1;
+				if(syn.op2 == null) syn.op2 = old.op2;
+				if(syn.ty == null)  syn.ty = old.ty;
+				if(syn.priority <= 0) syn.priority = old.priority;
+			}
 			syntaxMapNN.put(syn.kw, syn);
 		}
 	}

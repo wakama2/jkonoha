@@ -9,6 +9,10 @@ import jkonoha.ast.*;
 public class ArrayGlue implements KonohaPackageInitializer {
 	
 	private final Syntax bracketSyntax = new Syntax("[]") {
+		{
+			this.flag = SYNFLAG.ExprPostfixOp2;
+			this.priority = 16;
+		}
 		@Override
 		public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 			Token tkBRACKET = tls.get(c);

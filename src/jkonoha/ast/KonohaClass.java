@@ -29,8 +29,16 @@ public class KonohaClass extends KClass {
 		this.interfaceClass = interfaceClass;
 	}
 	
+	public static String toGetter(String name) {
+		return name + "$get";
+	}
+	
+	public static String toSetter(String name) {
+		return name + "$set";
+	}
+	
 	public void createDefaultValue() {
-		fields.add(new KField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "defaultValue", this.getAsmType()));
+		fields.add(new KField(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL, "defaultValue", this));
 		KonohaMethod m = new KonohaMethod(this, Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, "<clinit>", KClass.voidClass,
 				new String[0], new KClass[0]);
 		methods.add(m);
@@ -73,6 +81,27 @@ public class KonohaClass extends KClass {
 	
 	public void addField(KField f) {
 		fields.add(f);
+		
+		// create getter/setter
+		{
+			String mn = toGetter(f.getName());
+			KonohaMethod m = new KonohaMethod(this, Opcodes.ACC_PUBLIC, mn, f.getReturnClass(), new String[0], new KClass[0]);
+			addMethod(m);
+			MethodVisitor mv = m.getNode();
+			mv.visitVarInsn(Opcodes.ALOAD, 0);
+			mv.visitFieldInsn(Opcodes.GETFIELD, name, f.getName(), f.getReturnClass().getAsmType().getDescriptor());
+			mv.visitInsn(f.getReturnClass().getAsmType().getOpcode(Opcodes.IRETURN));
+		}
+		{
+			String mn = toSetter(f.getName());
+			KonohaMethod m = new KonohaMethod(this, Opcodes.ACC_PUBLIC, mn, KClass.voidClass, new String[]{"v"}, new KClass[]{f.getReturnClass()});
+			addMethod(m);
+			MethodVisitor mv = m.getNode();
+			mv.visitVarInsn(Opcodes.ALOAD, 0);
+			mv.visitVarInsn(f.getReturnClass().getAsmType().getOpcode(Opcodes.ILOAD), 1);
+			mv.visitFieldInsn(Opcodes.PUTFIELD, name, f.getName(), f.getReturnClass().getAsmType().getDescriptor());
+			mv.visitInsn(Opcodes.RETURN);
+		}
 	}
 	
 	/* split by dot (java.lang.String) */
@@ -99,6 +128,26 @@ public class KonohaClass extends KClass {
 			}
 		}
 		return superClass.getMethod(name, args);
+	}
+	
+	@Override public KMethod getGetter(String fn) {
+		String mn = toGetter(fn);
+		for(KonohaMethod m : methods) {
+			if(m.getName().equals(mn)) {
+				return m;
+			}
+		}
+		throw new RuntimeException("not found");
+	}
+	
+	@Override public KMethod getSetter(String fn) {
+		String mn = toSetter(fn);
+		for(KonohaMethod m : methods) {
+			if(m.getName().equals(mn)) {
+				return m;
+			}
+		}
+		throw new RuntimeException("not found");
 	}
 	
 	@Override public String toString() {

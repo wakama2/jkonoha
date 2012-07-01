@@ -82,6 +82,14 @@ public class JavaClass extends KClass {
 		return null;
 	}
 	
+	@Override public KMethod getGetter(String fn) {
+		throw new RuntimeException("not impl");
+	}
+	
+	@Override public KMethod getSetter(String fn) {
+		throw new RuntimeException("not impl");
+	}
+	
 	@Override public String toString() {
 		return klass.getName();
 	}

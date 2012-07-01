@@ -27,7 +27,7 @@ public class ClassGlue implements KonohaPackageInitializer {
 				if(tk1.kw.equals(KW.Type) && tk2.tt == TK.AST_BRANCET) {     // new C [...]
 					Syntax syn = stmt.parentNULL.ks.syntax(ctx, KW._new);
 					KClass ct = KClass.arrayClass;//CT_p0(ctx, CT_Array, tk1.ty);//TODO
-					tkNEW.setmn("newArray", jkonoha.MNTYPE.method);
+					tkNEW.setmn("newArray", MNTYPE.method);
 					Expr nexpr = new Expr(ctx, syn, tk1, ct, 0); //TODO cid : unsigned int
 					Expr expr = new Expr(syn);
 					expr.setCons(tkNEW, nexpr);
@@ -61,7 +61,6 @@ public class ClassGlue implements KonohaPackageInitializer {
 //					return false;
 //				}
 			}
-			//KClass ct = defineClassName(ctx, gamma, gamma.ks, cflag, tkC.text, supcid, stmt.uline);
 			KonohaClass ct = new KonohaClass(tkC.text, supct, ifct.toArray(new KClass[0]));
 			ct.createDefaultConstructor();
 			gamma.cc.addClass(ct);
@@ -81,7 +80,7 @@ public class ClassGlue implements KonohaPackageInitializer {
 					Expr e = (Expr)s.getObject(KW.Expr);
 					String name = e.tk.text;
 					KClass type = s.parentNULL.ks.getClass(ctx, tk.text);
-					ct.addField(new KField(Opcodes.ACC_PUBLIC, name, type.getAsmType()));
+					ct.addField(new KField(Opcodes.ACC_PUBLIC, name, type));
 				} else {
 					stmt.parentNULL.blocks.add(s);
 				}
@@ -121,60 +120,31 @@ public class ClassGlue implements KonohaPackageInitializer {
 			this.priority = 16;
 		}
 
-		private boolean isFileName(List<Token> tls, int c, int e){
-			if(c+1 < e) {
-				Token tk = tls.get(c+1);
-				return (tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
-			}
-			return false;
-		}
-		
-		@Override public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
-			//DBG_P("s=%d, c=%d", s, c);
-			assert(s < c);
-			if(isFileName(tls, c, e)) {
-				Expr expr = stmt.newExpr2(ctx, tls, s, c);
-				Expr expr2 = new Expr(this);
-				expr2.setCons(tls.get(c+1), expr);
-				return expr2;
-			}
-			if(c + 1 < e) c++;
-			return null;
-		}
-
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {//Joseph
+			//in /package/konoha/class_glue.h:271
 			Token tkN = (Token)expr.cons.get(0);
-			String fn = tkN.mn; // tkN.text ?
+			String fn = tkN.text;
 			Expr self = expr.tyCheckAt(ctx, 1, gamma, KClass.varClass, 0);
 			if (self != null) {
-				List<KClass> args = new ArrayList<KClass>(1);
-				args.set(0, KClass.intClass);
-				KMethod mtd = self.ty.getMethod("get", args);
-				if (mtd == null) {
-					//						mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty); TODO
-					mtd = self.ty.getMethod("get", args);
-				}
+				KMethod mtd = self.ty.getGetter(fn);
+//				if (mtd == null) {
+//					mtd = (KonohaMethod)klass.getMethod(MN_toISBOOL(fn), self.ty);//TODO
+//				}
 				if (mtd != null) {
 					expr.cons.set(0, mtd);
 					int size = expr.cons.size();
-					for(int i = 2; i < size; i++) {
-						Expr texpr = expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
-						if(texpr == null) {
-							return texpr;
-						}
+					for(int i=2; i<size; i++) {
+						expr.tyCheckAt(ctx, i, gamma, KClass.varClass, 0);
 					}
+					expr.build = TEXPR.CALL;
+					return expr;
 				}
 			}
 			System.out.println("undefined field: " + tkN.text);
 			return null;
 		}
-//		private void tosymbolUM (CTX ctx, Token tk) {//TODO
-//			assert(tk.tt == TK.SYMBOL || tk.tt == TK.USYMBOL || tk.tt == TK.MSYMBOL);
-//			return ctx.Ksymbol2(tk.text);//TODO in src/konoha/klibexec.h: 339
-//		}
 	};
-	
 	
 	@Override
 	public void init(CTX ctx, KonohaSpace ks) {

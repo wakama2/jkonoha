@@ -7,16 +7,24 @@ public class KField extends KObject {
 	
 	private final int access;
 	private final String name;
-	private final Type type;
+	private final KClass type;
 	
-	public KField(int access, String name, Type type) {
+	public KField(int access, String name, KClass type) {
 		this.access = access;
 		this.name = name;
 		this.type = type;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
+	public KClass getReturnClass() {
+		return type;
+	}
+	
 	public void accept(ClassVisitor cv) {
-		cv.visitField(access, name, type.getDescriptor(), null/*generics*/, null/*value*/);
+		cv.visitField(access, name, type.getAsmType().getDescriptor(), null/*generics*/, null/*value*/);
 	}
 	
 }

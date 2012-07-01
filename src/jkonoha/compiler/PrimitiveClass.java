@@ -48,6 +48,14 @@ public class PrimitiveClass extends KClass {
 		return boxedClass.getMethod(name, args);
 	}
 	
+	@Override public KMethod getGetter(String fn) {
+		throw new RuntimeException("not impl");
+	}
+	
+	@Override public KMethod getSetter(String fn) {
+		throw new RuntimeException("not impl");
+	}
+	
 	@Override
 	public String toString() {
 		return klass.toString();
