@@ -175,9 +175,8 @@ public abstract class Tokenizer {
 	public static final Tokenizer parseINDENT = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos) {
 			while(true) {
-				pos++;
 				if(pos >= tenv.source.length()) break;
-				/*int ch = */tenv.source.charAt(pos);
+				/*int ch = */tenv.source.charAt(pos++);
 //				if(ch == '\t') { c += tenv.indent_tab; }
 //				else if(ch == ' ') { c += 1; }
 				break;
@@ -203,9 +202,8 @@ public abstract class Tokenizer {
 			int ch, pos = tok_start, dot = 0;
 			String ts = tenv.source;
 			while(true) {
-				pos++;
 				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+				if((ch = ts.charAt(pos++)) == 0) break;
 				if(ch == '_') continue; // nothing
 				if(ch == '.') {
 					if(!Character.isDigit(ts.charAt(pos))) {
@@ -236,9 +234,8 @@ public abstract class Tokenizer {
 			String ts = tenv.source;
 //			while((ch = ts.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+				if((ch = ts.charAt(pos++)) == 0) break;
 				if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
 				break;
 			}
@@ -259,9 +256,8 @@ public abstract class Tokenizer {
 			String ts = tenv.source;
 //			while((ch = ts.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+				if((ch = ts.charAt(pos++)) == 0) break;
 				if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
 				break;
 			}
@@ -282,9 +278,8 @@ public abstract class Tokenizer {
 			String ts = tenv.source;
 //			while((ch = ts.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+				if((ch = ts.charAt(pos++)) == 0) break;
 				if(!(ch < 0)) break;
 			}
 			Token rtk = tk;
@@ -316,9 +311,8 @@ public abstract class Tokenizer {
 			int ch, pos = tok_start;
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if((ch = tenv.source.charAt(pos++)) == 0) break;
 				if(Character.isLetter(ch)) break;
 				switch(ch) {
 				case '<': case '>': case '@': case '$': case '#':
@@ -349,9 +343,8 @@ public abstract class Tokenizer {
 			int ch, pos = tok_start;
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if((ch = tenv.source.charAt(pos++)) == 0) break;
 				if(ch == '\n') break;
 			}
 //			return pos - 1;/*EOF*/
@@ -370,9 +363,8 @@ public abstract class Tokenizer {
 			}
 //			while((ch = tenv.source.charAt(pos++)) != 0) {
 			while(true) {
-				pos++;
 				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+				if((ch = tenv.source.charAt(pos++)) == 0) break;
 				if(ch == '\n') {
 					tenv.uline += 1;
 				}

@@ -303,6 +303,10 @@ public class Compiler implements Opcodes {
 				KBoolean i = (KBoolean)expr.data;
 				loadConst(i.unbox());
 				typeStack.push(Type.BOOLEAN_TYPE);
+			} else if(expr.data instanceof KFloat) {
+				KFloat i = (KFloat)expr.data;
+				loadConst(i.unbox());
+				typeStack.push(Type.DOUBLE_TYPE);
 			} else if(expr.data instanceof KString) {
 				KString s = (KString)expr.data;
 				loadConst(s.unbox());
