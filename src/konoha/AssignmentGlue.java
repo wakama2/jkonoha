@@ -5,12 +5,13 @@ import java.util.*;
 import jkonoha.*;
 import jkonoha.ast.*;
 
-//author Joseph
-
 public class AssignmentGlue implements KonohaPackageInitializer {
 
 	private final Syntax asnSyntax = new OpSyntax("=") {
-
+		{
+			this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
+			this.priority = 4096;
+		}
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 			// porting package/konoha/assignment_glue.h:ExprTyCheck_assignment
@@ -66,9 +67,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			tkNewOp = new Token();
 			tmp = tls.get(c);
 			String opr = tmp.text;
-			int osize = tmp.text.length();
-			int j = 0;
-			String newopr = opr;//TODO
+			String newopr = opr.substring(0,opr.length()-1);
 			setToken(tkNewOp, newopr, tmp.tt, tmp.topch, newopr);
 
 			tkNew = new Token();
@@ -112,17 +111,13 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			tk.kw = k;
 		}
 		@Override
-		public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s,
-				int c, int e) {
-			// TODO Auto-generated method stub
+		public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 			int atop = tls.size();
-			System.out.println("s = "+s+", c = "+c+", e = "+e);
-			s = transformOprAssignment(ctx, tls, s, c, e);//TODO
+			s = transformOprAssignment(ctx, tls, s, c, e);
 			Expr expr = stmt.newExpr2(ctx, tls, s, tls.size());
 			KArray.clear(tls, atop);
 			return expr;
 		}
-
 	};
 
 	private final Syntax subasnSyntax = new OpSyntax("-=") {

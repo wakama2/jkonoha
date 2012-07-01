@@ -48,7 +48,8 @@ public class Compiler implements Opcodes {
 	
 	private Local addLocal(String name, Type type) {
 		if(locals.containsKey(name)) {
-			throw new CodeGenException("duplicate local variable: " + name);
+			//throw new CodeGenException("duplicate local variable: " + name);
+			return	locals.get(name);
 		}
 		int size = type.getSize();
 		//System.out.println(type + " size = " + size);
