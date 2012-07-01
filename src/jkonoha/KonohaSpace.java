@@ -87,7 +87,7 @@ public class KonohaSpace extends KObject {
 		defineSyntax(ctx, Syntax.defaultSyntax);
 	}
 	
-	public Syntax syntax(CTX ctx, String kw) {
+	public Syntax syntax(CTX ctx, String kw) {//Joseph Syntax parent is not null. kw = KW_LET 
 		KonohaSpace ks0 = this;
 		KonohaSpace ks = ks0;
 		while(ks != null) {

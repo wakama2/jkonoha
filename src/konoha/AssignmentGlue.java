@@ -66,18 +66,18 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			tkNewOp = new Token();
 			tmp = tls.get(c);
 			String opr = tmp.text;
-			String newopr = opr;
+			String newopr = opr.substring(0,opr.length()-1);
 			setToken(tkNewOp, newopr, tmp.tt, tmp.topch, newopr);
 			
 			tkNew = new Token();
-			setToken(tkNew, "=", 1, TK.OPERATOR, "=");
+			setToken(tkNew, "=", TK.OPERATOR, '=', KW.LET);//TODO
 			tls.add(tkNew);
 			newc = tls.size() - 1;
 			
 			Token newtk = new Token();
 			tkHead = tls.get(e+1);
 			newtk.tt = TK.AST_PARENTHESIS;
-			newtk.kw = KW.TK_KW[TK.AST_PARENTHESIS | (KFLAG.H0 | KFLAG.H1 | KFLAG.H2)];
+			newtk.kw = KW.TK_KW[TK.AST_PARENTHESIS];
 			newtk.uline = tkHead.uline;
 			newtk.sub = new ArrayList<Token>();
 			i = news;
@@ -114,7 +114,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 				int c, int e) {
 			// TODO Auto-generated method stub
 			int atop = tls.size();
-			s = transformOprAssignment(ctx, tls, s, c, e);//TODO
+			s = transformOprAssignment(ctx, tls, s, c, e);
 			Expr expr = stmt.newExpr2(ctx, tls, s, tls.size());
 			KArray.clear(tls, atop);
 			return expr;
