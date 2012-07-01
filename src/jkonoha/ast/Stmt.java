@@ -262,7 +262,7 @@ public class Stmt extends KObject {
 		if(!allowEmpty || start < i) {
 			expr = expr.add(ctx, newExpr2(ctx, tls, start, i));
 		}
-		KArray.clear(tls, s);
+		KArray.clear(tls, s+1);
 		return expr;
 	}
 
@@ -354,7 +354,7 @@ public class Stmt extends KObject {
 				}
 			}
 			setObject(KW.Block, bk);
-			KArray.clear(a, atop);
+			KArray.clear(a, atop+1);
 		}
 	}
 	
