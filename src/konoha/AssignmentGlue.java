@@ -9,7 +9,7 @@ import jkonoha.ast.*;
 
 public class AssignmentGlue implements KonohaPackageInitializer {
 
-	private final Syntax asnSyntax = new Syntax("=") {
+	private final Syntax asnSyntax = new OpSyntax("=") {
 
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -43,7 +43,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 		}
 	};
 
-	private final Syntax addasnSyntax = new Syntax("+=") {
+	private final Syntax addasnSyntax = new OpSyntax("+=") {
 		{
 			this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
 			this.priority = 4096;
@@ -72,7 +72,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			setToken(tkNewOp, newopr, tmp.tt, tmp.topch, newopr);
 
 			tkNew = new Token();
-			setToken(tkNew, "=", 1, TK.OPERATOR, "=");
+			setToken(tkNew, "=", TK.OPERATOR, '=', KW.LET);
 			tls.add(tkNew);
 			newc = tls.size() - 1;
 
@@ -124,22 +124,22 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 
 	};
 
-	private final Syntax subasnSyntax = new Syntax("-=") {
+	private final Syntax subasnSyntax = new OpSyntax("-=") {
 		//TODO
 
 	};
 
-	private final Syntax mulasnSyntax = new Syntax("*=") {
+	private final Syntax mulasnSyntax = new OpSyntax("*=") {
 		//TODO
 
 	};
 
-	private final Syntax divasnSyntax = new Syntax("/=") {
+	private final Syntax divasnSyntax = new OpSyntax("/=") {
 		//TODO
 
 	};
 
-	private final Syntax modasnSyntax = new Syntax("%=") {
+	private final Syntax modasnSyntax = new OpSyntax("%=") {
 		//TODO
 
 	};
