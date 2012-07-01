@@ -231,6 +231,20 @@ public class Compiler implements Opcodes {
 	private void asmCall(int a, Expr expr, int shift, int espidx) {
 		List<Object> l = expr.cons;
 		KMethod mtd = (KMethod)l.get(0);
+		
+		//FIXME!!!!!! field setter
+		if(mtd.getName().endsWith("$get") && l.size() == 3) {
+			String self = expr.at(1).tk.text;
+			this.loadLocal(self);
+			Type selfTy = typeStack.pop();
+			asmExpr(0, expr.at(2), 0, 0);
+			Type valTy = typeStack.pop();
+			String name = mtd.getName();
+			name = name.substring(0, name.length()-4);
+			mv.visitFieldInsn(PUTFIELD, selfTy.getClassName(), name, valTy.getDescriptor());
+			return;
+		}
+		
 		Type[] argTypes = mtd.getArgTypes();
 		int thisidx = 0;
 		if(!mtd.isStatic() || (l.size() >= 2 && !(((Expr)l.get(1)).build == -1))) {

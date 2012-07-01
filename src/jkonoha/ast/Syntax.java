@@ -520,7 +520,8 @@ class DotSyntax extends Syntax {
 		assert(s < c);
 		if(isFileName(tls, c, e)) {
 			Expr expr = stmt.newExpr2(ctx, tls, s, c);
-			Expr expr2 = new ConsExpr(this);
+			//Expr expr2 = new ConsExpr(this);
+			Expr expr2 = new ConsExpr(stmt.parentNULL.ks.syntax(ctx, "."));
 			expr2.setCons(tls.get(c+1), expr);
 			return expr2;
 		}
