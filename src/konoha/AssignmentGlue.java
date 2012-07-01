@@ -8,7 +8,10 @@ import jkonoha.ast.*;
 public class AssignmentGlue implements KonohaPackageInitializer {
 
 	private final Syntax asnSyntax = new OpSyntax("=") {
-		
+		{
+			this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
+			this.priority = 4096;
+		}
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
 			// porting package/konoha/assignment_glue.h:ExprTyCheck_assignment
@@ -52,7 +55,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			Token tmp, tkHead;
 			int newc, news = e;
 			int i = s;
-			
+
 			while (i < c) {
 				tkNew = new Token();
 				tmp = tls.get(i);
@@ -66,12 +69,12 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			String opr = tmp.text;
 			String newopr = opr.substring(0,opr.length()-1);
 			setToken(tkNewOp, newopr, tmp.tt, tmp.topch, newopr);
-			
+
 			tkNew = new Token();
 			setToken(tkNew, "=", TK.OPERATOR, '=', KW.LET);
 			tls.add(tkNew);
 			newc = tls.size() - 1;
-			
+
 			Token newtk = new Token();
 			tkHead = tls.get(e+1);
 			newtk.tt = TK.AST_PARENTHESIS;
@@ -79,7 +82,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			newtk.uline = tkHead.uline;
 			newtk.sub = new ArrayList<Token>();
 			i = news;
-			
+
 			while (i < newc) {
 				tkNew = new Token();
 				tmp = tls.get(i);
@@ -89,7 +92,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			}
 			tls.add(newtk);
 			tls.add(tkNewOp);
-			
+
 			tkNew = new Token();
 			i = c+1;
 			while (i < news) {
@@ -116,27 +119,27 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			return expr;
 		}
 	};
-	
+
 	private final Syntax subasnSyntax = new OpSyntax("-=") {
 		//TODO
-		
+
 	};
 
 	private final Syntax mulasnSyntax = new OpSyntax("*=") {
 		//TODO
-		
+
 	};
 
 	private final Syntax divasnSyntax = new OpSyntax("/=") {
 		//TODO
-		
+
 	};
 
 	private final Syntax modasnSyntax = new OpSyntax("%=") {
 		//TODO
-		
+
 	};
-	
+
 	@Override
 	public void init(CTX ctx, KonohaSpace ks) {
 		Syntax[] syndef = {

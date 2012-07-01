@@ -191,7 +191,7 @@ public class Stmt extends KObject {
 		int idx = -1, i, prif = 0;
 		for(i = skipUnaryOp(ctx, tls, s, e) + 1; i < e; i++) {
 			Token tk = tls.get(i);
-			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw); //syn is not null. When the tk.kw = KW.LET and tk.text = "=", it gets null. //Joseph
+			Syntax syn = this.parentNULL.ks.syntax(ctx, tk.kw);
 //			if(syn != NULL && syn.op2 != 0) {
 			if(syn.priority > 0) {
 				if(prif < syn.priority || (prif == syn.priority && !((syn.flag & SYNFLAG.ExprLeftJoinOp2) == SYNFLAG.ExprLeftJoinOp2) )) {
