@@ -102,54 +102,6 @@ public class Expr extends KObject {
 		return flagTerm;
 	}
 	
-	//Joseph
-//	public Expr tyCheckCallParams (CTX ctx, Stmt stmt, KMethod mtd, Gamma gma, int reqty) {
-//		// srg/sugar/tycheck.h: 536
-//		List<Object> cons = this.cons;
-//		int i, size = cons.size();
-//		Object o = cons.get(1);
-//		Expr expr1 = null;
-//		if (o instanceof Expr) {
-//			expr1 = (Expr)o;
-//		}
-//		KClass thisCt = expr1.ty;
-//		if (thisCt == null) {
-//			
-//		}
-//		assert(thisCt != KClass.varClass);
-//		if(!TY_isUnbox(mtd.cid) && CT_isUnbox(thisCt)) {
-//			expr1 = new_BoxingExpr(ctx, cons.exprs[1], thisCt.cid);
-//			KSETv(cons.exprs[1], expr1);
-//		}
-//		int isConst = (Expr_isCONST(expr1)) ? 1 : 0;
-//		for(i = 2; i < size; i++) {
-//			Expr texpr = expr.tyCheckAt(stmt, i, gma, TY.VAR, 0);
-//			if(texpr == K_NULLEXPR) {
-//				return texpr;
-//			}
-//		}
-//		kParam *pa = kMethod_param(mtd);
-//		if(pa.psize + 2 != size) {
-//			return kExpr_p(stmt, expr, ERR_, "%s.%s%s takes %d parameter(s), but given %d parameter(s)", CT_t(this_ct), T_mn(mtd.mn), (int)pa.psize, (int)size-2);
-//		}
-//		for(i = 0; i < pa->psize; i++) {
-//			size_t n = i + 2;
-//			ktype_t ptype = ktype_var(_ctx, pa.p[i].ty, this_ct);
-//			int pol = param_policy(pa.p[i].fn);
-//			kExpr *texpr = kExpr_tyCheckAt(stmt, expr, n, gma, ptype, pol);
-//			if(texpr == K_NULLEXPR) {
-//				return kExpr_p(stmt, expr, ERR_, "%s.%s%s accepts %s at the parameter %d", CT_t(this_ct), T_mn(mtd.mn), TY_t(ptype), (int)i+1);
-//			}
-//			if(!Expr_isCONST(expr)) isConst = 0;
-//		}
-//		expr = Expr_typedWithMethod(_ctx, expr, mtd, reqty);
-//		if(isConst && kMethod_isConst(mtd)) {
-//			ktype_t rtype = ktype_var(_ctx, pa.rtype, this_ct);
-//			return ExprCall_toConstValue(_ctx, expr, cons, rtype);
-//		}
-//		return expr;
-//	}
-	
 	public void dump(CTX ctx, int n, int nest) {
 		PrintStream out = System.out;
 		if (nest == 0) out.println();

@@ -5,11 +5,9 @@ import java.util.*;
 import jkonoha.*;
 import jkonoha.ast.*;
 
-//author Joseph
-
 public class AssignmentGlue implements KonohaPackageInitializer {
 
-	private final Syntax asnSyntax = new Syntax("=") {
+	private final Syntax asnSyntax = new OpSyntax("=") {
 		
 		@Override
 		public Expr exprTyCheck(CTX ctx, Expr expr, Gamma gamma, KClass ty) {
@@ -43,7 +41,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 		}
 	};
 
-	private final Syntax addasnSyntax = new Syntax("+=") {
+	private final Syntax addasnSyntax = new OpSyntax("+=") {
 		{
 			this.flag = (SYNFLAG.ExprOp | SYNFLAG.ExprLeftJoinOp2);
 			this.priority = 4096;
@@ -70,7 +68,7 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			setToken(tkNewOp, newopr, tmp.tt, tmp.topch, newopr);
 			
 			tkNew = new Token();
-			setToken(tkNew, "=", TK.OPERATOR, '=', KW.LET);//TODO
+			setToken(tkNew, "=", TK.OPERATOR, '=', KW.LET);
 			tls.add(tkNew);
 			newc = tls.size() - 1;
 			
@@ -110,34 +108,31 @@ public class AssignmentGlue implements KonohaPackageInitializer {
 			tk.kw = k;
 		}
 		@Override
-		public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s,
-				int c, int e) {
-			// TODO Auto-generated method stub
+		public Expr parseExpr(CTX ctx, Stmt stmt, List<Token> tls, int s, int c, int e) {
 			int atop = tls.size();
 			s = transformOprAssignment(ctx, tls, s, c, e);
 			Expr expr = stmt.newExpr2(ctx, tls, s, tls.size());
 			KArray.clear(tls, atop);
 			return expr;
 		}
-		
 	};
 	
-	private final Syntax subasnSyntax = new Syntax("-=") {
+	private final Syntax subasnSyntax = new OpSyntax("-=") {
 		//TODO
 		
 	};
 
-	private final Syntax mulasnSyntax = new Syntax("*=") {
+	private final Syntax mulasnSyntax = new OpSyntax("*=") {
 		//TODO
 		
 	};
 
-	private final Syntax divasnSyntax = new Syntax("/=") {
+	private final Syntax divasnSyntax = new OpSyntax("/=") {
 		//TODO
 		
 	};
 
-	private final Syntax modasnSyntax = new Syntax("%=") {
+	private final Syntax modasnSyntax = new OpSyntax("%=") {
 		//TODO
 		
 	};
