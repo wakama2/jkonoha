@@ -72,6 +72,14 @@ public class KInt extends KNumber {
 		return self >= n;
 	}
 	
+	public static int opLSHIFT(int self, int n) {
+		return self << n;
+	}
+	
+	public static int opRSHIFT(int self, int n) {
+		return self >> n;
+	}
+	
 	public static String toString(int self) {
 		return Integer.toString(self);
 	}
