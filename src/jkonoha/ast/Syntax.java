@@ -601,6 +601,9 @@ class VOIDSyntax extends Syntax {
 				name, retty, argNames.toArray(new String[0]), argTypes.toArray(new KClass[0]));
 		klass.addMethod(mtd);
 		
+		if(mod == KonohaMethod.ACC_FUNC) {
+			gamma.locals.put("this", klass);
+		}
 		gamma.argNames = argNames;
 		Token bkt = (Token)stmt.getObject(KW.Block);
 		List<Token> tls = new ArrayList<Token>();
