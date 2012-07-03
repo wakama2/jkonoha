@@ -76,7 +76,7 @@ public class Compiler implements Opcodes {
 		if(l == null) {
 			l = addLocal(name, type);
 		} else {
-			if(l.type != type) {
+			if(!l.type.equals(type)) {
 				throw new CodeGenException("different type: " + name);
 			}
 		}

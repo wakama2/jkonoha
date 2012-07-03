@@ -16,6 +16,18 @@ public class KString extends KObject {
 		return self + s;
 	}
 	
+	public static String opADD(String self, boolean b) {
+		return self + b;
+	}
+	
+	public static String opADD(String self, int n) {
+		return self + n;
+	}
+	
+	public static String opADD(String self, float n) {
+		return self + n;
+	}
+	
 	public static boolean opEQ(String self, String s) {
 		return self.equals(s);
 	}

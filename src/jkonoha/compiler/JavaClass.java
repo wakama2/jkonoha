@@ -6,14 +6,15 @@ import java.util.List;
 
 import jkonoha.KClass;
 import jkonoha.KMethod;
+import jkonoha.KObject;
 
 import org.objectweb.asm.Type;
 
 public class JavaClass extends KClass {
 	
 	private final Class<?> klass;
-	private JavaClass superClass = null;
-	private JavaClass[] interfaces = null;
+	private KClass superClass = null;
+	private KClass[] interfaces = null;
 	
 	private JavaClass(Class<?> klass) {
 		this.klass = klass;
@@ -26,6 +27,8 @@ public class JavaClass extends KClass {
 			return KClass.floatClass;
 		} else if(c == boolean.class) {
 			return KClass.booleanClass;
+		} else if(c == String.class) {
+			return KClass.stringClass;
 		} else {
 			return new JavaClass(c);
 		}
@@ -41,7 +44,7 @@ public class JavaClass extends KClass {
 
 	@Override public KClass getSuperClass() {
 		if(superClass == null && klass != Object.class) {
-			superClass = new JavaClass(klass.getSuperclass());
+			superClass = JavaClass.create(klass.getSuperclass());
 		}
 		return superClass;
 	}
@@ -51,7 +54,7 @@ public class JavaClass extends KClass {
 			Class<?>[] is = klass.getInterfaces();
 			interfaces = new JavaClass[is.length];
 			for(int i=0; i<is.length; i++) {
-				interfaces[i] = new JavaClass(is[i]);
+				interfaces[i] = JavaClass.create(is[i]);
 			}
 		}
 		return interfaces;
@@ -68,12 +71,20 @@ public class JavaClass extends KClass {
 		return null;
 	}
 	
-	@Override public JavaMethod getMethod(String name, List<KClass> args) {
+	@Override public KMethod getMethod(String name, List<KClass> args) {
 		for(Method m : klass.getMethods()) {
 			Class<?>[] a = m.getParameterTypes();
 			if(m.getName().equals(name) && a.length == args.size()) {
-				//TODO arg typecheck
-				return new JavaMethod(m);
+				int i;
+				for(i=0; i<a.length; i++) {
+					if(a[i] == KObject.class) continue;
+					KClass p = JavaClass.create(a[i]);
+					KClass p1 = args.get(i);
+					if(!p1.isa(p)) {
+						break;
+					}
+				}
+				if(i == a.length) return new JavaMethod(m);
 			}
 		}
 		if(superClass != null) {

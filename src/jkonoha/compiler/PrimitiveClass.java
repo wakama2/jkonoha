@@ -40,7 +40,7 @@ public class PrimitiveClass extends KClass {
 	@Override
 	public KClass[] getInterfaces() {
 		// TODO Auto-generated method stub
-		return null;
+		return new KClass[0];
 	}
 
 	@Override
@@ -57,8 +57,13 @@ public class PrimitiveClass extends KClass {
 	}
 	
 	@Override
+	public boolean equals(Object o) {
+		return super.equals(o);
+	}
+	
+	@Override
 	public String toString() {
-		return klass.toString();
+		return "(boxed)" + klass.toString();
 	}
 
 }

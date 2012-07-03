@@ -16,7 +16,7 @@ public abstract class KClass extends KObject {
 	public static final KClass intClass = new PrimitiveClass(int.class, JavaClass.create(KInt.class));
 	public static final KClass floatClass = new PrimitiveClass(float.class, JavaClass.create(KFloat.class));
 	public static final KClass booleanClass = new PrimitiveClass(boolean.class, JavaClass.create(KBoolean.class));
-	public static final KClass stringClass = JavaClass.create(KString.class);
+	public static final KClass stringClass = new PrimitiveClass(String.class, JavaClass.create(KString.class));
 	public static final KClass methodClass = JavaClass.create(KMethod.class);
 	public static final KClass classClass = JavaClass.create(KClass.class);
 	public static final KClass systemClass = JavaClass.create(KSystem.class);
@@ -60,19 +60,16 @@ public abstract class KClass extends KObject {
 	}
 	
 	public boolean isa(KClass k) {
-		return !isAssignableFrom(k);
-	}
-	
-	public boolean isAssignableFrom(KClass k) {
 		if(this.equals(k)) {
 			return true;
 		}
-		KClass ksup = k.getSuperClass();
-		if(ksup != null && ksup.isAssignableFrom(this)) {
+		KClass ksup = this.getSuperClass();
+		if(ksup != null && this.isa(ksup)) {
 			return true;
 		}
-		for(KClass kif : k.getInterfaces()) {
-			if(kif.isAssignableFrom(this)) {
+		KClass[] kifs = this.getInterfaces();
+		for(KClass kif : kifs) {
+			if(this.isa(kif)) {
 				return true;
 			}
 		}

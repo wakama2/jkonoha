@@ -48,38 +48,27 @@ void kmain() {
 	;
 	int stretchDepth = maxDepth + 1;
 	int check = bottomUpTree(0, stretchDepth).itemCheck();
-	System.p(check);
 	System.assert(check == -1);
-	System.p("stretch tree of depth:");
-	System.p(stretchDepth);
-	System.p("check:");
-	System.p(check);
+	System.p("stretch tree of depth " + stretchDepth + " check: " + check);
 	TreeNode longLivedTree = bottomUpTree(0, maxDepth);
 	int depth = c_MINDEPTH;
 	while(depth <= maxDepth) {
 		int iterations = 1 << (maxDepth - depth + c_MINDEPTH);
 		check = 0;
 		int i = 1;
-		while(i<= iterations) {
+		while(i <= iterations) {
 			check = check + bottomUpTree(i, depth).itemCheck();
 			check = check + bottomUpTree(-i, depth).itemCheck();
 			i += 1;
 		}
 		System.assert(check == iterations * -2);
-		System.p(iterations * 2);
-		System.p("trees of depth:");
-		System.p(depth);
-		System.p("check");
-		System.p(check);
-		depth = depth + 2;
+		System.p("" + iterations*2 + " trees of depth " + depth + " check:" + check);
+		depth += 2;
 	}
 	;
 	check = longLivedTree.itemCheck();
 	System.assert(check == -1);
-	System.p("long lived tree of depth:");
-	System.p(maxDepth);
-	System.p("check:");
-	System.p(check);
+	System.p("long lived tree of depth " + maxDepth + " check:" + check);
 }
 
 kmain();

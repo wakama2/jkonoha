@@ -80,6 +80,10 @@ public class KInt extends KNumber {
 		return self >> n;
 	}
 	
+	public static String opADD(int self, String s) {
+		return self + s;
+	}
+	
 	public static String toString(int self) {
 		return Integer.toString(self);
 	}
