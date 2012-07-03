@@ -6,53 +6,55 @@ class TreeNode {
 	int item;
 	boolean isNull;
 
-	void f() {
-		System.p("hoge");
-	};
-
+	TreeNode(int item, boolean isNull) {
+		this.item = item;
+		this.isNull = isNull;
+	}
+	;
 	int itemCheck() {
 		if(this.isNull) {
 			return this.item;
+		} else {
+			int item = this.item;
+			TreeNode l = this.left;
+			TreeNode r = this.right;
+			return item + l.itemCheck() - r.itemCheck();
+			/*return this.item + this.left.itemCheck() - this.right.itemCheck();*/
 		}
-		return this.item + this.left.itemCheck() - this.right.itemCheck();
 	}
 }
 
 TreeNode bottomUpTree(int item, int depth) {
 	if(depth > 0) {
-		TreeNode ret1 = new TreeNode();
-		ret1.left = bottomUpTree(2 * item - 1, depth - 1);
-		ret1.right = bottomUpTree(2 * item, depth - 1);
-		ret1.item = item;
-		ret1.isNull = false;
-		return ret1;
+		TreeNode t = new TreeNode(item, false);
+		t.left = bottomUpTree(2 * item - 1, depth - 1);
+		t.right = bottomUpTree(2 * item, depth - 1);
+		return t;
 	}
 	else {
-		TreeNode ret2 = new TreeNode();
-		ret2.item = item;
-		ret2.isNull = true;
-		return ret2;
+		return new TreeNode(item, true);
 	}
 }
 
 void kmain() {
 	int c_MINDEPTH = 4;
-	int n = 16;
+	int n = 18;
 	int maxDepth = 0;
 	if(c_MINDEPTH + 2 > n) {
 		maxDepth = c_MINDEPTH + 2;
-	}
-	else {
+	} else {
 		maxDepth = n;
 	}
-	System.p(maxDepth);
+	;
 	int stretchDepth = maxDepth + 1;
-	int check = bottomUpTree(0, maxDepth).itemCheck();
+	int check = bottomUpTree(0, stretchDepth).itemCheck();
+	System.p(check);
+	System.assert(check == -1);
 	System.p("stretch tree of depth:");
 	System.p(stretchDepth);
 	System.p("check:");
 	System.p(check);
-	TreeNode logLivedTree = bottomUpTree(0, maxDepth);
+	TreeNode longLivedTree = bottomUpTree(0, maxDepth);
 	int depth = c_MINDEPTH;
 	while(depth <= maxDepth) {
 		int iterations = 1 << (maxDepth - depth + c_MINDEPTH);
@@ -61,8 +63,9 @@ void kmain() {
 		while(i<= iterations) {
 			check = check + bottomUpTree(i, depth).itemCheck();
 			check = check + bottomUpTree(-i, depth).itemCheck();
-			i = i + 1;
+			i += 1;
 		}
+		System.assert(check == iterations * -2);
 		System.p(iterations * 2);
 		System.p("trees of depth:");
 		System.p(depth);
@@ -70,7 +73,9 @@ void kmain() {
 		System.p(check);
 		depth = depth + 2;
 	}
+	;
 	check = longLivedTree.itemCheck();
+	System.assert(check == -1);
 	System.p("long lived tree of depth:");
 	System.p(maxDepth);
 	System.p("check:");
@@ -78,3 +83,4 @@ void kmain() {
 }
 
 kmain();
+
