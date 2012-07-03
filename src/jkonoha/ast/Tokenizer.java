@@ -6,16 +6,22 @@ import jkonoha.TEnv;
 public abstract class Tokenizer {
 	
 	public abstract int parse(CTX ctx, Token tk, TEnv tenv, int pos);
+	
+	public static int kchar(String t, int pos) {
+		int ch = t.charAt(pos);
+		return (ch < 0) ? _MULTI : cMatrix[ch];
+	}	
 
 	public static void tokenize(CTX ctx, TEnv tenv) {
-		int ch, pos = 0;
+		int pos = 0;
 		Tokenizer fmat[] = tenv.fmat;
 		Token tk = new Token(tenv.uline);
 		assert(tk.tt == TK.NONE);
 		tk.uline = tenv.uline;
 //		tk.lpos = tenv.lpos(0);
 		pos = parseINDENT.parse(ctx, tk, tenv, pos);
-		while(pos < tenv.source.length() && (ch = kchar(tenv.source, pos)) != 0) {
+		while(pos < tenv.source.length()) {
+			int ch = kchar(tenv.source, pos);
 			if(tk.tt != TK.NONE) {
 				tenv.list.add(tk);
 				tk = new Token(tenv.uline);
@@ -31,19 +37,6 @@ public abstract class Tokenizer {
 		}
 	}
 
-	/**
-	 * This method is used to reduce character's types to 41 types.
-	 * 
-	 * @param t imported sourcecode
-	 * @param pos position of sourcecode
-	 * @return character type
-	 */
-	
-	public static int kchar(String t, int pos) {
-		int ch = t.charAt(pos);
-		return (ch < 0) ? _MULTI : cMatrix[ch];
-	}	
-	
 	/**
 	 * This method returns a matrix of parser about each character code.
 	 * @return matrix of parser about each character code
@@ -170,21 +163,27 @@ public abstract class Tokenizer {
 	_LALPHA, _LALPHA, _LALPHA, _LALPHA, _LALPHA, _LALPHA, _LALPHA, _LALPHA,
 	/*170  x   171  y   172  z   173  {   174  |   175  }   176  ~   177 del*/
 	_LALPHA, _LALPHA, _LALPHA, _LBR, _VAR, _RBR, _CHILDER, 1,
-	};	
+	};
+	
+	private static char nextChar(String s, int pos) {
+		if(pos < s.length()) {
+			return s.charAt(pos);
+		} else {
+			return 0;
+		}
+	}
 	
 	public static final Tokenizer parseINDENT = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int pos) {
-			while(true) {
-				pos++;
-				if(pos >= tenv.source.length()) break;
-				/*int ch = */tenv.source.charAt(pos);
+			int ch;
+			while((ch = nextChar(tenv.source, pos++)) != 0) {
 //				if(ch == '\t') { c += tenv.indent_tab; }
 //				else if(ch == ' ') { c += 1; }
 				break;
 			}
 			if(tk != null) {
 				tk.tt = TK.INDENT;
-//				tk.lpos = 0;		
+				tk.lpos = 0;		
 			}
 			return pos - 1;
 		}
@@ -202,10 +201,7 @@ public abstract class Tokenizer {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start, dot = 0;
 			String ts = tenv.source;
-			while(true) {
-				pos++;
-				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+			while((ch = nextChar(ts, pos++)) != 0) {
 				if(ch == '_') continue; // nothing
 				if(ch == '.') {
 					if(!Character.isDigit(ts.charAt(pos))) {
@@ -221,12 +217,10 @@ public abstract class Tokenizer {
 				if(!Character.isLetterOrDigit(ch)) break;
 			}
 			if(tk != null /* IS_NOTNULL(tk) */) {
-//				tk.text = new KString(ts.substring(tok_start, pos - 1));
-				tk.text = ts.substring(tok_start, pos);
+				tk.text = ts.substring(tok_start, pos-1);
 				tk.tt = (dot == 0) ? TK.INT : TK.FLOAT;
 			}
-//			return pos - 1;  // next
-			return pos;  // next
+			return pos - 1;  // next
 		}
 	};
 
@@ -234,22 +228,17 @@ public abstract class Tokenizer {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 			String ts = tenv.source;
-//			while((ch = ts.charAt(pos++)) != 0) {
-			while(true) {
-				pos++;
-				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+			while((ch = nextChar(ts, pos++)) != 0) {
 				if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
 				break;
 			}
 			Token rtk = tk;
 			if(rtk != null /* IS_NOTNULL(tk) */) {
-				rtk.text = ts.substring(tok_start, pos);
+				rtk.text = ts.substring(tok_start, pos-1);
 				assert rtk.text != null;
 				tk.tt = TK.SYMBOL;
 			}
-			return pos;  // next
-//			return pos - 1;  // next
+			return pos - 1;  // next
 		}
 	};
 
@@ -257,22 +246,16 @@ public abstract class Tokenizer {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 			String ts = tenv.source;
-//			while((ch = ts.charAt(pos++)) != 0) {
-			while(true) {
-				pos++;
-				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+			while((ch = nextChar(ts, pos++)) != 0) {
 				if(ch == '_' || Character.isLetterOrDigit(ch)) continue; // nothing
 				break;
 			}
 			Token rtk = tk;
 			if(rtk != null /* IS_NOTNULL(tk) */) {
-//				tk.text = new KString(ts.substring(tok_start, pos - 1));
-				rtk.text = ts.substring(tok_start, pos);
+				rtk.text = ts.substring(tok_start, pos-1);
 				rtk.tt = TK.USYMBOL;
 			}
-//			return pos - 1; // next
-			return pos; // next
+			return pos - 1; // next
 		}
 	};
 
@@ -280,32 +263,25 @@ public abstract class Tokenizer {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
 			String ts = tenv.source;
-//			while((ch = ts.charAt(pos++)) != 0) {
-			while(true) {
-				pos++;
-				if(pos >= ts.length()) break;
-				if((ch = ts.charAt(pos)) == 0) break;
+			while((ch = nextChar(ts, pos++)) != 0) {
 				if(!(ch < 0)) break;
 			}
 			Token rtk = tk;
 			if(rtk != null /* IS_NOTNULL(tk) */) {
-//				tk.text = new KString(ts.substring(tok_start, pos - 1));
-				rtk.text = ts.substring(tok_start, pos);
+				rtk.text = ts.substring(tok_start, pos-1);
 				tk.tt = TK.MSYMBOL;
 			}
-//			return pos - 1; // next
-			return pos; // next
+			return pos - 1; // next
 		}
 	};
 
 	public static final Tokenizer parseOP1 = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			Token rtk = tk;
-			if(rtk != null /* IS_NOTNULL(tk) */) {
-				String s = tenv.source.substring(tok_start);
-				rtk.text = s.substring(0, 1);
+			if(rtk != null) {
+				rtk.text = tenv.source.substring(tok_start, tok_start + 1);
 				rtk.tt = TK.OPERATOR;
-				rtk.topch = s.charAt(0);
+				rtk.topch = rtk.text.charAt(0);
 			}
 			return tok_start + 1;
 		}
@@ -314,11 +290,7 @@ public abstract class Tokenizer {
 	public static final Tokenizer parseOP = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
-//			while((ch = tenv.source.charAt(pos++)) != 0) {
-			while(true) {
-				pos++;
-				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+			while((ch = nextChar(tenv.source, pos++)) != 0) {
 				if(Character.isLetter(ch)) break;
 				switch(ch) {
 				case '<': case '>': case '@': case '$': case '#':
@@ -330,32 +302,25 @@ public abstract class Tokenizer {
 				break;
 			}
 			Token rtk = tk;
-			if(rtk != null /* IS_NOTNULL(tk) */) {
+			if(rtk != null) {
 				String s = tenv.source.substring(tok_start);
-//				tk.text = new KString(s.substring(0, (pos - 1) - tok_start));
-				rtk.text = s.substring(0, pos - tok_start);
+				rtk.text = s.substring(0, pos-1 - tok_start);
 				rtk.tt = TK.OPERATOR;
 				if(rtk.text.length() == 1) {
 					rtk.topch = rtk.text.charAt(0);
 				}
 			}
-//			return pos - 1;
-			return pos;
+			return pos - 1;
 		}
 	};
 
 	public static final Tokenizer parseLINE = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, pos = tok_start;
-//			while((ch = tenv.source.charAt(pos++)) != 0) {
-			while(true) {
-				pos++;
-				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+			while((ch = nextChar(tenv.source, pos++)) != 0) {
 				if(ch == '\n') break;
 			}
-//			return pos - 1;/*EOF*/
-			return pos;/*EOF*/
+			return pos - 1;/*EOF*/
 		}
 	};
 
@@ -368,30 +333,24 @@ public abstract class Tokenizer {
 				// tenv->uline >>= (sizeof(kshort_t)*8);
 				// tenv->uline = (tenv->uline<<(sizeof(kshort_t)*8)) | (kshort_t)strtoll(tenv->source + pos + 2, NULL, 10);
 			}
-//			while((ch = tenv.source.charAt(pos++)) != 0) {
-			while(true) {
-				pos++;
-				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos)) == 0) break;
+			while((ch = nextChar(tenv.source, pos++)) != 0) {
 				if(ch == '\n') {
 					tenv.uline += 1;
 				}
 				if(prev == '*'  && ch == '/') {
 					level--;
-//					if(level == 0) return pos;
-					if(level == 0) return pos + 1;
+					if(level == 0) return pos;
 				} else if(prev == '/' && ch == '*') {
 					level++;
 				}
 				prev = ch;
 			}
-			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
+			if(tk != null) {
 				// TODO perror.h
 				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with */");
 				// KToken.Token_toERR(ctx, tk, errref);
 			}
-//			return pos - 1;/*EOF*/
-			return pos;/*EOF*/
+			return pos - 1;/*EOF*/
 		}
 	};
 
@@ -412,17 +371,13 @@ public abstract class Tokenizer {
 	public static final Tokenizer parseDQUOTE = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, prev = '"', pos = tok_start + 1;
-//			while((ch = tenv.source.charAt(pos++)) != 0) {
-			while(true) {
-				if(pos >= tenv.source.length()) break;
-				if((ch = tenv.source.charAt(pos++)) == 0) break;
+			while((ch = nextChar(tenv.source, pos++)) != 0) {
 				if(ch == '\n') {
 					break;
 				}
 				if(ch == '"' && prev != '\\') {
 					Token rtk = tk;
-					if(rtk != null /* CTX.IS_NOTNULL(tk) */) {
-//						tk.text = new KString(tenv.source.substring(tok_start + 1, pos - 1));
+					if(rtk != null) {
 						rtk.text = tenv.source.substring(tok_start + 1, pos-1);
 						rtk.tt = TK.TEXT;
 					}
@@ -430,13 +385,12 @@ public abstract class Tokenizer {
 				}
 				prev = ch;
 			}
-			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
+			if(tk != null) {
 				// TODO perror.h
 				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with \"");
 				// KToken.Token_toERR(ctx, tk, errref);
 			}
-//			return pos - 1;
-			return pos;
+			return pos - 1;
 		}
 	};
 
@@ -448,7 +402,7 @@ public abstract class Tokenizer {
 
 	public static final Tokenizer parseUNDEF = new Tokenizer() {
 		@Override public int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
-			if(tk != null /* IS_NOTNULL(tk) */) {
+			if(tk != null) {
 				// TODO
 				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "undefined token character: %c", tenv->source[tok_start]);
 				// KToken.Token_toERR(ctx, tk, errref);
@@ -464,17 +418,18 @@ public abstract class Tokenizer {
 	};
 
 	public static final Tokenizer parseBLOCK = new Tokenizer() {
+
 		@Override public final int parse(CTX ctx,  Token tk, TEnv tenv, int tok_start) {
 			int ch, level = 1, pos = tok_start + 1;
 			Tokenizer[] fmat = tenv.fmat;
-//			tk.lpos += 1;
+			tk.lpos += 1;
 			while(pos < tenv.source.length()) {
 				ch = kchar(tenv.source, pos);
 				if(ch == _RBR/*}*/) {
 					level--;
 					if(level == 0) {
 						Token rtk = tk;
-						if(tk != null /* IS_NOTNULL(tk) */) {
+						if(tk != null) {
 							rtk.text = tenv.source.substring(tok_start + 1, pos);
 							rtk.tt = TK.CODE;
 						}
@@ -486,10 +441,10 @@ public abstract class Tokenizer {
 					level++; pos++;
 				}
 				else {
-					pos = fmat[ch].parse(ctx, /* TODO K_NULLTOKEN*/null, tenv, pos);
+					pos = fmat[ch].parse(ctx, null, tenv, pos);
 				}
 			}
-			if(tk != null /* CTX.IS_NOTNULL(tk) */) {
+			if(tk != null) {
 				// TODO
 				// size_t errref = SUGAR_P(ERR_, tk->uline, tk->lpos, "must close with }");
 				// Token_toERR(_ctx, tk, errref);
