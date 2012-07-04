@@ -14,7 +14,7 @@ public abstract class KClass extends KObject {
 	public static final KClass varClass = JavaClass.create(Object.class); //FIXME
 	public static final KClass objectClass = JavaClass.create(KObject.class);
 	public static final KClass intClass = new PrimitiveClass(int.class, JavaClass.create(KInt.class));
-	public static final KClass floatClass = new PrimitiveClass(float.class, JavaClass.create(KFloat.class));
+	public static final KClass floatClass = new PrimitiveClass(double.class, JavaClass.create(KFloat.class));
 	public static final KClass booleanClass = new PrimitiveClass(boolean.class, JavaClass.create(KBoolean.class));
 	public static final KClass stringClass = new PrimitiveClass(String.class, JavaClass.create(KString.class));
 	public static final KClass methodClass = JavaClass.create(KMethod.class);

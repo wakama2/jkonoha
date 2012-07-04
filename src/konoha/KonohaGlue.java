@@ -12,6 +12,7 @@ public class KonohaGlue implements KonohaPackageInitializer {
 		new WhileGlue().init(ctx, ks);
 		new AssignmentGlue().init(ctx, ks);
 		new IntGlue().init(ctx, ks);
+		new FloatGlue().init(ctx, ks);
 	}
 
 }

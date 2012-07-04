@@ -48,6 +48,22 @@ public class KInt extends KNumber {
 		return self % n;
 	}
 	
+	public static double opADD(int self, double d) {
+		return self + d;
+	}
+	
+	public static double opSUB(int self, double d) {
+		return self - d;
+	}
+	
+	public static double opMUL(int self, double d) {
+		return self * d;
+	}
+	
+	public static double opDIV(int self, double d) {
+		return self / d;
+	}		
+	
 	public static boolean opEQ(int self, int n) {
 		return self == n;
 	}
